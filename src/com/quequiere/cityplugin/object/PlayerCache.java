@@ -46,7 +46,7 @@ public class PlayerCache
 		this.reloadPerm();
 	}
 
-	private void reloadPerm()
+	public void reloadPerm()
 	{
 		cachePerm = new HashMap<Chunk, HashMap<CityPermEnum, Boolean>>();
 	}
@@ -85,7 +85,8 @@ public class PlayerCache
 
 		if (targetCity == null)
 		{
-			this.loadPermFromWorld(c, c.getWorld(), CityPermRankEnum.outsider);
+			CityWorld cw = CityWorld.getByName(c.getWorld().getName());
+			this.loadPermFromWorld(c, c.getWorld(), CityPermRankEnum.outsider,cw);
 		}
 		else
 		{
@@ -176,15 +177,13 @@ public class PlayerCache
 
 	}
 
-	private void loadPermFromWorld(Chunk c, World w, CityPermRankEnum rank)
+	private void loadPermFromWorld(Chunk c,World w, CityPermRankEnum rank,CityWorld cw)
 	{
-
-		System.out.println("this need to be dev2");
 
 		HashMap<CityPermEnum, Boolean> local1 = new HashMap<CityPermEnum, Boolean>();
 		for (CityPermEnum perm : CityPermEnum.values())
 		{
-			boolean b = false;
+			boolean b = cw.canDoAction(perm, rank);
 			local1.put(perm, b);
 		}
 		this.getCachePerm().put(c, local1);

@@ -294,8 +294,10 @@ public class City extends PermissibleZone {
 		}
 		
 
-		citychunk.add(new CityChunk(target));
+		CityChunk cc = new CityChunk(target);
+		citychunk.add(cc);
 		this.save();
+		cc.updatePermission();
 		CityPlugin.sendMessage("New chunk claimed !", TextColors.GREEN, p);
 
 	}
@@ -334,7 +336,6 @@ public class City extends PermissibleZone {
 			Resident r = Resident.fromPlayerId(p.getUniqueId());
 			r.getCache().clearChunkPerm(cc.getChunk());
 		}
-		
 		this.save();
 	}
 	

@@ -98,6 +98,26 @@ public class CityCommand implements CommandCallable
 					}
 				}
 			}
+			else if (subc.equals(SubCommand.info))
+			{
+					if (args.length < 2)
+					{
+						CityPlugin.sendMessage("You need to give a name to the city !", TextColors.RED, p);
+					}
+					else
+					{
+						City ci = City.getCityByName(args[1]);
+						if(ci!=null)
+						{
+							displayCity(p, r, ci);
+						}
+						else
+						{
+							CityPlugin.sendMessage("Can't find this city", TextColors.RED, p);
+						}
+					}
+				
+			}
 			else if (subc.equals(SubCommand.join))
 			{
 				if (c != null)
@@ -303,7 +323,7 @@ public class CityCommand implements CommandCallable
 
 	public enum SubCommand
 	{
-		create, claim, leave, help, join,destroy,unclaim,deposite
+		create, claim, leave, help, join,destroy,unclaim,deposite,info
 	};
 
 	public static void displayCity(Player p, Resident r, City c)
@@ -336,10 +356,10 @@ public class CityCommand implements CommandCallable
 		builder.append(Text.of(TextColors.RED, balance +" "+CityPlugin.economyService.getDefaultCurrency().getSymbol().toString()));
 
 		builder.append(Text.of(TextColors.DARK_GREEN, " Daily chunk price: "));
-		builder.append(Text.of(TextColors.GREEN,CityPlugin.generalConfig.getChunkDailyCostBase()  +" "+CityPlugin.economyService.getDefaultCurrency().getSymbol()));
+		builder.append(Text.of(TextColors.GREEN,CityPlugin.generalConfig.getChunkDailyCostBase()  +" "+CityPlugin.economyService.getDefaultCurrency().getSymbol().toString()));
 		
 		builder.append(Text.of(TextColors.DARK_GREEN, " Daily city cost: "));
-		builder.append(Text.of(TextColors.RED,c.getDailyCost()  +" "+CityPlugin.economyService.getDefaultCurrency().getSymbol()));
+		builder.append(Text.of(TextColors.RED,c.getDailyCost()  +" "+CityPlugin.economyService.getDefaultCurrency().getSymbol().toString()));
 		
 		builder.append(Text.of("\n"));
 		
@@ -349,6 +369,11 @@ public class CityCommand implements CommandCallable
 		BigDecimal days = balance.divide(c.getDailyCost());
 		days=days.setScale(2, RoundingMode.DOWN);
 		builder.append(Text.of(TextColors.RED,days+" days"));
+		
+		if(days.compareTo(new BigDecimal(5))<1)
+		{
+			builder.append(Text.of(TextColors.RED,"Emmergency alert, deposite funds with '/c deposite' or city could be destroyed in few days"));
+		}
 		
 		builder.append(Text.of("\n"));
 		

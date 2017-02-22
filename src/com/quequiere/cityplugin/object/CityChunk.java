@@ -83,8 +83,8 @@ public class CityChunk extends PermissibleZone
 	@Override
 	public void updatePermission()
 	{
-		this.save();
 
+		this.save();
 		for (Player p : Sponge.getServer().getOnlinePlayers())
 		{
 			Resident r = Resident.fromPlayerId(p.getUniqueId());

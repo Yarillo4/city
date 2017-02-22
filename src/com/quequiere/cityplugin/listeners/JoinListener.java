@@ -10,6 +10,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
+import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.service.economy.account.Account;
 import org.spongepowered.api.service.economy.transaction.ResultType;
 import org.spongepowered.api.service.economy.transaction.TransactionResult;
@@ -18,12 +19,17 @@ import org.spongepowered.api.text.format.TextColors;
 
 import com.quequiere.cityplugin.CityPlugin;
 import com.quequiere.cityplugin.object.City;
+import com.quequiere.cityplugin.object.CityWorld;
 import com.quequiere.cityplugin.object.Resident;
 
 
 public class JoinListener
 {
-	
+	@Listener
+	public void worldLoad(LoadWorldEvent event)
+	{
+		CityWorld.loadWorld(event.getTargetWorld().getName());
+	}
 	
 	@Listener
 	public void onConnectTaxCheck(ClientConnectionEvent.Join event)

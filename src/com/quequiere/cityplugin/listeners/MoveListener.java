@@ -39,7 +39,7 @@ public class MoveListener
 		{
 			CityPlugin.sendMessageWithoutPrefix("______________[ WILDERNESS ]______________", TextColors.GOLD, p);
 		}
-		else if(newCity!=null && previousCity==null || newCity!=null && previousCity!=null && newCity!=previousCity)
+		else if(newCity!=null && previousCity==null || newCity!=null && previousCity!=null && !newCity.equals(previousCity))
 		{
 			CityPlugin.sendMessageWithoutPrefix("______________[ Welcome to "+newCity.getName()+" ]______________", TextColors.GOLD, p);
 			
