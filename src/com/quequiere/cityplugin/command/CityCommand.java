@@ -12,6 +12,7 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.service.economy.account.Account;
 import org.spongepowered.api.text.LiteralText.Builder;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
@@ -211,8 +212,52 @@ public class CityCommand implements CommandCallable
 		// --------------------------------------------------------------------------------------------
 
 		builder.append(Text.of(TextColors.DARK_GREEN, "City chunks: "));
-		builder.append(Text.of(TextColors.GREEN, c.getClaimedChunk().size() + " / XX\n"));
+		builder.append(Text.of(TextColors.GREEN, c.getClaimedChunk().size() + " / "+c.getMaxChunk()+"\n"));
+		
+		// --------------------------------------------------------------------------------------------
 
+		Account account = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
+		
+		builder.append(Text.of(TextColors.DARK_GREEN, "Bank: "));
+		builder.append(Text.of(TextColors.RED, account.getBalance(CityPlugin.economyService.getDefaultCurrency()) +" "+CityPlugin.economyService.getDefaultCurrency().getSymbol()));
+
+		builder.append(Text.of(TextColors.DARK_GREEN, " Daily chunk price: "));
+		builder.append(Text.of(TextColors.GREEN,CityPlugin.generalConfig.getChunkDailyCostBase()  +" "+CityPlugin.economyService.getDefaultCurrency().getSymbol()));
+		
+		builder.append(Text.of(TextColors.DARK_GREEN, " Daily city cost: "));
+		builder.append(Text.of(TextColors.RED,c.getDailyCost()  +" "+CityPlugin.economyService.getDefaultCurrency().getSymbol()));
+		
+		builder.append(Text.of("\n"));
+		
+		// --------------------------------------------------------------------------------------------
+
+		builder.append(Text.of(TextColors.DARK_GREEN, "Player tax: "));
+		builder.append(Text.of(TextColors.GREEN, c.getPlayerTaxe()+" "));
+		
+		
+		itemColor = c.isRemovePlayerTax()? TextColors.GREEN : TextColors.RED;
+		itemString = c.isRemovePlayerTax() ? "Remove if can't pay" : "Can stay in city";
+
+		builder.append(Text.of(TextColors.DARK_GREEN, "Pay statment: "));
+		builder.append(Text.of(TextColors.GRAY, "["));
+
+		objects.clear();
+		if (canModify)
+			objects.add(TextActions.executeCallback(source -> {
+				c.setRemovePlayerTax(!c.isRemovePlayerTax());
+				displayCity(p, r, c);
+			}));
+
+		objects.add(TextActions.showText(Text.of("Determine if players are removed of the city if they can't pay daily player tax")));
+		objects.add(itemColor);
+		objects.add(itemString);
+
+		builder.append(Text.of(objects.toArray()));
+
+		builder.append(Text.of(TextColors.GRAY, "]"));
+		builder.append(Text.of(TextColors.GRAY, "\n"));
+
+		
 		// --------------------------------------------------------------------------------------------
 
 		DisplayPlayerListCallBack.displayPlayerList(builder, p, r, c);

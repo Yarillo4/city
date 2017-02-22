@@ -1,19 +1,24 @@
 package com.quequiere.cityplugin;
 
+import java.util.Optional;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandManager;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
 
 import com.quequiere.cityplugin.command.CityChunkCommand;
 import com.quequiere.cityplugin.command.CityCommand;
+import com.quequiere.cityplugin.config.CityGeneralConfig;
 import com.quequiere.cityplugin.listeners.JoinListener;
 import com.quequiere.cityplugin.listeners.MoveListener;
 import com.quequiere.cityplugin.listeners.PhysicBlockListener;
@@ -25,6 +30,8 @@ public class CityPlugin
 
 	public static CityPlugin plugin;
 	public static PluginContainer container;
+	public static CityGeneralConfig generalConfig;
+	public static EconomyService economyService;
 
 	@Listener
 	public void preInit(GamePreInitializationEvent e)
@@ -34,6 +41,11 @@ public class CityPlugin
 
 		this.registerListener();
 		this.registerCommand();
+	}
+	
+	private void loadConfig()
+	{
+		CityGeneralConfig.loadConfig();
 	}
 
 	private void registerListener()
@@ -49,10 +61,21 @@ public class CityPlugin
 		cmdService.register(plugin, new CityCommand(), "city", "c");
 		cmdService.register(plugin, new CityChunkCommand(), "citychunk", "cc");
 	}
-
+	
 	@Listener
-	public void onGamePostInit(GameStartedServerEvent e)
+	public void onGamePostInit(GamePostInitializationEvent event)
 	{
+		Optional<EconomyService> econService = Sponge.getServiceManager().provide(EconomyService.class);
+
+		if (econService.isPresent())
+		{
+			economyService = econService.get();
+		}
+		else
+		{
+			System.out.println("FATAL ERROR WITH CITY PLUGIN, NO ECONOMY SERVICE !!!!!!!!!!!");
+		}
+		
 		City.reloadAll();
 	}
 	

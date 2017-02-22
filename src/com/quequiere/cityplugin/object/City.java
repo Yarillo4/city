@@ -7,12 +7,18 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.service.economy.account.Account;
+import org.spongepowered.api.service.economy.transaction.ResultType;
+import org.spongepowered.api.service.economy.transaction.TransactionResult;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.Location;
@@ -41,7 +47,9 @@ public class City extends PermissibleZone {
 	private Empire empire;
 
 	private boolean openJoin = false;
-
+	private double playerTax = 0;
+	private boolean removePlayerTax = false;
+	
 	private City(String name, Resident mayor) {
 		this.name = name;
 		this.spawn = mayor.getPlayer().getLocation();
@@ -54,6 +62,19 @@ public class City extends PermissibleZone {
 	}
 
 	public static City tryCreateCity(String name, Player p) {
+		
+		
+		Account account = CityPlugin.economyService.getOrCreateAccount(p.getUniqueId()).get();
+		TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), CityPlugin.generalConfig.getCityCreateCost(), Cause.of(NamedCause.source(p)));
+		
+		if (transactionResult.getResult() != ResultType.SUCCESS)
+		{
+			CityPlugin.sendMessage("No enought money in your account ! You need: "+ CityPlugin.generalConfig.getCityCreateCost()+CityPlugin.economyService.getDefaultCurrency().getSymbol(), TextColors.RED, p);
+			return null;
+		}
+		
+		
+		
 		City named = getCityByName(name);
 		if (named != null) {
 			CityPlugin.sendMessage(named.getName() + " city already exist !", TextColors.RED, p);
@@ -83,12 +104,22 @@ public class City extends PermissibleZone {
 
 		return null;
 	}
+	
+	public int getMaxChunk()
+	{
+		return CityPlugin.generalConfig.getChunkPerPlayer()*this.getResidents().size();
+	}
 
 	public void addResident(Resident r) {
 		r.setRank(CityRankEnum.resident);
 		this.residents.add(r.getId());
 		r.getCache().initializeCache();
 		this.save();
+	}
+	
+	public String getNameEconomy()
+	{
+		return "City_"+this.getName();
 	}
 
 	public boolean hasResident(UUID id) {
@@ -238,11 +269,54 @@ public class City extends PermissibleZone {
 			CityPlugin.sendMessage("This chunk is already claimed by " + c.getName(), TextColors.RED, p);
 			return;
 		}
+		
+		if(this.getClaimedChunk().size()>=this.getMaxChunk())
+		{
+			CityPlugin.sendMessage("You need more player in your city to claim more chunk !", TextColors.RED, p);
+			return;
+		}
+		
+		
+		Account account = CityPlugin.economyService.getOrCreateAccount(this.getNameEconomy()).get();
+		TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), CityPlugin.generalConfig.getChunkClaimCost(), Cause.of(NamedCause.source(p)));
+		
+		if (transactionResult.getResult() != ResultType.SUCCESS)
+		{
+			CityPlugin.sendMessage("No enought money in the city's bank account.", TextColors.RED, p);
+			CityPlugin.sendMessage("Use /c deposite to add fund. You need "+CityPlugin.generalConfig.getChunkClaimCost()+CityPlugin.economyService.getDefaultCurrency().getSymbol(), TextColors.RED, p);
+			return ;
+		}
+		
 
 		citychunk.add(new CityChunk(target));
 		this.save();
 		CityPlugin.sendMessage("New chunk claimed !", TextColors.GREEN, p);
 
+	}
+	
+	public BigDecimal getDailyCost()
+	{
+		return CityPlugin.generalConfig.getChunkDailyCostBase().multiply(new BigDecimal(this.getResidents().size()));
+	}
+	
+	
+
+	public BigDecimal getPlayerTaxe() {
+		return new BigDecimal(this.playerTax);
+	}
+
+	public void setPlayerTaxe(double playerTaxe) {
+		this.playerTax = playerTaxe;
+		this.save();
+	}
+	
+
+	public boolean isRemovePlayerTax() {
+		return removePlayerTax;
+	}
+
+	public void setRemovePlayerTax(boolean removePlayerTax) {
+		this.removePlayerTax = removePlayerTax;
 	}
 
 	public ArrayList<CityChunk> getClaimedChunk() {

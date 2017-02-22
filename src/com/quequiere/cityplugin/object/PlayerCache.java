@@ -15,7 +15,6 @@ public class PlayerCache
 	public static ArrayList<PlayerCache> cache = new ArrayList<PlayerCache>();
 	private City city;
 	private UUID id;
-	private Chunk lastChunk;
 
 	private HashMap<Chunk, HashMap<CityPermEnum, Boolean>> cachePerm;
 
@@ -208,15 +207,5 @@ public class PlayerCache
 	{
 		this.getCachePerm().remove(c);
 	}
-
-	public Chunk getLastChunk() {
-		return lastChunk;
-	}
-
-	public void setLastChunk(Chunk lastChunk) {
-		this.lastChunk = lastChunk;
-	}
-	
-	
 
 }
