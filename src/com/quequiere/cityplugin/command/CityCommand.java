@@ -1,5 +1,7 @@
 package com.quequiere.cityplugin.command;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +14,11 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.service.economy.account.Account;
+import org.spongepowered.api.service.economy.transaction.ResultType;
+import org.spongepowered.api.service.economy.transaction.TransactionResult;
 import org.spongepowered.api.text.LiteralText.Builder;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
@@ -26,6 +32,7 @@ import org.spongepowered.common.text.action.SpongeCallbackHolder;
 import com.quequiere.cityplugin.CityPlugin;
 import com.quequiere.cityplugin.Tools;
 import com.quequiere.cityplugin.object.City;
+import com.quequiere.cityplugin.object.CityChunk;
 import com.quequiere.cityplugin.object.CityPermEnum;
 import com.quequiere.cityplugin.object.CityPermRankEnum;
 import com.quequiere.cityplugin.object.Resident;
@@ -137,6 +144,40 @@ public class CityCommand implements CommandCallable
 					}
 				}
 			}
+			else if (subc.equals(SubCommand.destroy))
+			{
+				if (c == null)
+				{
+					CityPlugin.sendMessage("You need to be in a city to do that", TextColors.RED, p);
+				}
+				else
+				{
+
+					if (args.length < 2)
+					{
+						CityPlugin.sendMessage("add 'confirm' to this command to destroy definitly your city", TextColors.RED, p);
+					}
+					else
+					{
+						if(c.hasMayorPerm(r))
+						{
+							String s = args[1];
+
+							if(s.equalsIgnoreCase("confirm"))
+							{
+								CityPlugin.sendMessage("Start city destroy process ", TextColors.GREEN, p);
+								c.destroy();
+							}
+						}
+						else
+						{
+							CityPlugin.sendMessage("You need to be mayor to do that !", TextColors.RED, p);
+						}
+
+						
+					}
+				}
+			}
 			else if (subc.equals(SubCommand.claim))
 			{
 				if (c == null)
@@ -153,6 +194,37 @@ public class CityCommand implements CommandCallable
 					{
 						CityPlugin.sendMessage("Starting claim process ...", TextColors.GREEN, p);
 						c.tryToClaimHere(p);
+					}
+				}
+			}
+			else if (subc.equals(SubCommand.unclaim))
+			{
+				if (c == null)
+				{
+					CityPlugin.sendMessage("You need to be in a city to do that !", TextColors.RED, p);
+				}
+				else
+				{
+					if (!c.hasAssistantPerm(r))
+					{
+						CityPlugin.sendMessage("You need assistant perm to do that !", TextColors.RED, p);
+					}
+					else
+					{
+						CityPlugin.sendMessage("Starting unclaim process ...", TextColors.GREEN, p);
+						
+						CityChunk cc = c.getChunck(r.getChunk());
+						
+						if(cc!=null)
+						{
+							c.unclaimChunk(cc);
+							CityPlugin.sendMessage("Unclaimed chunk !", TextColors.GREEN, p);
+						}
+						else
+						{
+							CityPlugin.sendMessage("This is not a city chunk !", TextColors.RED, p);
+						}
+						
 					}
 				}
 			}
@@ -173,6 +245,57 @@ public class CityCommand implements CommandCallable
 					CityPlugin.sendMessage("You leaved the city !", TextColors.GREEN, p);
 				}
 			}
+			else if (subc.equals(SubCommand.deposite))
+			{
+				if (c != null)
+				{
+					CityPlugin.sendMessage("You are in a city, so you can't do that !", TextColors.RED, p);
+				}
+				else
+				{
+
+					if (args.length < 2)
+					{
+						CityPlugin.sendMessage("You need to give an amount !", TextColors.RED, p);
+					}
+					else
+					{
+						String name = args[1];
+						double amount = 0;
+						try
+						{
+							amount=Double.parseDouble(name);
+							
+							if(amount<=0)
+							{
+								CityPlugin.sendMessage("Invalid amount", TextColors.RED, p);
+								return CommandResult.success();
+							}
+						}
+						catch(NumberFormatException e)
+						{
+							CityPlugin.sendMessage("Format error !", TextColors.RED, p);
+							return CommandResult.success();
+						}
+						
+						
+						Account paccount = CityPlugin.economyService.getOrCreateAccount(p.getUniqueId()).get();
+						Account caccount = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
+						
+						TransactionResult transactionResult = paccount.transfer(caccount, CityPlugin.economyService.getDefaultCurrency(), new BigDecimal(amount), Cause.of(NamedCause.source(p)));
+						
+						if (transactionResult.getResult() != ResultType.SUCCESS)
+						{
+							CityPlugin.sendMessage("Transaction failed !", TextColors.RED, p);
+						}
+						else
+						{
+							CityPlugin.sendMessage("Transaction sucess !", TextColors.GREEN, p);
+						}
+						
+					}
+				}
+			}
 			else if (subc.equals(SubCommand.help))
 			{
 				displayHelp(p);
@@ -190,7 +313,7 @@ public class CityCommand implements CommandCallable
 
 	public enum SubCommand
 	{
-		create, claim, leave, help, join
+		create, claim, leave, help, join,destroy,unclaim,deposite
 	};
 
 	public static void displayCity(Player p, Resident r, City c)
@@ -217,15 +340,25 @@ public class CityCommand implements CommandCallable
 		// --------------------------------------------------------------------------------------------
 
 		Account account = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
+		BigDecimal balance =  account.getBalance(CityPlugin.economyService.getDefaultCurrency());
 		
 		builder.append(Text.of(TextColors.DARK_GREEN, "Bank: "));
-		builder.append(Text.of(TextColors.RED, account.getBalance(CityPlugin.economyService.getDefaultCurrency()) +" "+CityPlugin.economyService.getDefaultCurrency().getSymbol()));
+		builder.append(Text.of(TextColors.RED, balance +" "+CityPlugin.economyService.getDefaultCurrency().getSymbol()));
 
 		builder.append(Text.of(TextColors.DARK_GREEN, " Daily chunk price: "));
 		builder.append(Text.of(TextColors.GREEN,CityPlugin.generalConfig.getChunkDailyCostBase()  +" "+CityPlugin.economyService.getDefaultCurrency().getSymbol()));
 		
 		builder.append(Text.of(TextColors.DARK_GREEN, " Daily city cost: "));
 		builder.append(Text.of(TextColors.RED,c.getDailyCost()  +" "+CityPlugin.economyService.getDefaultCurrency().getSymbol()));
+		
+		builder.append(Text.of("\n"));
+		
+		// --------------------------------------------------------------------------------------------
+				
+		builder.append(Text.of(TextColors.DARK_GREEN, "Remaining day before destruction: "));
+		BigDecimal days = balance.divide(c.getDailyCost());
+		days=days.setScale(2, RoundingMode.DOWN);
+		builder.append(Text.of(TextColors.RED,days+" days"));
 		
 		builder.append(Text.of("\n"));
 		

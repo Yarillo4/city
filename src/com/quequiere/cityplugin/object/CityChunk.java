@@ -63,6 +63,12 @@ public class CityChunk extends PermissibleZone
 	{
 		return Tools.getChunk(this.x, this.z, Tools.getWorldByName(this.world));
 	}
+	
+	public void initialize()
+	{
+		this.city=null;
+		this.resident=null;
+	}
 
 	public City getCity()
 	{

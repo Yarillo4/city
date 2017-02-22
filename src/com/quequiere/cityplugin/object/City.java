@@ -19,6 +19,7 @@ import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.service.economy.account.Account;
 import org.spongepowered.api.service.economy.transaction.ResultType;
 import org.spongepowered.api.service.economy.transaction.TransactionResult;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.Location;
@@ -292,6 +293,43 @@ public class City extends PermissibleZone {
 		this.save();
 		CityPlugin.sendMessage("New chunk claimed !", TextColors.GREEN, p);
 
+	}
+	
+	public void destroy()
+	{
+		for(UUID id:this.getResidents())
+		{
+			this.removeResident(id);
+		}
+		
+		ArrayList<CityChunk> list = (ArrayList<CityChunk>) this.getClaimedChunk().clone();
+		
+		for(CityChunk cc:list)
+		{
+			this.unclaimChunk(cc);
+		}
+		
+		loaded.remove(this);
+		
+		File f = new File(folder.getAbsolutePath() + "/" + name + ".json");
+		f.delete();
+		
+		Sponge.getGame().getServer().getBroadcastChannel().send(Text.builder(this.getName()+ " has been successfuly destroyed").color(TextColors.GRAY).build());
+	}
+	
+	public void unclaimChunk(CityChunk cc)
+	{
+		this.citychunk.remove(cc);
+		this.cityoutpost.remove(cc);
+		cc.initialize();
+		
+		for (Player p : Sponge.getServer().getOnlinePlayers())
+		{
+			Resident r = Resident.fromPlayerId(p.getUniqueId());
+			r.getCache().clearChunkPerm(cc.getChunk());
+		}
+		
+		this.save();
 	}
 	
 	public BigDecimal getDailyCost()

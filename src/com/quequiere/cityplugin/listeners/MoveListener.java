@@ -5,7 +5,6 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.Getter;
-import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.Location;
@@ -15,7 +14,6 @@ import com.quequiere.cityplugin.CityPlugin;
 import com.quequiere.cityplugin.Tools;
 import com.quequiere.cityplugin.object.City;
 import com.quequiere.cityplugin.object.CityChunk;
-import com.quequiere.cityplugin.object.Resident;
 
 public class MoveListener
 {
