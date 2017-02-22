@@ -38,6 +38,7 @@ public class LocationDeserializer implements JsonDeserializer<Location<World>>
 		if(!w.isPresent())
 		{
 			System.out.println("cant find world: "+args[3]);
+			System.out.println("While loading: "+jsonO.toString());
 		}
 		
 		Location<World> l = new Location<World>(w.get(),x,y,z);

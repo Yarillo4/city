@@ -66,7 +66,8 @@ public class CityWorld  extends PermissibleZone{
 			loaded.remove(getByName(name));
 		}
 		System.out.println("[City] New city world loaded !");
-		loadCityFromFile(name);
+		CityWorld cw = loadCityFromFile(name);
+		loaded.add(cw);
 	}
 	
 	private static CityWorld loadCityFromFile(String name) {

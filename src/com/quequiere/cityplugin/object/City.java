@@ -70,7 +70,7 @@ public class City extends PermissibleZone {
 		
 		if (transactionResult.getResult() != ResultType.SUCCESS)
 		{
-			CityPlugin.sendMessage("No enought money in your account ! You need: "+ CityPlugin.generalConfig.getCityCreateCost()+CityPlugin.economyService.getDefaultCurrency().getSymbol(), TextColors.RED, p);
+			CityPlugin.sendMessage("No enought money in your account ! You need: "+ CityPlugin.generalConfig.getCityCreateCost()+" $", TextColors.RED, p);
 			return null;
 		}
 		
@@ -177,6 +177,15 @@ public class City extends PermissibleZone {
 	public void removeResident(UUID id) {
 		this.getResidents().remove(id);
 		Resident.fromPlayerId(id).setRank(CityRankEnum.resident);
+		
+		for(CityChunk cc:this.getClaimedChunk())
+		{
+			if(cc.getResident().equals(id))
+			{
+				cc.setResident(null);
+			}
+		}
+		
 		this.save();
 	}
 
@@ -289,7 +298,7 @@ public class City extends PermissibleZone {
 		if (transactionResult.getResult() != ResultType.SUCCESS)
 		{
 			CityPlugin.sendMessage("No enought money in the city's bank account.", TextColors.RED, p);
-			CityPlugin.sendMessage("Use /c deposite to add fund. You need "+CityPlugin.generalConfig.getChunkClaimCost()+CityPlugin.economyService.getDefaultCurrency().getSymbol(), TextColors.RED, p);
+			CityPlugin.sendMessage("Use /c deposit to add fund. You need "+CityPlugin.generalConfig.getChunkClaimCost()+" $", TextColors.RED, p);
 			return ;
 		}
 		
@@ -304,7 +313,9 @@ public class City extends PermissibleZone {
 	
 	public void destroy()
 	{
-		for(UUID id:this.getResidents())
+		@SuppressWarnings("unchecked")
+		ArrayList<UUID> listr = (ArrayList<UUID>) this.getResidents().clone();
+		for(UUID id:listr)
 		{
 			this.removeResident(id);
 		}

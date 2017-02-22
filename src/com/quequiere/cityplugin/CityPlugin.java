@@ -8,6 +8,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.economy.EconomyService;
@@ -15,6 +16,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColor;
 import com.quequiere.cityplugin.command.CityChunkCommand;
 import com.quequiere.cityplugin.command.CityCommand;
+import com.quequiere.cityplugin.command.CityWorldCommand;
 import com.quequiere.cityplugin.config.CityGeneralConfig;
 import com.quequiere.cityplugin.listeners.JoinListener;
 import com.quequiere.cityplugin.listeners.MoveListener;
@@ -59,10 +61,11 @@ public class CityPlugin
 		CommandManager cmdService = Sponge.getCommandManager();
 		cmdService.register(plugin, new CityCommand(), "city", "c");
 		cmdService.register(plugin, new CityChunkCommand(), "citychunk", "cc");
+		cmdService.register(plugin, new CityWorldCommand(), "cityworld", "cw");
 	}
 	
 	@Listener
-	public void onGamePostInit(GamePostInitializationEvent event)
+	public void onGamePostInit(GameStartedServerEvent event)
 	{
 		Optional<EconomyService> econService = Sponge.getServiceManager().provide(EconomyService.class);
 
@@ -80,7 +83,7 @@ public class CityPlugin
 	
 	public static void sendMessageWithoutPrefix(String message, TextColor color, Player p)
 	{
-		p.sendMessage(Text.of(message));
+		p.sendMessage(Text.of(color,message));
 	}
 
 	public static void sendMessage(String message, TextColor color, Player p)

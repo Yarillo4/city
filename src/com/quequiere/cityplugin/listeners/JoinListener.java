@@ -44,7 +44,10 @@ public class JoinListener
 			 System.out.println("[CITY] New day of tax !");
 			 Sponge.getGame().getServer().getBroadcastChannel().send(Text.builder("New day of tax for City !").color(TextColors.GREEN).build());
 			 
-			 for(City c:City.getLoaded())
+			 @SuppressWarnings("unchecked")
+			ArrayList<City> cites = (ArrayList<City>) City.getLoaded().clone();
+			 
+			 for(City c:cites)
 			 {
 					Account account = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
 					TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), c.getDailyCost(), Cause.of(NamedCause.source(event)));
@@ -65,7 +68,11 @@ public class JoinListener
 						
 						if (rtransactionResult.getResult() != ResultType.SUCCESS && c.isRemovePlayerTax())
 						{
-							residentToRemove.add(id);
+							if(!c.hasAssistantPerm(Resident.fromPlayerId(id)))
+							{
+								residentToRemove.add(id);
+							}
+							
 						}
 					}
 					

@@ -1,5 +1,6 @@
 package com.quequiere.cityplugin.command;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +10,11 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.service.economy.account.Account;
+import org.spongepowered.api.service.economy.transaction.ResultType;
+import org.spongepowered.api.service.economy.transaction.TransactionResult;
 import org.spongepowered.api.text.LiteralText.Builder;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
@@ -47,7 +53,7 @@ public class CityChunkCommand implements CommandCallable
 		{
 			CityPlugin.sendMessage("This is wilderness", TextColors.DARK_GREEN, p);
 			return CommandResult.success();
-			
+
 		}
 
 		CityChunk cc = city.getChunck(ch);
@@ -81,15 +87,15 @@ public class CityChunkCommand implements CommandCallable
 					int price = 0;
 					try
 					{
-						 price = Integer.parseInt(args[1]);
+						price = Integer.parseInt(args[1]);
 					}
 					catch (NumberFormatException e)
 					{
 						CityPlugin.sendMessage("Invalid price", TextColors.RED, p);
 						return CommandResult.success();
 					}
-					
-					if(city.hasAssistantPerm(r)||cc.isOwner(r.getId()))
+
+					if (city.hasAssistantPerm(r) || cc.isOwner(r.getId()))
 					{
 						cc.setSellPrice(price);
 						CityPlugin.sendMessage("Sell price modified !", TextColors.GREEN, p);
@@ -138,15 +144,15 @@ public class CityChunkCommand implements CommandCallable
 		String itemString;
 		ArrayList<Object> objects = new ArrayList<>();
 
-		builder.append(Text.of(TextColors.GOLD, "_____________[ City chunk of " + c.getName() + " "+    " ]_____________\n"));
-		
-		if(cc.getResident()!=null)
+		builder.append(Text.of(TextColors.GOLD, "_____________[ City chunk of " + c.getName() + " " + " ]_____________\n"));
+
+		if (cc.getResident() != null)
 		{
 			builder.append(Text.of(TextColors.DARK_GREEN, "Resident: "));
-			
+
 			User u = Tools.getUser(cc.getResident());
-			
-			builder.append(Text.of(TextColors.GREEN,u.getName()+"\n"));
+
+			builder.append(Text.of(TextColors.GREEN, u.getName() + "\n"));
 			cc.displayPerm(p, r, builder, canModify);
 		}
 		else
@@ -154,59 +160,74 @@ public class CityChunkCommand implements CommandCallable
 			builder.append(Text.of(TextColors.DARK_GREEN, "No resident here, city perm applied use /c for more info\n"));
 		}
 
-		
-		if(cc.getSellPrice()>0)
+		if (cc.getSellPrice() > 0)
 		{
-			builder.append(Text.of(TextColors.DARK_GREEN, "Sell price: ")); 
-			builder.append(Text.of(TextColors.GREEN, cc.getSellPrice()+""));
-			
-			
+			builder.append(Text.of(TextColors.DARK_GREEN, "Sell price: "));
+			builder.append(Text.of(TextColors.GREEN, cc.getSellPrice() + ""));
+
 			builder.append(Text.of(TextColors.GRAY, " ["));
 
 			objects.clear();
-			
-				objects.add(TextActions.executeCallback(source -> {
-					
-					if(c.hasResident(r.getId()))
+
+			objects.add(TextActions.executeCallback(source -> {
+
+				if (c.hasResident(r.getId()))
+				{
+
+					Account originaccount = null;
+					if (cc.getResident() == null)
 					{
-						cc.setSellPrice(-1); 
-						cc.setResident(r.getId());
-						CityPlugin.sendMessage("You bought this chunk !", TextColors.GREEN, p);
+						CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
 					}
 					else
 					{
-						CityPlugin.sendMessage("You need to be resident of the city to do that !", TextColors.RED, p);
+						CityPlugin.economyService.getOrCreateAccount(cc.getResident()).get();
 					}
-					
-				}));
+
+					Account newaccount = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
+
+					TransactionResult transactionResult = originaccount.transfer(newaccount, CityPlugin.economyService.getDefaultCurrency(), new BigDecimal(cc.getSellPrice()), Cause.of(NamedCause.source(p)));
+
+					if (transactionResult.getResult() != ResultType.SUCCESS)
+					{
+						CityPlugin.sendMessage("Transaction failed !", TextColors.RED, p);
+					}
+					else
+					{
+						CityPlugin.sendMessage("Transaction sucess !", TextColors.GREEN, p);
+						cc.setSellPrice(-1);
+						cc.setResident(r.getId());
+						CityPlugin.sendMessage("You bought this chunk !", TextColors.GREEN, p);
+					}
+
+				}
+				else
+				{
+					CityPlugin.sendMessage("You need to be resident of the city to do that !", TextColors.RED, p);
+				}
+
+			}));
 
 			objects.add(TextActions.showText(Text.of("Buy the chunk")));
 			objects.add(TextColors.AQUA);
 			objects.add("Buy");
-			
+
 			builder.append(Text.of(objects.toArray()));
-			
+
 			builder.append(Text.of(TextColors.GRAY, "]"));
 			builder.append(Text.of(TextColors.GRAY, "\n"));
 
-			
-
-			
-			
 		}
 		else
 		{
 			builder.append(Text.of(TextColors.DARK_GREEN, "Sell price: "));
-			builder.append(Text.of(TextColors.GREEN, "Not to sell\n"));
+			builder.append(Text.of(TextColors.GREEN, "Not for sale\n"));
 		}
-		
-		
-	
-		
+
 		builder.append(Text.of(TextColors.DARK_GREEN, "Use /cc help for more info "));
-		
+
 		p.sendMessage(builder.toText());
-		
+
 	}
 
 	public static void displayHelp(Player p)

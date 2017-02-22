@@ -12,10 +12,12 @@ import org.spongepowered.api.text.format.TextColors;
 import com.quequiere.cityplugin.CityPlugin;
 import com.quequiere.cityplugin.command.CityChunkCommand;
 import com.quequiere.cityplugin.command.CityCommand;
+import com.quequiere.cityplugin.command.CityWorldCommand;
 import com.quequiere.cityplugin.object.City;
 import com.quequiere.cityplugin.object.CityChunk;
 import com.quequiere.cityplugin.object.CityPermEnum;
 import com.quequiere.cityplugin.object.CityPermRankEnum;
+import com.quequiere.cityplugin.object.CityWorld;
 import com.quequiere.cityplugin.object.Resident;
 
 public abstract class PermissibleZone
@@ -103,6 +105,10 @@ public abstract class PermissibleZone
 						else if (this instanceof CityChunk)
 						{
 							CityChunkCommand.displayChunk(p, r, (CityChunk) this);
+						}
+						else if (this instanceof CityWorld)
+						{
+							CityWorldCommand.displayWorld(p, CityWorld.getByName(p.getWorld().getName()));
 						}
 						else
 						{

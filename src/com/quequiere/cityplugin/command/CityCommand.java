@@ -255,7 +255,7 @@ public class CityCommand implements CommandCallable
 					CityPlugin.sendMessage("You leaved the city !", TextColors.GREEN, p);
 				}
 			}
-			else if (subc.equals(SubCommand.deposite))
+			else if (subc.equals(SubCommand.deposit))
 			{
 				if (c == null)
 				{
@@ -306,6 +306,63 @@ public class CityCommand implements CommandCallable
 					}
 				}
 			}
+			else if (subc.equals(SubCommand.withdraw))
+			{
+				if (c == null)
+				{
+					CityPlugin.sendMessage("You need to be in a city to do that !", TextColors.RED, p);
+				}
+				else
+				{
+					
+					if(!c.hasAssistantPerm(r))
+					{
+						CityPlugin.sendMessage("You need assistant perm to do that", TextColors.RED, p);
+						return CommandResult.success();
+					}
+
+					if (args.length < 2)
+					{
+						CityPlugin.sendMessage("You need to give an amount !", TextColors.RED, p);
+					}
+					else
+					{
+						String name = args[1];
+						double amount = 0;
+						try
+						{
+							amount=Double.parseDouble(name);
+							
+							if(amount<=0)
+							{
+								CityPlugin.sendMessage("Invalid amount", TextColors.RED, p);
+								return CommandResult.success();
+							}
+						}
+						catch(NumberFormatException e)
+						{
+							CityPlugin.sendMessage("Format error !", TextColors.RED, p);
+							return CommandResult.success();
+						}
+						
+						
+						Account paccount = CityPlugin.economyService.getOrCreateAccount(p.getUniqueId()).get();
+						Account caccount = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
+						
+						TransactionResult transactionResult = caccount.transfer(paccount, CityPlugin.economyService.getDefaultCurrency(), new BigDecimal(amount), Cause.of(NamedCause.source(p)));
+						
+						if (transactionResult.getResult() != ResultType.SUCCESS)
+						{
+							CityPlugin.sendMessage("Transaction failed !", TextColors.RED, p);
+						}
+						else
+						{
+							CityPlugin.sendMessage("Transaction sucess !", TextColors.GREEN, p);
+						}
+						
+					}
+				}
+			}
 			else if (subc.equals(SubCommand.help))
 			{
 				displayHelp(p);
@@ -323,7 +380,7 @@ public class CityCommand implements CommandCallable
 
 	public enum SubCommand
 	{
-		create, claim, leave, help, join,destroy,unclaim,deposite,info
+		create, claim, leave, help, join,destroy,unclaim,deposit,info,withdraw,teleport
 	};
 
 	public static void displayCity(Player p, Resident r, City c)
@@ -353,13 +410,13 @@ public class CityCommand implements CommandCallable
 		BigDecimal balance =  account.getBalance(CityPlugin.economyService.getDefaultCurrency());
 		
 		builder.append(Text.of(TextColors.DARK_GREEN, "Bank: "));
-		builder.append(Text.of(TextColors.RED, balance +" "+CityPlugin.economyService.getDefaultCurrency().getSymbol().toString()));
+		builder.append(Text.of(TextColors.RED, balance +" $"));
 
 		builder.append(Text.of(TextColors.DARK_GREEN, " Daily chunk price: "));
-		builder.append(Text.of(TextColors.GREEN,CityPlugin.generalConfig.getChunkDailyCostBase()  +" "+CityPlugin.economyService.getDefaultCurrency().getSymbol().toString()));
+		builder.append(Text.of(TextColors.GREEN,CityPlugin.generalConfig.getChunkDailyCostBase()  +" $"));
 		
 		builder.append(Text.of(TextColors.DARK_GREEN, " Daily city cost: "));
-		builder.append(Text.of(TextColors.RED,c.getDailyCost()  +" "+CityPlugin.economyService.getDefaultCurrency().getSymbol().toString()));
+		builder.append(Text.of(TextColors.RED,c.getDailyCost()  +" $"));
 		
 		builder.append(Text.of("\n"));
 		
@@ -372,7 +429,7 @@ public class CityCommand implements CommandCallable
 		
 		if(days.compareTo(new BigDecimal(5))<1)
 		{
-			builder.append(Text.of(TextColors.RED,"Emmergency alert, deposite funds with '/c deposite' or city could be destroyed in few days"));
+			builder.append(Text.of(TextColors.RED,"\nEmmergency alert, deposite funds with '/c deposit' or city could be destroyed in few days"));
 		}
 		
 		builder.append(Text.of("\n"));
