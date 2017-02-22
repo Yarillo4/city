@@ -15,6 +15,7 @@ import org.spongepowered.api.text.format.TextColors;
 import com.quequiere.cityplugin.command.CityChunkCommand;
 import com.quequiere.cityplugin.command.CityCommand;
 import com.quequiere.cityplugin.listeners.JoinListener;
+import com.quequiere.cityplugin.listeners.MoveListener;
 import com.quequiere.cityplugin.listeners.PhysicBlockListener;
 import com.quequiere.cityplugin.object.City;
 
@@ -39,6 +40,7 @@ public class CityPlugin
 	{
 		Sponge.getEventManager().registerListeners(this, new PhysicBlockListener());
 		Sponge.getEventManager().registerListeners(this, new JoinListener());
+		Sponge.getEventManager().registerListeners(this, new MoveListener());
 	}
 
 	private void registerCommand()
@@ -53,9 +55,14 @@ public class CityPlugin
 	{
 		City.reloadAll();
 	}
-
-	public static void sendMessage(String message, TextColor green, Player p)
+	
+	public static void sendMessageWithoutPrefix(String message, TextColor color, Player p)
 	{
-		p.sendMessage(Text.of(green,"[City] "+message));
+		p.sendMessage(Text.of(message));
+	}
+
+	public static void sendMessage(String message, TextColor color, Player p)
+	{
+		p.sendMessage(Text.of(color,"[City] "+message));
 	}
 }
