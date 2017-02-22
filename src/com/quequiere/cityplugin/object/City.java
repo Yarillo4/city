@@ -183,6 +183,11 @@ public class City extends PermissibleZone {
 	public static void reloadAll() {
 		loaded.clear();
 
+		if(!folder.exists())
+		{
+			folder.mkdir();
+		}
+		
 		for (String fname : folder.list()) {
 			String toload = fname.replace(".json", "");
 
@@ -335,7 +340,7 @@ public class City extends PermissibleZone {
 	
 	public BigDecimal getDailyCost()
 	{
-		return CityPlugin.generalConfig.getChunkDailyCostBase().multiply(new BigDecimal(this.getResidents().size()));
+		return CityPlugin.generalConfig.getChunkDailyCostBase().multiply(new BigDecimal(this.getClaimedChunk().size()));
 	}
 	
 	

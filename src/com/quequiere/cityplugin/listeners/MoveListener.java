@@ -57,7 +57,7 @@ public class MoveListener
 				}
 				
 			}
-			else if(newcc.getResident()==null && oldcc.getResident()!=null)
+			else if(newcc!=null &&oldcc!=null&& newcc.getResident()==null && oldcc.getResident()!=null)
 			{
 				CityPlugin.sendMessageWithoutPrefix("______________[ City chunk ]______________", TextColors.GOLD, p);
 			}

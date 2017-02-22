@@ -333,7 +333,7 @@ public class CityCommand implements CommandCallable
 		BigDecimal balance =  account.getBalance(CityPlugin.economyService.getDefaultCurrency());
 		
 		builder.append(Text.of(TextColors.DARK_GREEN, "Bank: "));
-		builder.append(Text.of(TextColors.RED, balance +" "+CityPlugin.economyService.getDefaultCurrency().getSymbol()));
+		builder.append(Text.of(TextColors.RED, balance +" "+CityPlugin.economyService.getDefaultCurrency().getSymbol().toString()));
 
 		builder.append(Text.of(TextColors.DARK_GREEN, " Daily chunk price: "));
 		builder.append(Text.of(TextColors.GREEN,CityPlugin.generalConfig.getChunkDailyCostBase()  +" "+CityPlugin.economyService.getDefaultCurrency().getSymbol()));
