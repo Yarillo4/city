@@ -9,14 +9,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import org.spongepowered.api.world.Location;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.quequiere.cityplugin.CityPlugin;
-import com.quequiere.cityplugin.datamanip.LocationDeserializer;
-import com.quequiere.cityplugin.datamanip.LocationSerializer;
-import com.quequiere.cityplugin.object.City;
 
 public class CityGeneralConfig {
 	

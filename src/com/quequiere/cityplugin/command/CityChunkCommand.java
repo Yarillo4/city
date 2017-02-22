@@ -3,9 +3,6 @@ package com.quequiere.cityplugin.command;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -17,18 +14,13 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-import org.spongepowered.common.text.action.SpongeCallbackHolder;
-
 import com.quequiere.cityplugin.CityPlugin;
 import com.quequiere.cityplugin.Tools;
 import com.quequiere.cityplugin.object.City;
 import com.quequiere.cityplugin.object.CityChunk;
-import com.quequiere.cityplugin.object.CityPermEnum;
-import com.quequiere.cityplugin.object.CityPermRankEnum;
 import com.quequiere.cityplugin.object.Resident;
 
 public class CityChunkCommand implements CommandCallable
@@ -140,7 +132,9 @@ public class CityChunkCommand implements CommandCallable
 			canModify = true;
 		}
 
+		@SuppressWarnings("unused")
 		TextColor itemColor;
+		@SuppressWarnings("unused")
 		String itemString;
 		ArrayList<Object> objects = new ArrayList<>();
 

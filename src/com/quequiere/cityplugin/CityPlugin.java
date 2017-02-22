@@ -8,14 +8,11 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColor;
-import org.spongepowered.api.text.format.TextColors;
-
 import com.quequiere.cityplugin.command.CityChunkCommand;
 import com.quequiere.cityplugin.command.CityCommand;
 import com.quequiere.cityplugin.config.CityGeneralConfig;
@@ -39,6 +36,8 @@ public class CityPlugin
 		plugin = this;
 		container = Sponge.getPluginManager().fromInstance(CityPlugin.plugin).get();
 
+		this.loadConfig();
+		
 		this.registerListener();
 		this.registerCommand();
 	}

@@ -1,6 +1,5 @@
 package com.quequiere.cityplugin.listeners;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.UUID;
@@ -56,9 +55,9 @@ public class JoinListener
 					for(UUID id:c.getResidents())
 					{
 						Account raccount = CityPlugin.economyService.getOrCreateAccount(id).get();
-						TransactionResult rtransactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), c.getPlayerTaxe(), Cause.of(NamedCause.source(event)));
+						TransactionResult rtransactionResult = raccount.withdraw(CityPlugin.economyService.getDefaultCurrency(), c.getPlayerTaxe(), Cause.of(NamedCause.source(event)));
 						
-						if (transactionResult.getResult() != ResultType.SUCCESS && c.isRemovePlayerTax())
+						if (rtransactionResult.getResult() != ResultType.SUCCESS && c.isRemovePlayerTax())
 						{
 							residentToRemove.add(id);
 						}

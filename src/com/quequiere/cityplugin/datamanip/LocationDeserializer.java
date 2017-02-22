@@ -1,7 +1,6 @@
 package com.quequiere.cityplugin.datamanip;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.Optional;
 
 import org.spongepowered.api.Sponge;
@@ -16,11 +15,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-public class LocationDeserializer implements JsonDeserializer<Location>
+public class LocationDeserializer implements JsonDeserializer<Location<World>>
 {
 
 	@Override
-	public Location deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
+	public Location<World> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
 	{
 		//System.out.println("Location deserialize....");
 

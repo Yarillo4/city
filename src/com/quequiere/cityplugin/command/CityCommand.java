@@ -5,15 +5,11 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.service.economy.account.Account;
@@ -24,17 +20,11 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-import org.spongepowered.common.text.action.SpongeCallbackHolder;
-
 import com.quequiere.cityplugin.CityPlugin;
-import com.quequiere.cityplugin.Tools;
 import com.quequiere.cityplugin.object.City;
 import com.quequiere.cityplugin.object.CityChunk;
-import com.quequiere.cityplugin.object.CityPermEnum;
-import com.quequiere.cityplugin.object.CityPermRankEnum;
 import com.quequiere.cityplugin.object.Resident;
 
 public class CityCommand implements CommandCallable
@@ -247,9 +237,9 @@ public class CityCommand implements CommandCallable
 			}
 			else if (subc.equals(SubCommand.deposite))
 			{
-				if (c != null)
+				if (c == null)
 				{
-					CityPlugin.sendMessage("You are in a city, so you can't do that !", TextColors.RED, p);
+					CityPlugin.sendMessage("You need to be in a city to do that !", TextColors.RED, p);
 				}
 				else
 				{

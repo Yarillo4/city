@@ -13,11 +13,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public class LocationSerializer implements JsonSerializer<Location>
+public class LocationSerializer implements JsonSerializer<Location<World>>
 {
 
 	@Override
-	public JsonElement serialize(Location src, Type typeOfSrc, JsonSerializationContext arg2)
+	public JsonElement serialize(Location<World> src, Type typeOfSrc, JsonSerializationContext arg2)
 	{
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		JsonElement withoutTransientFields = new JsonObject();
@@ -28,7 +28,7 @@ public class LocationSerializer implements JsonSerializer<Location>
 		return withoutTransientFields;
 	}
 
-	public static String toString(Location l)
+	public static String toString(Location<World> l)
 	{
 		if (l.getExtent() instanceof World)
 		{

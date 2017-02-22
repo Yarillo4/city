@@ -8,15 +8,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.UUID;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Chunk;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.quequiere.cityplugin.Tools;

@@ -9,7 +9,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.UUID;
 
 import org.spongepowered.api.Sponge;
@@ -45,6 +44,7 @@ public class City extends PermissibleZone {
 
 	private ArrayList<UUID> residents = new ArrayList<UUID>();
 
+	@SuppressWarnings("unused")
 	private Empire empire;
 
 	private boolean openJoin = false;
@@ -302,6 +302,7 @@ public class City extends PermissibleZone {
 			this.removeResident(id);
 		}
 		
+		@SuppressWarnings("unchecked")
 		ArrayList<CityChunk> list = (ArrayList<CityChunk>) this.getClaimedChunk().clone();
 		
 		for(CityChunk cc:list)
