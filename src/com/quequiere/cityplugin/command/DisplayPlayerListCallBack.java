@@ -85,6 +85,10 @@ public class DisplayPlayerListCallBack
 		{
 			objects.clear();
 			objects.add(TextActions.executeCallback(source -> {
+				
+				if(!c.hasMayorPerm(r))
+					return;
+				
 				r.setRank(CityRankEnum.assistant);
 				target.setRank(CityRankEnum.mayor);
 				Builder l = Text.builder("");
@@ -105,6 +109,10 @@ public class DisplayPlayerListCallBack
 			{
 				objects.clear();
 				objects.add(TextActions.executeCallback(source -> {
+					
+					if(!c.hasAssistantPerm(r))
+						return;
+					
 					target.setRank(CityRankEnum.assistant);
 					Builder l = Text.builder("");
 					diplayPlayerList(localbuilder, p, r, c, l, canModify);
@@ -122,6 +130,10 @@ public class DisplayPlayerListCallBack
 			{
 				objects.clear();
 				objects.add(TextActions.executeCallback(source -> {
+					
+					if(!c.hasAssistantPerm(r))
+						return;
+					
 					target.setRank(CityRankEnum.resident);
 					Builder l = Text.builder("");
 					diplayPlayerList(localbuilder, p, r, c, l, canModify);
@@ -139,6 +151,10 @@ public class DisplayPlayerListCallBack
 			{
 				objects.clear();
 				objects.add(TextActions.executeCallback(source -> {
+					
+					if(!c.hasAssistantPerm(r))
+						return;
+					
 					c.removeResident(target.getId());
 					Builder l = Text.builder("");
 					diplayPlayerList(localbuilder, p, r, c, l, canModify);

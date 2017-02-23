@@ -86,6 +86,14 @@ public class City extends PermissibleZone {
 			CityPlugin.sendMessage("You can't create city on a claimed territory !", TextColors.RED, p);
 			return null;
 		}
+		
+		Chunk target = Tools.getChunk(p.getLocation());
+		
+		if(hasOtherCityInRadius(null,target))
+		{
+			CityPlugin.sendMessage("You can't create city here, need more space between city !", TextColors.RED, p);
+			return null;
+		}
 
 		Resident r = Resident.fromPlayerId(p.getUniqueId());
 		City c = new City(name, r);
@@ -94,6 +102,27 @@ public class City extends PermissibleZone {
 		r.getCache().initializeCache();
 		c.updatePermission();
 		return c;
+	}
+	
+	public static boolean hasOtherCityInRadius(City reference, Chunk c)
+	{
+		for(int x=-5;x<=5;x++)
+		{
+			for(int z=-5;x<=5;z++)
+			{
+				if(x!=0 && z !=0)
+				{
+					City ctarget = City.getCityFromChunk(Tools.getChunk(c.getPosition().getX()+x, c.getPosition().getZ()+z, c.getWorld()));
+					
+					if(ctarget!=null && !ctarget.equals(reference))
+					{
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
 	}
 
 	public static City getCityByName(String name) {
@@ -147,6 +176,12 @@ public class City extends PermissibleZone {
 
 	public Location<World> getSpawn() {
 		return spawn;
+	}
+
+	
+	public void setSpawn(Location<World> spawn) {
+		this.spawn = spawn;
+		this.save();
 	}
 
 	public boolean isOpenJoin() {
@@ -291,6 +326,36 @@ public class City extends PermissibleZone {
 			return;
 		}
 		
+		boolean pass = false;
+		//check proximity
+		for(int x=-1;x<=1;x++)
+		{
+			for(int z=-1;x<=1;z++)
+			{
+				if(x!=0 && z !=0)
+				{
+					City ctarget = City.getCityFromChunk(Tools.getChunk(target.getPosition().getX()+x, target.getPosition().getZ()+z, target.getWorld()));
+					
+					if(ctarget.equals(c))
+					{
+						pass=true;
+						break;
+					}
+				}
+			}
+		}
+		
+		if(!pass)
+		{
+			CityPlugin.sendMessage("Claims need to be accroch to the city, or create an outpost", TextColors.RED, p);
+			return;
+		}
+		
+		if(hasOtherCityInRadius(null,target))
+		{
+			CityPlugin.sendMessage("You cant claim here, need more space between city !", TextColors.RED, p);
+			return ;
+		}
 		
 		Account account = CityPlugin.economyService.getOrCreateAccount(this.getNameEconomy()).get();
 		TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), CityPlugin.generalConfig.getChunkClaimCost(), Cause.of(NamedCause.source(p)));

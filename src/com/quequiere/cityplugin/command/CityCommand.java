@@ -207,6 +207,18 @@ public class CityCommand implements CommandCallable
 					}
 				}
 			}
+			else if (subc.equals(SubCommand.teleport))
+			{
+				if (c == null)
+				{
+					CityPlugin.sendMessage("You need to be in a city to do that !", TextColors.RED, p);
+				}
+				else
+				{
+					p.setLocation(c.getSpawn());
+					CityPlugin.sendMessage("You has been teleported to the city !", TextColors.GREEN, p);
+				}
+			}
 			else if (subc.equals(SubCommand.unclaim))
 			{
 				if (c == null)
@@ -253,6 +265,70 @@ public class CityCommand implements CommandCallable
 					c.removeResident(p.getUniqueId());
 					r.getCache().initializeCache();
 					CityPlugin.sendMessage("You leaved the city !", TextColors.GREEN, p);
+				}
+			}
+			else if (subc.equals(SubCommand.setteleport))
+			{
+				if (c == null)
+				{
+					CityPlugin.sendMessage("You need to be in a city to do that !", TextColors.RED, p);
+				}
+				else if (c.hasAssistantPerm(r))
+				{
+					c.setSpawn(p.getLocation());
+					CityPlugin.sendMessage("Teleport location set !", TextColors.GREEN, p);
+				}
+				else
+				{
+					CityPlugin.sendMessage("You need to be assistant to do that !", TextColors.RED, p);
+					return CommandResult.success();
+				}
+			}
+			else if (subc.equals(SubCommand.settax))
+			{
+				if (c == null)
+				{
+					CityPlugin.sendMessage("You need to be in a city to do that !", TextColors.RED, p);
+				}
+				else
+				{
+
+					if (args.length < 2)
+					{
+						CityPlugin.sendMessage("You need to give an amount !", TextColors.RED, p);
+					}
+					else
+					{
+						String name = args[1];
+						double amount = 0;
+						try
+						{
+							amount=Double.parseDouble(name);
+							
+							if(amount<=0)
+							{
+								CityPlugin.sendMessage("Invalid amount", TextColors.RED, p);
+								return CommandResult.success();
+							}
+						}
+						catch(NumberFormatException e)
+						{
+							CityPlugin.sendMessage("Format error !", TextColors.RED, p);
+							return CommandResult.success();
+						}
+						
+						if(c.hasMayorPerm(r))
+						{
+							c.setPlayerTaxe(amount);
+							CityPlugin.sendMessage("Tax set !", TextColors.GREEN, p);
+						}
+						else
+						{
+							CityPlugin.sendMessage("You need to be mayor to do that", TextColors.RED, p);
+							return CommandResult.success();
+						}
+						
+					}
 				}
 			}
 			else if (subc.equals(SubCommand.deposit))
@@ -363,6 +439,13 @@ public class CityCommand implements CommandCallable
 					}
 				}
 			}
+			else if (subc.equals(SubCommand.credit))
+			{
+				CityPlugin.sendMessage("__________[ Credit ]__________", TextColors.GREEN, p);
+				CityPlugin.sendMessage("Dev by quequiere [FR]", TextColors.GREEN, p);
+				CityPlugin.sendMessage("Skype support: quequierebego", TextColors.GREEN, p);
+				CityPlugin.sendMessage("For pixelsky-mc.com", TextColors.GREEN, p);
+			}
 			else if (subc.equals(SubCommand.help))
 			{
 				displayHelp(p);
@@ -380,7 +463,7 @@ public class CityCommand implements CommandCallable
 
 	public enum SubCommand
 	{
-		create, claim, leave, help, join,destroy,unclaim,deposit,info,withdraw,teleport
+		create, claim, leave, help, join,destroy,unclaim,deposit,info,withdraw,teleport,credit,settax,setteleport
 	};
 
 	public static void displayCity(Player p, Resident r, City c)
@@ -449,6 +532,8 @@ public class CityCommand implements CommandCallable
 		objects.clear();
 		if (canModify)
 			objects.add(TextActions.executeCallback(source -> {
+				if(!c.hasAssistantPerm(r))
+					return;
 				c.setRemovePlayerTax(!c.isRemovePlayerTax());
 				displayCity(p, r, c);
 			}));
@@ -478,6 +563,8 @@ public class CityCommand implements CommandCallable
 		objects.clear();
 		if (canModify)
 			objects.add(TextActions.executeCallback(source -> {
+				if(!c.hasAssistantPerm(r))
+					return;
 				c.setOpenJoin(!c.isOpenJoin());
 				displayCity(p, r, c);
 			}));

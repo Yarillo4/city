@@ -1,9 +1,13 @@
 package com.quequiere.cityplugin.listeners;
 
+import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.Optional;
 
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.tileentity.MobSpawner;
+import org.spongepowered.api.block.tileentity.TileEntity;
+import org.spongepowered.api.block.tileentity.carrier.TileEntityCarrier;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
 import org.spongepowered.api.data.type.HandTypes;
@@ -22,6 +26,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.common.block.SpongeBlockSnapshot;
 import org.spongepowered.common.item.inventory.lens.impl.minecraft.ContainerChestInventoryLens;
+import org.spongepowered.common.mixin.core.tileentity.MixinTileEntityLockable;
 
 import com.quequiere.cityplugin.CityPlugin;
 import com.quequiere.cityplugin.object.CityPermEnum;
@@ -78,17 +83,38 @@ public class PhysicBlockListener
 			return;
 		}
 
-		if (!location.isPresent() || event instanceof InteractBlockEvent.Secondary)
+		if(!location.isPresent())
 		{
-			
-		
-			//chest here
 			return;
 		}
-
+		
 		Resident r = Resident.fromPlayerId(p.getUniqueId());
 
 		Location<World> loc = event.getTargetBlock().getLocation().get();
+		
+		if ( event instanceof InteractBlockEvent.Secondary)
+		{
+			Optional<TileEntity> optiel = location.get().getTileEntity();
+			
+			if(optiel.isPresent())
+			{
+				TileEntity te = optiel.get();
+				if(te instanceof TileEntityCarrier ||te instanceof MobSpawner)
+				{
+					if (!r.getCache().hasPerm(loc, CityPermEnum.SWITH))
+					{
+						event.setCancelled(true);
+						CityPlugin.sendMessage("You can't swith and interact with inventory here !", TextColors.RED, p);
+						return;
+					}
+				}
+				
+			}
+			
+			return;
+		}
+
+
 
 		if (!r.getCache().hasPerm(loc, CityPermEnum.SWITH))
 		{

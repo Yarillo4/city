@@ -18,6 +18,7 @@ import com.quequiere.cityplugin.command.CityChunkCommand;
 import com.quequiere.cityplugin.command.CityCommand;
 import com.quequiere.cityplugin.command.CityWorldCommand;
 import com.quequiere.cityplugin.config.CityGeneralConfig;
+import com.quequiere.cityplugin.listeners.ChatListener;
 import com.quequiere.cityplugin.listeners.JoinListener;
 import com.quequiere.cityplugin.listeners.MoveListener;
 import com.quequiere.cityplugin.listeners.PhysicBlockListener;
@@ -54,6 +55,7 @@ public class CityPlugin
 		Sponge.getEventManager().registerListeners(this, new PhysicBlockListener());
 		Sponge.getEventManager().registerListeners(this, new JoinListener());
 		Sponge.getEventManager().registerListeners(this, new MoveListener());
+		Sponge.getEventManager().registerListeners(this, new ChatListener());
 	}
 
 	private void registerCommand()
