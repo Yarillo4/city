@@ -32,7 +32,8 @@ import com.quequiere.cityplugin.datamanip.LocationDeserializer;
 import com.quequiere.cityplugin.datamanip.LocationSerializer;
 import com.quequiere.cityplugin.object.tool.PermissibleZone;
 
-public class City extends PermissibleZone {
+public class City extends PermissibleZone
+{
 	private static ArrayList<City> loaded = new ArrayList<City>();
 	private static File folder = new File("./config/city/citys/");
 
@@ -50,8 +51,9 @@ public class City extends PermissibleZone {
 	private boolean openJoin = false;
 	private double playerTax = 0;
 	private boolean removePlayerTax = false;
-	
-	private City(String name, Resident mayor) {
+
+	private City(String name, Resident mayor)
+	{
 		this.name = name;
 		this.spawn = mayor.getPlayer().getLocation();
 		this.initCityPerm();
@@ -62,34 +64,34 @@ public class City extends PermissibleZone {
 
 	}
 
-	public static City tryCreateCity(String name, Player p) {
-		
-		
+	public static City tryCreateCity(String name, Player p)
+	{
+
 		Account account = CityPlugin.economyService.getOrCreateAccount(p.getUniqueId()).get();
 		TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), CityPlugin.generalConfig.getCityCreateCost(), Cause.of(NamedCause.source(p)));
-		
+
 		if (transactionResult.getResult() != ResultType.SUCCESS)
 		{
-			CityPlugin.sendMessage("No enought money in your account ! You need: "+ CityPlugin.generalConfig.getCityCreateCost()+" $", TextColors.RED, p);
+			CityPlugin.sendMessage("No enought money in your account ! You need: " + CityPlugin.generalConfig.getCityCreateCost() + " $", TextColors.RED, p);
 			return null;
 		}
-		
-		
-		
+
 		City named = getCityByName(name);
-		if (named != null) {
+		if (named != null)
+		{
 			CityPlugin.sendMessage(named.getName() + " city already exist !", TextColors.RED, p);
 			return null;
 		}
 
-		if (City.getCityFromChunk(Tools.getChunk(p.getLocation())) != null) {
+		if (City.getCityFromChunk(Tools.getChunk(p.getLocation())) != null)
+		{
 			CityPlugin.sendMessage("You can't create city on a claimed territory !", TextColors.RED, p);
 			return null;
 		}
-		
+
 		Chunk target = Tools.getChunk(p.getLocation());
-		
-		if(hasOtherCityInRadius(null,target))
+
+		if (hasOtherCityInRadius(null, target))
 		{
 			CityPlugin.sendMessage("You can't create city here, need more space between city !", TextColors.RED, p);
 			return null;
@@ -103,58 +105,72 @@ public class City extends PermissibleZone {
 		c.updatePermission();
 		return c;
 	}
-	
+
 	public static boolean hasOtherCityInRadius(City reference, Chunk c)
 	{
-		for(int x=-5;x<=5;x++)
+		for (int x = -5; x <= 5; x++)
 		{
-			for(int z=-5;x<=5;z++)
+			for (int z = -5; z <= 5; z++)
 			{
-				if(x!=0 && z !=0)
+
+				int xc = c.getPosition().getX() + x;
+				int zc = c.getPosition().getZ() + z;
+
+				Chunk tosee = Tools.getChunk(xc, zc, c.getWorld());
+
+				if (!tosee.equals(c))
 				{
-					City ctarget = City.getCityFromChunk(Tools.getChunk(c.getPosition().getX()+x, c.getPosition().getZ()+z, c.getWorld()));
-					
-					if(ctarget!=null && !ctarget.equals(reference))
+					City ctarget = City.getCityFromChunk(Tools.getChunk(xc, zc, c.getWorld()));
+
+					if (ctarget != null && !ctarget.equals(reference))
 					{
 						return true;
 					}
 				}
+
 			}
 		}
-		
+
 		return false;
 	}
 
-	public static City getCityByName(String name) {
-		for (City c : loaded) {
-			if (c.getName().equalsIgnoreCase(name)) {
+	public static City getCityByName(String name)
+	{
+		for (City c : loaded)
+		{
+			if (c.getName().equalsIgnoreCase(name))
+			{
 				return c;
 			}
 		}
 
 		return null;
 	}
-	
+
 	public int getMaxChunk()
 	{
-		return CityPlugin.generalConfig.getChunkPerPlayer()*this.getResidents().size();
+		return CityPlugin.generalConfig.getChunkPerPlayer() * this.getResidents().size();
 	}
 
-	public void addResident(Resident r) {
+	public void addResident(Resident r)
+	{
 		r.setRank(CityRankEnum.resident);
 		this.residents.add(r.getId());
 		r.getCache().initializeCache();
 		this.save();
 	}
-	
+
 	public String getNameEconomy()
 	{
-		return "City_"+this.getName();
+		return "City_" + this.getName();
 	}
 
-	public boolean hasResident(UUID id) {
-		for (UUID rid : this.getResidents()) {
-			if (rid.equals(id)) {
+	public boolean hasResident(UUID id)
+	{
+		for (UUID rid : this.getResidents())
+		{
+			if (rid.equals(id))
+			{
 				return true;
 			}
 		}
@@ -162,118 +178,148 @@ public class City extends PermissibleZone {
 		return false;
 	}
 
-	public ArrayList<UUID> getResidents() {
+	public ArrayList<UUID> getResidents()
+	{
 		return residents;
 	}
 
-	public static ArrayList<City> getLoaded() {
+	public static ArrayList<City> getLoaded()
+	{
 		return loaded;
 	}
 
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
 
-	public Location<World> getSpawn() {
+	public Location<World> getSpawn()
+	{
 		return spawn;
 	}
 
-	
-	public void setSpawn(Location<World> spawn) {
+	public void setSpawn(Location<World> spawn)
+	{
 		this.spawn = spawn;
 		this.save();
 	}
 
-	public boolean isOpenJoin() {
+	public boolean isOpenJoin()
+	{
 		return openJoin;
 	}
 
-	public void setOpenJoin(boolean openJoin) {
+	public void setOpenJoin(boolean openJoin)
+	{
 		this.openJoin = openJoin;
 		this.save();
 	}
 
-	public boolean hasAssistantPerm(Resident r) {
-		if (r.getRank().equals(CityRankEnum.mayor) || r.getRank().equals(CityRankEnum.assistant)) {
+	public boolean hasAssistantPerm(Resident r)
+	{
+		if (r.getRank().equals(CityRankEnum.mayor) || r.getRank().equals(CityRankEnum.assistant))
+		{
 			return true;
 		}
 
 		return false;
 	}
 
-	public boolean hasMayorPerm(Resident r) {
-		if (r.getRank().equals(CityRankEnum.mayor)) {
+	public boolean hasMayorPerm(Resident r)
+	{
+		if (r.getRank().equals(CityRankEnum.mayor))
+		{
 			return true;
 		}
 
 		return false;
 	}
 
-	public void removeResident(UUID id) {
+	public void removeResident(UUID id)
+	{
 		this.getResidents().remove(id);
 		Resident.fromPlayerId(id).setRank(CityRankEnum.resident);
-		
-		for(CityChunk cc:this.getClaimedChunk())
+
+		for (CityChunk cc : this.getClaimedChunk())
 		{
-			if(cc.getResident().equals(id))
+			if (cc.getResident().equals(id))
 			{
 				cc.setResident(null);
 			}
 		}
-		
+
 		this.save();
 	}
 
-	public static void reloadAll() {
+	public static void reloadAll()
+	{
 		loaded.clear();
 
-		if(!folder.exists())
+		if (!folder.exists())
 		{
 			folder.mkdir();
 		}
-		
-		for (String fname : folder.list()) {
+
+		for (String fname : folder.list())
+		{
 			String toload = fname.replace(".json", "");
 
 			City c = loadCityFromFile(toload);
-			if (c != null) {
+			if (c != null)
+			{
 				loaded.add(c);
 				System.out.println("[City] Loaded city: " + c.getName());
-			} else {
+			}
+			else
+			{
 				System.out.println("Error while loading city: " + toload);
 			}
 		}
 
 	}
 
-	private static City loadCityFromFile(String name) {
-		if (!folder.exists()) {
+	private static City loadCityFromFile(String name)
+	{
+		if (!folder.exists())
+		{
 			folder.mkdirs();
 		}
 
 		File f = new File(folder.getAbsolutePath() + "/" + name + ".json");
 		City c = null;
-		if (f.exists()) {
+		if (f.exists())
+		{
 			BufferedReader br = null;
-			try {
+			try
+			{
 				br = new BufferedReader(new FileReader(f));
 				StringBuilder sb = new StringBuilder();
 				String line = br.readLine();
-				while (line != null) {
+				while (line != null)
+				{
 					sb.append(line);
 					sb.append(System.lineSeparator());
 					line = br.readLine();
 				}
 				String everything = sb.toString();
 				c = fromJson(everything);
-			} catch (FileNotFoundException e) {
+			}
+			catch (FileNotFoundException e)
+			{
 				e.printStackTrace();
-			} catch (IOException e) {
+			}
+			catch (IOException e)
+			{
 				e.printStackTrace();
-			} finally {
-				try {
+			}
+			finally
+			{
+				try
+				{
 					br.close();
-				} catch (IOException e) {
+				}
+				catch (IOException e)
+				{
 					e.printStackTrace();
 				}
 			}
@@ -283,90 +329,108 @@ public class City extends PermissibleZone {
 		return c;
 	}
 
-	public void save() {
+	public void save()
+	{
 
 		BufferedWriter writer = null;
-		try {
+		try
+		{
 
-			if (!folder.exists()) {
+			if (!folder.exists())
+			{
 				folder.mkdirs();
 			}
 
 			File file = new File(folder.getAbsolutePath() + "/" + this.getName() + ".json");
-			if (!file.exists()) {
+			if (!file.exists())
+			{
 				file.createNewFile();
 			}
 			writer = new BufferedWriter(new FileWriter(file));
 
 			writer.write(this.toJson());
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
-		} finally {
-			try {
+		}
+		finally
+		{
+			try
+			{
 				writer.close();
-			} catch (Exception e) {
+			}
+			catch (Exception e)
+			{
 			}
 		}
 
 	}
 
-	public void tryToClaimHere(Player p) {
+	public void tryToClaimHere(Player p)
+	{
 		Resident r = Resident.fromPlayerId(p.getUniqueId());
 		Chunk target = r.getChunk();
 		City c = City.getCityFromChunk(target);
 
-		if (c != null) {
+		if (c != null)
+		{
 			CityPlugin.sendMessage("This chunk is already claimed by " + c.getName(), TextColors.RED, p);
 			return;
 		}
-		
-		if(this.getClaimedChunk().size()>=this.getMaxChunk())
+
+		if (this.getClaimedChunk().size() >= this.getMaxChunk())
 		{
 			CityPlugin.sendMessage("You need more player in your city to claim more chunk !", TextColors.RED, p);
 			return;
 		}
-		
+
 		boolean pass = false;
-		//check proximity
-		for(int x=-1;x<=1;x++)
+		// check proximity
+		for (int x = -1; x <= 1; x++)
 		{
-			for(int z=-1;x<=1;z++)
+			for (int z = -1; z <= 1; z++)
 			{
-				if(x!=0 && z !=0)
+
+				int xc = target.getPosition().getX() + x;
+				int zc = target.getPosition().getZ() + z;
+
+				Chunk tosee = Tools.getChunk(xc, zc, target.getWorld());
+				if (!tosee.equals(target))
 				{
-					City ctarget = City.getCityFromChunk(Tools.getChunk(target.getPosition().getX()+x, target.getPosition().getZ()+z, target.getWorld()));
-					
-					if(ctarget.equals(c))
+					City ctarget = City.getCityFromChunk(tosee);
+
+					if (ctarget != null && ctarget.equals(r.getCity()))
 					{
-						pass=true;
+						pass = true;
 						break;
 					}
 				}
+
 			}
 		}
-		
-		if(!pass)
+
+		if (!pass)
 		{
 			CityPlugin.sendMessage("Claims need to be accroch to the city, or create an outpost", TextColors.RED, p);
 			return;
 		}
-		
-		if(hasOtherCityInRadius(null,target))
+
+		if (hasOtherCityInRadius(null, target))
 		{
 			CityPlugin.sendMessage("You cant claim here, need more space between city !", TextColors.RED, p);
-			return ;
+			return;
 		}
-		
+
 		Account account = CityPlugin.economyService.getOrCreateAccount(this.getNameEconomy()).get();
 		TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), CityPlugin.generalConfig.getChunkClaimCost(), Cause.of(NamedCause.source(p)));
-		
+
 		if (transactionResult.getResult() != ResultType.SUCCESS)
 		{
 			CityPlugin.sendMessage("No enought money in the city's bank account.", TextColors.RED, p);
-			CityPlugin.sendMessage("Use /c deposit to add fund. You need "+CityPlugin.generalConfig.getChunkClaimCost()+" $", TextColors.RED, p);
-			return ;
+			CityPlugin.sendMessage("Use /c deposit to add fund. You need " + CityPlugin.generalConfig.getChunkClaimCost() + " $", TextColors.RED, p);
+			return;
 		}
-		
 
 		CityChunk cc = new CityChunk(target);
 		citychunk.add(cc);
@@ -375,38 +439,38 @@ public class City extends PermissibleZone {
 		CityPlugin.sendMessage("New chunk claimed !", TextColors.GREEN, p);
 
 	}
-	
+
 	public void destroy()
 	{
 		@SuppressWarnings("unchecked")
 		ArrayList<UUID> listr = (ArrayList<UUID>) this.getResidents().clone();
-		for(UUID id:listr)
+		for (UUID id : listr)
 		{
 			this.removeResident(id);
 		}
-		
+
 		@SuppressWarnings("unchecked")
 		ArrayList<CityChunk> list = (ArrayList<CityChunk>) this.getClaimedChunk().clone();
-		
-		for(CityChunk cc:list)
+
+		for (CityChunk cc : list)
 		{
 			this.unclaimChunk(cc);
 		}
-		
+
 		loaded.remove(this);
-		
+
 		File f = new File(folder.getAbsolutePath() + "/" + name + ".json");
 		f.delete();
-		
-		Sponge.getGame().getServer().getBroadcastChannel().send(Text.builder(this.getName()+ " has been successfuly destroyed").color(TextColors.GRAY).build());
+
+		Sponge.getGame().getServer().getBroadcastChannel().send(Text.builder(this.getName() + " has been successfuly destroyed").color(TextColors.GRAY).build());
 	}
-	
+
 	public void unclaimChunk(CityChunk cc)
 	{
 		this.citychunk.remove(cc);
 		this.cityoutpost.remove(cc);
 		cc.initialize();
-		
+
 		for (Player p : Sponge.getServer().getOnlinePlayers())
 		{
 			Resident r = Resident.fromPlayerId(p.getUniqueId());
@@ -414,81 +478,95 @@ public class City extends PermissibleZone {
 		}
 		this.save();
 	}
-	
+
 	public BigDecimal getDailyCost()
 	{
 		return CityPlugin.generalConfig.getChunkDailyCostBase().multiply(new BigDecimal(this.getClaimedChunk().size()));
 	}
-	
-	
 
-	public BigDecimal getPlayerTaxe() {
+	public BigDecimal getPlayerTaxe()
+	{
 		return new BigDecimal(this.playerTax);
 	}
 
-	public void setPlayerTaxe(double playerTaxe) {
+	public void setPlayerTaxe(double playerTaxe)
+	{
 		this.playerTax = playerTaxe;
 		this.save();
 	}
-	
 
-	public boolean isRemovePlayerTax() {
+	public boolean isRemovePlayerTax()
+	{
 		return removePlayerTax;
 	}
 
-	public void setRemovePlayerTax(boolean removePlayerTax) {
+	public void setRemovePlayerTax(boolean removePlayerTax)
+	{
 		this.removePlayerTax = removePlayerTax;
 	}
 
-	public ArrayList<CityChunk> getClaimedChunk() {
+	public ArrayList<CityChunk> getClaimedChunk()
+	{
 		ArrayList<CityChunk> list = new ArrayList<CityChunk>();
-		for (CityChunk cc : this.citychunk) {
+		for (CityChunk cc : this.citychunk)
+		{
 			list.add(cc);
 		}
 
-		for (CityChunk cc : this.cityoutpost) {
+		for (CityChunk cc : this.cityoutpost)
+		{
 			list.add(cc);
 		}
 		return list;
 	}
 
-	public CityChunk getChunck(Chunk c) {
-		for (CityChunk cc : this.getClaimedChunk()) {
-			if (cc.isEquals(c)) {
+	public CityChunk getChunck(Chunk c)
+	{
+		for (CityChunk cc : this.getClaimedChunk())
+		{
+			if (cc.isEquals(c))
+			{
 				return cc;
 			}
 		}
 		return null;
 	}
 
-	public static City getCityFromChunk(Chunk c) {
-		for (City ci : loaded) {
-			if (ci.getChunck(c)!=null) {
+	public static City getCityFromChunk(Chunk c)
+	{
+		for (City ci : loaded)
+		{
+			if (ci.getChunck(c) != null)
+			{
 				return ci;
 			}
 		}
 		return null;
 	}
 
-	public String toJson() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Location.class, new LocationSerializer())
-				.create();
+	public String toJson()
+	{
+		Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Location.class, new LocationSerializer()).create();
 		return gson.toJson(this);
 	}
 
-	private static City fromJson(String s) {
+	private static City fromJson(String s)
+	{
 		Gson gson = new GsonBuilder().registerTypeAdapter(Location.class, new LocationDeserializer()).create();
 		return gson.fromJson(s, City.class);
 	}
 
 	@Override
-	public void updatePermission() {
+	public void updatePermission()
+	{
 		this.save();
 
-		for (Player p : Sponge.getServer().getOnlinePlayers()) {
+		for (Player p : Sponge.getServer().getOnlinePlayers())
+		{
 			Resident r = Resident.fromPlayerId(p.getUniqueId());
 
-			for (CityChunk cc : this.getClaimedChunk()) {
+			for (CityChunk cc : this.getClaimedChunk())
+			{
 				r.getCache().clearChunkPerm(cc.getChunk());
 			}
 

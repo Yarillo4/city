@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.block.tileentity.MobSpawner;
 import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.block.tileentity.carrier.TileEntityCarrier;
@@ -12,13 +13,20 @@ import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Item;
+import org.spongepowered.api.entity.hanging.Hanging;
+import org.spongepowered.api.entity.hanging.ItemFrame;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.block.InteractBlockEvent;
+import org.spongepowered.api.event.block.tileentity.TargetTileEntityEvent;
+import org.spongepowered.api.event.entity.DestructEntityEvent;
+import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
 import org.spongepowered.api.event.item.inventory.UseItemStackEvent;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Container;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.format.TextColors;
@@ -36,35 +44,22 @@ public class PhysicBlockListener
 {
 
 	@Listener
-	public void useItem(final UseItemStackEvent.Start event)
+	public void on(InteractEntityEvent event, @Root Player p)
 	{
 
-		/*
-		 * System.out.println("pass2"); Optional<Player> optionalPlayer =
-		 * event.getCause().first(Player.class); if
-		 * (!optionalPlayer.isPresent()) { return; }
-		 * 
-		 * Player p = optionalPlayer.get(); Resident r =
-		 * Resident.fromPlayerId(p.getUniqueId());
-		 * 
-		 * Location<World> loc = p.getLocation();
-		 * 
-		 * if (!r.getCache().hasPerm(loc, CityPermEnum.SWITH)) {
-		 * event.setCancelled(true);
-		 * CityPlugin.sendMessage("You can't use item here !", TextColors.RED,
-		 * p); return; }
-		 */
-		 
-	}
-	
-	@Listener
-	public void openInventory(final InteractInventoryEvent.Open event, @Root Player p)
-	{
-		Container container = event.getTargetInventory();
-	
-		//a voir
-		
-		
+		if (event.getTargetEntity() instanceof Hanging)
+		{
+			Resident r = Resident.fromPlayerId(p.getUniqueId());
+
+			if (!r.getCache().hasPerm(event.getTargetEntity().getLocation(), CityPermEnum.SWITH))
+			{
+				event.setCancelled(true);
+				CityPlugin.sendMessage("You can't swith with frame here !", TextColors.RED, p);
+				return;
+			}
+
+		}
+
 	}
 
 	@Listener
@@ -75,31 +70,36 @@ public class PhysicBlockListener
 
 		if (event.getTargetBlock() == null)
 		{
+
 			return;
 		}
 
 		if (event instanceof InteractBlockEvent.Primary)
 		{
+
 			return;
 		}
 
-		if(!location.isPresent())
+		if (!location.isPresent())
 		{
+
 			return;
 		}
-		
+
 		Resident r = Resident.fromPlayerId(p.getUniqueId());
 
 		Location<World> loc = event.getTargetBlock().getLocation().get();
-		
-		if ( event instanceof InteractBlockEvent.Secondary)
+
+		if (event instanceof InteractBlockEvent.Secondary)
 		{
+
 			Optional<TileEntity> optiel = location.get().getTileEntity();
-			
-			if(optiel.isPresent())
+
+			if (optiel.isPresent())
 			{
+
 				TileEntity te = optiel.get();
-				if(te instanceof TileEntityCarrier ||te instanceof MobSpawner)
+				if (te instanceof TileEntityCarrier || te instanceof MobSpawner)
 				{
 					if (!r.getCache().hasPerm(loc, CityPermEnum.SWITH))
 					{
@@ -108,13 +108,32 @@ public class PhysicBlockListener
 						return;
 					}
 				}
-				
+
 			}
 			
+			Optional<ItemStack> i = p.getItemInHand(((InteractBlockEvent.Secondary) event).getHandType());
+			if(i.isPresent())
+			{
+				ItemStack is = i.get();
+				if(is.getItem().getClass().toString().contains("ItemHangingEntity"))
+				{
+					
+					if (!r.getCache().hasPerm(loc, CityPermEnum.BUILD))
+					{
+						event.setCancelled(true);
+						CityPlugin.sendMessage("You can't build with hanging entity here !", TextColors.RED, p);
+						return;
+					}
+				}
+				
+			}
+
 			return;
 		}
-
-
+		else
+		{
+			// System.out.println("pa6");
+		}
 
 		if (!r.getCache().hasPerm(loc, CityPermEnum.SWITH))
 		{
@@ -147,7 +166,10 @@ public class PhysicBlockListener
 				if (!r.getCache().hasPerm(loc, CityPermEnum.BUILD))
 				{
 					event.setCancelled(true);
-					CityPlugin.sendMessage("You can't build here !", TextColors.RED, p);
+					if(!transaction.getOriginal().getState().getType().equals(BlockTypes.GRASS))
+					{
+						CityPlugin.sendMessage("You can't build here !", TextColors.RED, p);
+					}			
 					return;
 				}
 			}
