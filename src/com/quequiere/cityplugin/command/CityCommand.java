@@ -72,6 +72,15 @@ public class CityCommand implements CommandCallable
 
 			if (subc.equals(SubCommand.create))
 			{
+				
+				
+				String perm = "city.create";
+				if(!CityPlugin.hasPerm(p, perm))
+				{
+					CityPlugin.sendMessage("You need "+perm+" perm to do that !", TextColors.RED, p);
+					return CommandResult.success();
+				}
+				
 				if (c != null)
 				{
 					CityPlugin.sendMessage("You are in a city, so you can't do that !", TextColors.RED, p);
@@ -100,26 +109,35 @@ public class CityCommand implements CommandCallable
 			}
 			else if (subc.equals(SubCommand.info))
 			{
-					if (args.length < 2)
+				if (args.length < 2)
+				{
+					CityPlugin.sendMessage("You need to give a name to the city !", TextColors.RED, p);
+				}
+				else
+				{
+					City ci = City.getCityByName(args[1]);
+					if (ci != null)
 					{
-						CityPlugin.sendMessage("You need to give a name to the city !", TextColors.RED, p);
+						displayCity(p, r, ci);
 					}
 					else
 					{
-						City ci = City.getCityByName(args[1]);
-						if(ci!=null)
-						{
-							displayCity(p, r, ci);
-						}
-						else
-						{
-							CityPlugin.sendMessage("Can't find this city", TextColors.RED, p);
-						}
+						CityPlugin.sendMessage("Can't find this city", TextColors.RED, p);
 					}
-				
+				}
+
 			}
 			else if (subc.equals(SubCommand.join))
 			{
+				
+				
+				String perm = "city.join";
+				if(!CityPlugin.hasPerm(p, perm))
+				{
+					CityPlugin.sendMessage("You need "+perm+" perm to do that !", TextColors.RED, p);
+					return CommandResult.success();
+				}
+				
 				if (c != null)
 				{
 					CityPlugin.sendMessage("You are in a city, so you can't do that !", TextColors.RED, p);
@@ -169,11 +187,11 @@ public class CityCommand implements CommandCallable
 					}
 					else
 					{
-						if(c.hasMayorPerm(r))
+						if (c.hasMayorPerm(r))
 						{
 							String s = args[1];
 
-							if(s.equalsIgnoreCase("confirm"))
+							if (s.equalsIgnoreCase("confirm"))
 							{
 								CityPlugin.sendMessage("Start city destroy process ", TextColors.GREEN, p);
 								c.destroy();
@@ -184,8 +202,53 @@ public class CityCommand implements CommandCallable
 							CityPlugin.sendMessage("You need to be mayor to do that !", TextColors.RED, p);
 						}
 
-						
 					}
+				}
+			}
+			else if (subc.equals(SubCommand.setcustomname))
+			{
+				
+				
+				String perm = "city.setcustomname";
+				if(!CityPlugin.hasPerm(p, perm))
+				{
+					CityPlugin.sendMessage("You need "+perm+" perm to do that !", TextColors.RED, p);
+					return CommandResult.success();
+				}
+				
+				if (c == null)
+				{
+					CityPlugin.sendMessage("You need to be in a city to do that", TextColors.RED, p);
+				}
+				else
+				{
+					if (c.hasMayorPerm(r))
+					{
+						if (args.length < 2)
+						{
+							CityPlugin.sendMessage("You need to give a short name !", TextColors.RED, p);
+						}
+						else
+						{
+							String name = args[1];
+							int size = CityPlugin.generalConfig.getCustomCityNameLenght();
+							if(name.length()>CityPlugin.generalConfig.getCustomCityNameLenght())
+							{
+								CityPlugin.sendMessage("Custom name is too big, max size: "+size, TextColors.RED, p);
+							}
+							else
+							{
+								c.setCustomName(name);
+								CityPlugin.sendMessage("Custom name set !", TextColors.GREEN, p);
+							}
+
+						}
+					}
+					else
+					{
+						CityPlugin.sendMessage("You need to be mayor to do that !", TextColors.RED, p);
+					}
+
 				}
 			}
 			else if (subc.equals(SubCommand.claim))
@@ -209,6 +272,14 @@ public class CityCommand implements CommandCallable
 			}
 			else if (subc.equals(SubCommand.teleport))
 			{
+				
+				String perm = "city.teleport";
+				if(!CityPlugin.hasPerm(p, perm))
+				{
+					CityPlugin.sendMessage("You need "+perm+" perm to do that !", TextColors.RED, p);
+					return CommandResult.success();
+				}
+				
 				if (c == null)
 				{
 					CityPlugin.sendMessage("You need to be in a city to do that !", TextColors.RED, p);
@@ -234,10 +305,10 @@ public class CityCommand implements CommandCallable
 					else
 					{
 						CityPlugin.sendMessage("Starting unclaim process ...", TextColors.GREEN, p);
-						
+
 						CityChunk cc = c.getChunck(r.getChunk());
-						
-						if(cc!=null)
+
+						if (cc != null)
 						{
 							c.unclaimChunk(cc);
 							CityPlugin.sendMessage("Unclaimed chunk !", TextColors.GREEN, p);
@@ -246,7 +317,7 @@ public class CityCommand implements CommandCallable
 						{
 							CityPlugin.sendMessage("This is not a city chunk !", TextColors.RED, p);
 						}
-						
+
 					}
 				}
 			}
@@ -269,6 +340,15 @@ public class CityCommand implements CommandCallable
 			}
 			else if (subc.equals(SubCommand.setteleport))
 			{
+				
+				
+				String perm = "city.setteleport";
+				if(!CityPlugin.hasPerm(p, perm))
+				{
+					CityPlugin.sendMessage("You need "+perm+" perm to do that !", TextColors.RED, p);
+					return CommandResult.success();
+				}
+				
 				if (c == null)
 				{
 					CityPlugin.sendMessage("You need to be in a city to do that !", TextColors.RED, p);
@@ -286,6 +366,15 @@ public class CityCommand implements CommandCallable
 			}
 			else if (subc.equals(SubCommand.settax))
 			{
+				
+				
+				String perm = "city.settax";
+				if(!CityPlugin.hasPerm(p, perm))
+				{
+					CityPlugin.sendMessage("You need "+perm+" perm to do that !", TextColors.RED, p);
+					return CommandResult.success();
+				}
+				
 				if (c == null)
 				{
 					CityPlugin.sendMessage("You need to be in a city to do that !", TextColors.RED, p);
@@ -303,31 +392,40 @@ public class CityCommand implements CommandCallable
 						double amount = 0;
 						try
 						{
-							amount=Double.parseDouble(name);
-							
-							if(amount<=0)
+							amount = Double.parseDouble(name);
+
+							if (amount <= 0)
 							{
 								CityPlugin.sendMessage("Invalid amount", TextColors.RED, p);
 								return CommandResult.success();
 							}
 						}
-						catch(NumberFormatException e)
+						catch (NumberFormatException e)
 						{
 							CityPlugin.sendMessage("Format error !", TextColors.RED, p);
 							return CommandResult.success();
 						}
-						
-						if(c.hasMayorPerm(r))
+
+						if (c.hasMayorPerm(r))
 						{
-							c.setPlayerTaxe(amount);
-							CityPlugin.sendMessage("Tax set !", TextColors.GREEN, p);
+							if(amount>CityPlugin.generalConfig.getMaxPlayerTaxOnCity())
+							{
+								CityPlugin.sendMessage("Max amount is: "+CityPlugin.generalConfig.getMaxPlayerTaxOnCity(), TextColors.RED, p);
+								return CommandResult.success();
+							}
+							else
+							{
+								c.setPlayerTaxe(amount);
+								CityPlugin.sendMessage("Tax set !", TextColors.GREEN, p);
+							}
+							
 						}
 						else
 						{
 							CityPlugin.sendMessage("You need to be mayor to do that", TextColors.RED, p);
 							return CommandResult.success();
 						}
-						
+
 					}
 				}
 			}
@@ -350,26 +448,25 @@ public class CityCommand implements CommandCallable
 						double amount = 0;
 						try
 						{
-							amount=Double.parseDouble(name);
-							
-							if(amount<=0)
+							amount = Double.parseDouble(name);
+
+							if (amount <= 0)
 							{
 								CityPlugin.sendMessage("Invalid amount", TextColors.RED, p);
 								return CommandResult.success();
 							}
 						}
-						catch(NumberFormatException e)
+						catch (NumberFormatException e)
 						{
 							CityPlugin.sendMessage("Format error !", TextColors.RED, p);
 							return CommandResult.success();
 						}
-						
-						
+
 						Account paccount = CityPlugin.economyService.getOrCreateAccount(p.getUniqueId()).get();
 						Account caccount = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
-						
+
 						TransactionResult transactionResult = paccount.transfer(caccount, CityPlugin.economyService.getDefaultCurrency(), new BigDecimal(amount), Cause.of(NamedCause.source(p)));
-						
+
 						if (transactionResult.getResult() != ResultType.SUCCESS)
 						{
 							CityPlugin.sendMessage("Transaction failed !", TextColors.RED, p);
@@ -378,7 +475,7 @@ public class CityCommand implements CommandCallable
 						{
 							CityPlugin.sendMessage("Transaction sucess !", TextColors.GREEN, p);
 						}
-						
+
 					}
 				}
 			}
@@ -390,8 +487,8 @@ public class CityCommand implements CommandCallable
 				}
 				else
 				{
-					
-					if(!c.hasAssistantPerm(r))
+
+					if (!c.hasAssistantPerm(r))
 					{
 						CityPlugin.sendMessage("You need assistant perm to do that", TextColors.RED, p);
 						return CommandResult.success();
@@ -407,26 +504,25 @@ public class CityCommand implements CommandCallable
 						double amount = 0;
 						try
 						{
-							amount=Double.parseDouble(name);
-							
-							if(amount<=0)
+							amount = Double.parseDouble(name);
+
+							if (amount <= 0)
 							{
 								CityPlugin.sendMessage("Invalid amount", TextColors.RED, p);
 								return CommandResult.success();
 							}
 						}
-						catch(NumberFormatException e)
+						catch (NumberFormatException e)
 						{
 							CityPlugin.sendMessage("Format error !", TextColors.RED, p);
 							return CommandResult.success();
 						}
-						
-						
+
 						Account paccount = CityPlugin.economyService.getOrCreateAccount(p.getUniqueId()).get();
 						Account caccount = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
-						
+
 						TransactionResult transactionResult = caccount.transfer(paccount, CityPlugin.economyService.getDefaultCurrency(), new BigDecimal(amount), Cause.of(NamedCause.source(p)));
-						
+
 						if (transactionResult.getResult() != ResultType.SUCCESS)
 						{
 							CityPlugin.sendMessage("Transaction failed !", TextColors.RED, p);
@@ -435,7 +531,7 @@ public class CityCommand implements CommandCallable
 						{
 							CityPlugin.sendMessage("Transaction sucess !", TextColors.GREEN, p);
 						}
-						
+
 					}
 				}
 			}
@@ -463,7 +559,7 @@ public class CityCommand implements CommandCallable
 
 	public enum SubCommand
 	{
-		create, claim, leave, help, join,destroy,unclaim,deposit,info,withdraw,teleport,credit,settax,setteleport
+		create, claim, leave, help, join, destroy, unclaim, deposit, info, withdraw, teleport, credit, settax, setteleport, setcustomname
 	};
 
 	public static void displayCity(Player p, Resident r, City c)
@@ -485,45 +581,44 @@ public class CityCommand implements CommandCallable
 		// --------------------------------------------------------------------------------------------
 
 		builder.append(Text.of(TextColors.DARK_GREEN, "City chunks: "));
-		builder.append(Text.of(TextColors.GREEN, c.getClaimedChunk().size() + " / "+c.getMaxChunk()+"\n"));
-		
+		builder.append(Text.of(TextColors.GREEN, c.getClaimedChunk().size() + " / " + c.getMaxChunk() + "\n"));
+
 		// --------------------------------------------------------------------------------------------
 
 		Account account = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
-		BigDecimal balance =  account.getBalance(CityPlugin.economyService.getDefaultCurrency());
-		
+		BigDecimal balance = account.getBalance(CityPlugin.economyService.getDefaultCurrency());
+
 		builder.append(Text.of(TextColors.DARK_GREEN, "Bank: "));
-		builder.append(Text.of(TextColors.RED, balance +" $"));
+		builder.append(Text.of(TextColors.RED, balance + " $"));
 
 		builder.append(Text.of(TextColors.DARK_GREEN, " Daily chunk price: "));
-		builder.append(Text.of(TextColors.GREEN,CityPlugin.generalConfig.getChunkDailyCostBase()  +" $"));
-		
+		builder.append(Text.of(TextColors.GREEN, CityPlugin.generalConfig.getChunkDailyCostBase() + " $"));
+
 		builder.append(Text.of(TextColors.DARK_GREEN, " Daily city cost: "));
-		builder.append(Text.of(TextColors.RED,c.getDailyCost()  +" $"));
-		
+		builder.append(Text.of(TextColors.RED, c.getDailyCost() + " $"));
+
 		builder.append(Text.of("\n"));
-		
+
 		// --------------------------------------------------------------------------------------------
-				
+
 		builder.append(Text.of(TextColors.DARK_GREEN, "Remaining day before destruction: "));
 		BigDecimal days = balance.divide(c.getDailyCost());
-		days=days.setScale(2, RoundingMode.DOWN);
-		builder.append(Text.of(TextColors.RED,days+" days"));
-		
-		if(days.compareTo(new BigDecimal(5))<1)
+		days = days.setScale(2, RoundingMode.DOWN);
+		builder.append(Text.of(TextColors.RED, days + " days"));
+
+		if (days.compareTo(new BigDecimal(5)) < 1)
 		{
-			builder.append(Text.of(TextColors.RED,"\nEmmergency alert, deposite funds with '/c deposit' or city could be destroyed in few days"));
+			builder.append(Text.of(TextColors.RED, "\nEmergency alert, deposit funds with '/c deposit' or city could be destroyed in few days"));
 		}
-		
+
 		builder.append(Text.of("\n"));
-		
+
 		// --------------------------------------------------------------------------------------------
 
 		builder.append(Text.of(TextColors.DARK_GREEN, "Player tax: "));
-		builder.append(Text.of(TextColors.GREEN, c.getPlayerTaxe()+" "));
-		
-		
-		itemColor = c.isRemovePlayerTax()? TextColors.GREEN : TextColors.RED;
+		builder.append(Text.of(TextColors.GREEN, c.getPlayerTaxe() + "$ "));
+
+		itemColor = c.isRemovePlayerTax() ? TextColors.GREEN : TextColors.RED;
 		itemString = c.isRemovePlayerTax() ? "Remove if can't pay" : "Can stay in city";
 
 		builder.append(Text.of(TextColors.DARK_GREEN, "Pay statment: "));
@@ -532,7 +627,7 @@ public class CityCommand implements CommandCallable
 		objects.clear();
 		if (canModify)
 			objects.add(TextActions.executeCallback(source -> {
-				if(!c.hasAssistantPerm(r))
+				if (!c.hasAssistantPerm(r))
 					return;
 				c.setRemovePlayerTax(!c.isRemovePlayerTax());
 				displayCity(p, r, c);
@@ -547,7 +642,6 @@ public class CityCommand implements CommandCallable
 		builder.append(Text.of(TextColors.GRAY, "]"));
 		builder.append(Text.of(TextColors.GRAY, "\n"));
 
-		
 		// --------------------------------------------------------------------------------------------
 
 		DisplayPlayerListCallBack.displayPlayerList(builder, p, r, c);
@@ -563,7 +657,7 @@ public class CityCommand implements CommandCallable
 		objects.clear();
 		if (canModify)
 			objects.add(TextActions.executeCallback(source -> {
-				if(!c.hasAssistantPerm(r))
+				if (!c.hasAssistantPerm(r))
 					return;
 				c.setOpenJoin(!c.isOpenJoin());
 				displayCity(p, r, c);
@@ -580,7 +674,7 @@ public class CityCommand implements CommandCallable
 
 		// --------------------------------------------------------------------------------------------
 
-		c.displayPerm(p, r, builder,canModify);
+		c.displayPerm(p, r, builder, canModify);
 
 		// --------------------------------------------------------------------------------------------
 

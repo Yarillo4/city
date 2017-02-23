@@ -97,17 +97,25 @@ public abstract class PermissibleZone
 				if (canModify)
 					objects.add(TextActions.executeCallback(source -> {
 						boolean old = this.canDoAction(perm, rank);
-						this.setPermission(perm, rank, !old);
+						
 						if (this instanceof City)
 						{
-							CityCommand.displayCity(p, r, (City) this);
+							City c = (City) this;
+							if(c.hasAssistantPerm(r))
+							{
+								this.setPermission(perm, rank, !old);
+								CityCommand.displayCity(p, r, (City) this);
+							}
+							
 						}
 						else if (this instanceof CityChunk)
 						{
-							CityChunkCommand.displayChunk(p, r, (CityChunk) this);
+							this.setPermission(perm, rank, !old);
+							CityChunkCommand.displayChunk(p, r, (CityChunk) this); 
 						}
 						else if (this instanceof CityWorld)
 						{
+							this.setPermission(perm, rank, !old);
 							CityWorldCommand.displayWorld(p, CityWorld.getByName(p.getWorld().getName()));
 						}
 						else

@@ -23,7 +23,11 @@ public class CityGeneralConfig {
 	private double chunkDailyCostBase = 20;
 	private double chunkClaimCost = 500;
 	private double cityCreateCost = 50000;
-	
+	private int cityChunkseparator = 5;
+	private int customCityNameLenght = 3;
+	private int maxPlayerTaxOnCity = 9999;
+	private int defaultPlayerTaxOnCity =0;
+
 	
 	public int getChunkPerPlayer() {
 		return chunkPerPlayer;
@@ -40,8 +44,29 @@ public class CityGeneralConfig {
 	}
 
 
-	
 
+	public int getDefaultPlayerTaxOnCity()
+	{
+		return defaultPlayerTaxOnCity;
+	}
+
+
+	public int getMaxPlayerTaxOnCity()
+	{
+		return maxPlayerTaxOnCity;
+	}
+
+
+	public int getCustomCityNameLenght()
+	{
+		return customCityNameLenght;
+	}
+
+
+	public int getCityChunkseparator()
+	{
+		return cityChunkseparator;
+	}
 
 
 	public BigDecimal getChunkClaimCost() {
@@ -103,6 +128,8 @@ public class CityGeneralConfig {
 			c = new CityGeneralConfig();
 			c.save();
 		}
+		
+		c.save();
 
 		return c;
 	}

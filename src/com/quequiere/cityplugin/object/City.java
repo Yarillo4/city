@@ -51,6 +51,8 @@ public class City extends PermissibleZone
 	private boolean openJoin = false;
 	private double playerTax = 0;
 	private boolean removePlayerTax = false;
+	
+	private String customName ="";
 
 	private City(String name, Resident mayor)
 	{
@@ -61,6 +63,7 @@ public class City extends PermissibleZone
 
 		this.addResident(mayor);
 		mayor.setRank(CityRankEnum.mayor);
+		this.setPlayerTaxe(CityPlugin.generalConfig.getDefaultPlayerTaxOnCity());
 
 	}
 
@@ -108,9 +111,11 @@ public class City extends PermissibleZone
 
 	public static boolean hasOtherCityInRadius(City reference, Chunk c)
 	{
-		for (int x = -5; x <= 5; x++)
+		int chunkseparator = CityPlugin.generalConfig.getCityChunkseparator();
+		
+		for (int x = -chunkseparator; x <= chunkseparator; x++)
 		{
-			for (int z = -5; z <= 5; z++)
+			for (int z = -chunkseparator; z <= chunkseparator; z++)
 			{
 
 				int xc = c.getPosition().getX() + x;
@@ -242,7 +247,7 @@ public class City extends PermissibleZone
 
 		for (CityChunk cc : this.getClaimedChunk())
 		{
-			if (cc.getResident().equals(id))
+			if (cc!=null &&cc.getResident()!=null &&cc.getResident().equals(id))
 			{
 				cc.setResident(null);
 			}
@@ -573,5 +578,32 @@ public class City extends PermissibleZone
 		}
 
 	}
+
+	public String getCustomName()
+	{
+		if(customName==null || customName.equals(""))
+		{
+			int size = CityPlugin.generalConfig.getCustomCityNameLenght();
+			
+			if(this.getName().length()<size)
+			{
+				size=this.getName().length();
+			}
+			
+			String nametoret = this.getName().substring(0, size).toUpperCase();
+			return nametoret;
+			
+		}
+		
+		return this.customName.toUpperCase();
+	}
+
+	public void setCustomName(String customName)
+	{
+		this.customName = customName;
+		this.save();
+	}
+	
+	
 
 }

@@ -92,4 +92,12 @@ public class CityPlugin
 	{
 		p.sendMessage(Text.of(color,"[City] "+message));
 	}
+	
+	public static boolean hasPerm(Player p,String perm)
+	{
+		if(p.hasPermission(perm))
+			return true;
+		
+		return false;
+	}
 }

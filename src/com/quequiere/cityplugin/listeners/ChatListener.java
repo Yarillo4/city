@@ -21,7 +21,7 @@ public class ChatListener {
 		if(c!=null)
 		{
 			event.setMessage(Text.builder()
-					.append(Text.of(TextColors.AQUA, "["+c.getName()+"] "))
+					.append(Text.of(TextColors.DARK_GREEN, "["+c.getCustomName()+"] "))
 					.append(event.getMessage())
 					.build());
 		}
