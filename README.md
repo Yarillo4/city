@@ -2,10 +2,15 @@
 
 Chunk claim plugin, using a system of city, mayor who can setup custom perm on the entire city and more localy on chunk !
 
+###Downloads
+
+City 0.1.15 ALPHA [pixelsky-mc.com download](http://play.pixelsky-mc.com/downloads/city/City-0.1.5.jar)
+
+
 ###Features
 
 Please refer to the official thread for commands, permissions or features info!
 
 ###Installation
 
-Please refer to the official thread for commands, permissions or features info!
+Put City[version].jar in /mods folder
