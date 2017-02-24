@@ -14,6 +14,8 @@ import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColor;
+
+import com.quequiere.cityplugin.command.CityAdminCommand;
 import com.quequiere.cityplugin.command.CityChunkCommand;
 import com.quequiere.cityplugin.command.CityCommand;
 import com.quequiere.cityplugin.command.CityWorldCommand;
@@ -64,6 +66,7 @@ public class CityPlugin
 		cmdService.register(plugin, new CityCommand(), "city", "c");
 		cmdService.register(plugin, new CityChunkCommand(), "citychunk", "cc");
 		cmdService.register(plugin, new CityWorldCommand(), "cityworld", "cw");
+		cmdService.register(plugin, new CityAdminCommand(), "cityadmin", "ca");
 	}
 
 	@Listener

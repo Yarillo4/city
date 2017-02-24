@@ -5,7 +5,7 @@ plugins {
     id 'net.ellune.blossom' version '1.0.1'
 }
 
-version = "0.1.5"
+version = "0.1.6"
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -26,6 +26,7 @@ repositories {
 
 dependencies {
     compile 'org.spongepowered:spongeapi:5.0.0-SNAPSHOT'
+	compile files('libs/Polis-1.10.2-2.7.0.jar')
 }
 
 task wrapper(type: Wrapper) {

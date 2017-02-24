@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.plugin.Plugin;
@@ -54,35 +55,45 @@ public class City extends PermissibleZone {
 
 	private String customName = "";
 
-	private City(String name, Resident mayor) {
+	private City(String name, Resident mayor,Chunk c) {
 		this.name = name;
-		this.spawn = mayor.getPlayer().getLocation();
+		
+		if( Sponge.getServer().getPlayer(mayor.getId()).isPresent())
+		{
+			this.spawn = mayor.getPlayer().getLocation();
+		}
+	
 		this.initCityPerm();
-		this.citychunk.add(new CityChunk(mayor.getChunk()));
+		this.citychunk.add(new CityChunk(c));
 
 		this.addResident(mayor);
 		mayor.setRank(CityRankEnum.mayor);
 		this.setPlayerTaxe(CityPlugin.generalConfig.getDefaultPlayerTaxOnCity());
 
 	}
+	
+	public static City tryCreateCity(String name, Player p,boolean importFileBypass,User mayor,Chunk location) {
+		
+		if(!importFileBypass)
+		{
+			Account account = CityPlugin.economyService.getOrCreateAccount(p.getUniqueId()).get();
+			TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(),
+					CityPlugin.generalConfig.getCityCreateCost(), Cause.of(NamedCause.source(p)));
 
-	public static City tryCreateCity(String name, Player p) {
+			if (name.length() > CityPlugin.generalConfig.getCityNameLenght()) {
+				CityPlugin.sendMessage("Sorry, the maximum name lenght is: " + CityPlugin.generalConfig.getCityNameLenght(),
+						TextColors.RED, p);
+				return null;
+			}
+			
+			if (transactionResult.getResult() != ResultType.SUCCESS) {
+				CityPlugin.sendMessage("No enought money in your account ! You need: "
+						+ CityPlugin.generalConfig.getCityCreateCost() + " $", TextColors.RED, p);
+				return null;
+			}
 
-		Account account = CityPlugin.economyService.getOrCreateAccount(p.getUniqueId()).get();
-		TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(),
-				CityPlugin.generalConfig.getCityCreateCost(), Cause.of(NamedCause.source(p)));
-
-		if (name.length() > CityPlugin.generalConfig.getCityNameLenght()) {
-			CityPlugin.sendMessage("Sorry, the maximum name lenght is: " + CityPlugin.generalConfig.getCityNameLenght(),
-					TextColors.RED, p);
-			return null;
 		}
-
-		if (transactionResult.getResult() != ResultType.SUCCESS) {
-			CityPlugin.sendMessage("No enought money in your account ! You need: "
-					+ CityPlugin.generalConfig.getCityCreateCost() + " $", TextColors.RED, p);
-			return null;
-		}
+		
 
 		City named = getCityByName(name);
 		if (named != null) {
@@ -90,25 +101,33 @@ public class City extends PermissibleZone {
 			return null;
 		}
 
-		if (City.getCityFromChunk(Tools.getChunk(p.getLocation())) != null) {
+		if (City.getCityFromChunk(location) != null) {
 			CityPlugin.sendMessage("You can't create city on a claimed territory !", TextColors.RED, p);
 			return null;
 		}
 
-		Chunk target = Tools.getChunk(p.getLocation());
-
-		if (hasOtherCityInRadius(null, target)) {
+	
+		if (!importFileBypass && hasOtherCityInRadius(null, location)) {
 			CityPlugin.sendMessage("You can't create city here, need more space between city !", TextColors.RED, p);
 			return null;
 		}
 
-		Resident r = Resident.fromPlayerId(p.getUniqueId());
-		City c = new City(name, r);
+		Resident r = Resident.fromPlayerId(mayor.getUniqueId());
+		City c = new City(name, r,location);
 		loaded.add(c);
 		c.save();
 		r.getCache().initializeCache();
 		c.updatePermission();
+		
+		Sponge.getGame().getServer().getBroadcastChannel().send(Text.builder("New city created: "+name).color(TextColors.GREEN).build());
+		
 		return c;
+	
+		
+	}
+
+	public static City tryCreateCity(String name, Player p) {
+		return tryCreateCity(name, p,false,p,Tools.getChunk(p.getLocation()));
 	}
 
 	public static boolean hasOtherCityInRadius(City reference, Chunk c) {
@@ -149,6 +168,7 @@ public class City extends PermissibleZone {
 	public int getMaxChunk() {
 		return CityPlugin.generalConfig.getChunkPerPlayer() * this.getResidents().size();
 	}
+
 
 	public void addResident(Resident r) {
 		r.setRank(CityRankEnum.resident);
@@ -321,6 +341,22 @@ public class City extends PermissibleZone {
 			}
 		}
 
+	}
+	
+	public void forceClaimImport(Chunk target) {
+		
+		City c = City.getCityFromChunk(target);
+
+		if (c != null) {
+			System.out.println("chunk already claimed, can't import !");
+			return;
+		}
+		
+		CityChunk cc = new CityChunk(target);
+		citychunk.add(cc);
+		this.save();
+		cc.updatePermission();
+		
 	}
 
 	public void tryToClaimHere(Player p, boolean outpost) {
