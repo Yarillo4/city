@@ -118,7 +118,7 @@ public class CityWorldCommand implements CommandCallable
 		CityPlugin.sendMessage("List of possibilities: ", TextColors.RED, p);
 		for (SubCommand sc : SubCommand.values())
 		{
-			CityPlugin.sendMessage("/cc " + sc.name(), TextColors.RED, p);
+			CityPlugin.sendMessage("/cw " + sc.name(), TextColors.RED, p);
 		}
 	}
 

@@ -4,7 +4,7 @@ Chunk claim plugin, using a system of city, mayor who can setup custom perm on t
 
 ###Downloads
 
-City 0.1.16 ALPHA [pixelsky-mc.com download](http://play.pixelsky-mc.com/downloads/city/City-0.1.6.jar)
+City 0.1.17 ALPHA [pixelsky-mc.com download](http://play.pixelsky-mc.com/downloads/city/City-0.1.7.jar)
 
 
 ###Features

@@ -172,12 +172,26 @@ public class City extends PermissibleZone {
 
 	public void addResident(Resident r) {
 		r.setRank(CityRankEnum.resident);
+		if(r.getId()==null)
+		{
+			System.out.println("fatal error");
+			return;
+		}
 		this.residents.add(r.getId());
 		r.getCache().initializeCache();
 
 		for (Player p : Sponge.getServer().getOnlinePlayers()) {
 			if (this.hasResident(p.getUniqueId())) {
-				CityPlugin.sendMessage(r.getPlayer().getName() + " joined the city !", TextColors.GREEN, p);
+				
+				if(r.getPlayer()!=null)
+				{
+					CityPlugin.sendMessage(r.getPlayer().getName() + " joined the city !", TextColors.GREEN, p);
+				}
+				else
+				{
+					CityPlugin.sendMessage(r.getId() + " joined the city !", TextColors.GREEN, p);
+				}
+				
 			}
 
 		}
