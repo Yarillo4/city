@@ -10,6 +10,7 @@ City 0.1.15 ALPHA [pixelsky-mc.com download](http://play.pixelsky-mc.com/downloa
 ###Features
 
 Please refer to the official thread for commands, permissions or features info!
+[Sponge](https://forums.spongepowered.org/t/city-claim/)
 
 ###Installation
 
