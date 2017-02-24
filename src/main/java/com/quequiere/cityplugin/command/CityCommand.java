@@ -25,6 +25,7 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import com.quequiere.cityplugin.CityPlugin;
+import com.quequiere.cityplugin.PluginInfo;
 import com.quequiere.cityplugin.object.City;
 import com.quequiere.cityplugin.object.CityChunk;
 import com.quequiere.cityplugin.object.Resident;
@@ -646,6 +647,7 @@ public class CityCommand implements CommandCallable
 			else if (subc.equals(SubCommand.credit))
 			{
 				CityPlugin.sendMessage("__________[ Credit ]__________", TextColors.GREEN, p);
+				CityPlugin.sendMessage("City plugin "+PluginInfo.VERSION, TextColors.GREEN, p);
 				CityPlugin.sendMessage("Dev by quequiere [FR]", TextColors.GREEN, p);
 				CityPlugin.sendMessage("Skype support: quequierebego", TextColors.GREEN, p);
 				CityPlugin.sendMessage("For pixelsky-mc.com", TextColors.GREEN, p);
@@ -792,6 +794,7 @@ public class CityCommand implements CommandCallable
 	public static void displayHelp(Player p)
 	{
 
+		CityPlugin.sendMessage("City plugin "+PluginInfo.VERSION, TextColors.GREEN, p);
 		CityPlugin.sendMessage("List of possibilities: ", TextColors.RED, p);
 		for (SubCommand sc : SubCommand.values())
 		{

@@ -33,8 +33,6 @@ import com.quequiere.cityplugin.datamanip.LocationDeserializer;
 import com.quequiere.cityplugin.datamanip.LocationSerializer;
 import com.quequiere.cityplugin.object.tool.PermissibleZone;
 
-@Plugin(id = "city", name = "City", version = "0.1", description = "Claim chunk plugin", url = "http://pixelsky-mc.com", authors = {
-		"quequiere" })
 public class City extends PermissibleZone {
 	private static ArrayList<City> loaded = new ArrayList<City>();
 	private static File folder = new File("./config/city/citys/");

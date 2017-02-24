@@ -6,7 +6,6 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandManager;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
@@ -25,7 +24,7 @@ import com.quequiere.cityplugin.listeners.MoveListener;
 import com.quequiere.cityplugin.listeners.PhysicBlockListener;
 import com.quequiere.cityplugin.object.City;
 
-@Plugin(id = "city", name = "City", version = "0.01")
+@Plugin(id = "city", name = "City", version = PluginInfo.VERSION, description = "Claim chunk plugin", url = "http://pixelsky-mc.com", authors = { "quequiere" })
 public class CityPlugin
 {
 
@@ -41,11 +40,11 @@ public class CityPlugin
 		container = Sponge.getPluginManager().fromInstance(CityPlugin.plugin).get();
 
 		this.loadConfig();
-		
+
 		this.registerListener();
 		this.registerCommand();
 	}
-	
+
 	private void loadConfig()
 	{
 		CityGeneralConfig.loadConfig();
@@ -66,7 +65,7 @@ public class CityPlugin
 		cmdService.register(plugin, new CityChunkCommand(), "citychunk", "cc");
 		cmdService.register(plugin, new CityWorldCommand(), "cityworld", "cw");
 	}
-	
+
 	@Listener
 	public void onGamePostInit(GameStartedServerEvent event)
 	{
@@ -80,30 +79,30 @@ public class CityPlugin
 		{
 			System.out.println("FATAL ERROR WITH CITY PLUGIN, NO ECONOMY SERVICE !!!!!!!!!!!");
 		}
-		
+
 		City.reloadAll();
 	}
-	
+
 	public static void sendMessageWithoutPrefix(String message, TextColor color, Player p)
 	{
-		p.sendMessage(Text.of(color,message));
+		p.sendMessage(Text.of(color, message));
 	}
 
 	public static void sendMessage(String message, TextColor color, Player p)
 	{
-		p.sendMessage(Text.of(color,"[City] "+message));
+		p.sendMessage(Text.of(color, "[City] " + message));
 	}
-	
-	public static void sendMessage(String message, TextColor color,Object desc, Player p)
+
+	public static void sendMessage(String message, TextColor color, Object desc, Player p)
 	{
-		p.sendMessage(Text.of(color,TextActions.showText(Text.of(desc)),"[City] "+message));
+		p.sendMessage(Text.of(color, TextActions.showText(Text.of(desc)), "[City] " + message));
 	}
-	
-	public static boolean hasPerm(Player p,String perm)
+
+	public static boolean hasPerm(Player p, String perm)
 	{
-		if(p.hasPermission(perm))
+		if (p.hasPermission(perm))
 			return true;
-		
+
 		return false;
 	}
 }

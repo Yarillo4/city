@@ -8,6 +8,7 @@ import org.spongepowered.api.block.tileentity.MobSpawner;
 import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.block.tileentity.carrier.TileEntityCarrier;
 import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.hanging.Hanging;
 import org.spongepowered.api.entity.living.ArmorStand;
@@ -148,7 +149,7 @@ public class PhysicBlockListener
 
 			}
 
-			Optional<ItemStack> i = p.getItemInHand(((InteractBlockEvent.Secondary) event).getHandType());
+			Optional<ItemStack> i = p.getItemInHand(HandTypes.MAIN_HAND);
 			if (i.isPresent())
 			{
 				ItemStack is = i.get();

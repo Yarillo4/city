@@ -4,10 +4,8 @@ Chunk claim plugin, using a system of city, mayor who can setup custom perm on t
 
 ###Features
 
-Please refer to the official thread for commands, permissions or features info!<br>
-[Sponge Release Thread](---)
+Please refer to the official thread for commands, permissions or features info!
 
 ###Installation
 
-Please refer to the official thread for commands, permissions or features info!<br>
-[Sponge Release Thread](---)
+Please refer to the official thread for commands, permissions or features info!

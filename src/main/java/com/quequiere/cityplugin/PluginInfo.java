@@ -1,7 +1,7 @@
 /*
- * This file is part of EconomyLite, licensed under the MIT License (MIT).
+ * This file is part of City, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2015 - 2017 quequiere
+ * Copyright (c) 2017 - 2017 quequiere
  * Copyright (c) Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -33,5 +33,5 @@ public class PluginInfo {
     public static final String ID = "city";
     public static final String NAME = "City";
     public static final String VERSION = "@project.version@";
-    public static final String DESCRIPTION = "An economy plugin for Sponge.";
+    public static final String DESCRIPTION = "An claim chunk plugin for sponge";
 }

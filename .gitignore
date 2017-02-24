@@ -14,3 +14,4 @@ local.properties
 .settings/
 .project
 .factorypath
+.classpath
