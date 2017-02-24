@@ -1,0 +1,76 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'maven'
+    id 'com.github.hierynomus.license' version '0.12.1'
+    id 'net.ellune.blossom' version '1.0.1'
+    id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+group 'com.quequiere'
+
+defaultTasks 'licenseFormat', 'shadowJar'
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven {
+        name 'Sponge API repo'
+        url 'http://repo.spongepowered.org/maven'
+    }
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    compile 'org.spongepowered:spongeapi:${project.apiVersion}'
+}
+
+shadowJar {
+    def bVer = System.getenv("BUILD_NUMBER") ?: version
+    def buildNumber = ''
+    if (System.getenv("TRAVIS") != null) {
+        buildNumber = '-BUILD'
+    }
+    archiveName = "City-${project.apiVersion.minus("-SNAPSHOT")}-${bVer}${buildNumber}.jar"
+
+    dependencies {
+        //include dependency('net.minecrell.mcstats:statslite-sponge')
+    }
+}
+
+artifacts {
+    archives shadowJar
+}
+
+license {
+
+    // The project properties to use
+    ext.name = project.name
+    ext.owner = project.owner
+    ext.inceptionYear = project.inceptionYear
+    ext.currentYear = project.currentYear
+
+    // The file that contains the license header
+    header file('HEADER.txt')
+
+    // The source sets to apply the license to
+    sourceSets = project.sourceSets
+
+    ignoreFailures false
+    strictCheck true
+
+    mapping {
+        java = 'SLASHSTAR_STYLE'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.11'
+}
+
+blossom {
+    replaceToken '@project.version@', project.version, 'src/main/com/quequiere/cityplugin/PluginInfo.java'
+}

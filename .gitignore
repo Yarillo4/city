@@ -1,4 +1,16 @@
+# IntelliJ
+.idea/
+
+# Gradle
+.gradle/
+build/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# Eclipse
 bin/
-.classpath
+tmp/
+local.properties
+.settings/
 .project
-.settings/org.eclipse.jdt.core.prefs
+.factorypath
