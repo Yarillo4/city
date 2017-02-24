@@ -8,6 +8,7 @@ import org.spongepowered.api.block.tileentity.MobSpawner;
 import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.block.tileentity.carrier.TileEntityCarrier;
 import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.hanging.Hanging;
 import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.player.Player;
@@ -15,14 +16,9 @@ import org.spongepowered.api.entity.vehicle.minecart.Minecart;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.block.InteractBlockEvent;
-import org.spongepowered.api.event.block.tileentity.TargetTileEntityEvent;
-import org.spongepowered.api.event.entity.AffectEntityEvent;
-import org.spongepowered.api.event.entity.DamageEntityEvent;
-import org.spongepowered.api.event.entity.DestructEntityEvent;
-import org.spongepowered.api.event.entity.ExpireEntityEvent;
+import org.spongepowered.api.event.entity.CollideEntityEvent;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.event.filter.cause.Root;
-import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
@@ -33,6 +29,23 @@ import com.quequiere.cityplugin.object.Resident;
 
 public class PhysicBlockListener
 {
+	
+	@Listener
+	public void on(CollideEntityEvent event, @Root Player p)
+	{
+
+		Resident r = Resident.fromPlayerId(p.getUniqueId());
+		for(Entity e:event.getEntities())
+		{
+			if (!r.getCache().hasPerm(e.getLocation(), CityPermEnum.SWITH))
+			{
+				event.setCancelled(true);
+				CityPlugin.sendMessage("You can't swith with here: collide entity.", TextColors.RED, p);
+				return;
+			}
+		}
+	
+	}
 
 	@Listener
 	public void on(InteractEntityEvent event, @Root Player p)
@@ -191,7 +204,7 @@ public class PhysicBlockListener
 					event.setCancelled(true);
 					if (!transaction.getOriginal().getState().getType().equals(BlockTypes.GRASS))
 					{
-						CityPlugin.sendMessage("You can't build here !", TextColors.RED, p);
+						CityPlugin.sendMessage("You can't build here !", TextColors.RED,event.toString(), p);
 					}
 					return;
 				}

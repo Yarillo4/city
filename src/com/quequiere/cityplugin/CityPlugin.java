@@ -13,6 +13,7 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColor;
 import com.quequiere.cityplugin.command.CityChunkCommand;
 import com.quequiere.cityplugin.command.CityCommand;
@@ -91,6 +92,11 @@ public class CityPlugin
 	public static void sendMessage(String message, TextColor color, Player p)
 	{
 		p.sendMessage(Text.of(color,"[City] "+message));
+	}
+	
+	public static void sendMessage(String message, TextColor color,Object desc, Player p)
+	{
+		p.sendMessage(Text.of(color,TextActions.showText(Text.of(desc)),"[City] "+message));
 	}
 	
 	public static boolean hasPerm(Player p,String perm)

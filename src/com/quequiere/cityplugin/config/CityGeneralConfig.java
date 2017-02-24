@@ -22,17 +22,51 @@ public class CityGeneralConfig {
 	private int chunkPerPlayer = 5;
 	private double chunkDailyCostBase = 20;
 	private double chunkClaimCost = 500;
+	private double outpostClaimCost = 40000;
 	private double cityCreateCost = 50000;
 	private int cityChunkseparator = 5;
+	private int cityNameLenght = 10;
 	private int customCityNameLenght = 3;
 	private int maxPlayerTaxOnCity = 9999;
 	private int defaultPlayerTaxOnCity =0;
+	private int teleportCityCooldownInSeconds=60;
+	private boolean cityNameInChat = true;
 
 	
 	public int getChunkPerPlayer() {
 		return chunkPerPlayer;
 	}
 	
+	
+	
+
+	public BigDecimal getOutpostClaimCost() {
+		return new BigDecimal(this.outpostClaimCost);
+	}
+
+
+
+
+	public boolean isCityNameInChat() {
+		return cityNameInChat;
+	}
+
+
+
+
+	public int getCityNameLenght() {
+		return cityNameLenght;
+	}
+
+
+
+
+	public int getTeleportCityCooldownInSeconds() {
+		return teleportCityCooldownInSeconds;
+	}
+
+
+
 
 	public int getLastTaxCheck() {
 		return lastTaxCheck;

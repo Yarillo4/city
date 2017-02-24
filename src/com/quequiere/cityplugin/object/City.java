@@ -73,6 +73,13 @@ public class City extends PermissibleZone
 		Account account = CityPlugin.economyService.getOrCreateAccount(p.getUniqueId()).get();
 		TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), CityPlugin.generalConfig.getCityCreateCost(), Cause.of(NamedCause.source(p)));
 
+		
+		if(name.length()>CityPlugin.generalConfig.getCityNameLenght())
+		{
+			CityPlugin.sendMessage("Sorry, the maximum name lenght is: "+CityPlugin.generalConfig.getCityNameLenght(), TextColors.RED, p);
+			return null;
+		}
+		
 		if (transactionResult.getResult() != ResultType.SUCCESS)
 		{
 			CityPlugin.sendMessage("No enought money in your account ! You need: " + CityPlugin.generalConfig.getCityCreateCost() + " $", TextColors.RED, p);
@@ -162,6 +169,16 @@ public class City extends PermissibleZone
 		r.setRank(CityRankEnum.resident);
 		this.residents.add(r.getId());
 		r.getCache().initializeCache();
+		
+		for(Player p:Sponge.getServer().getOnlinePlayers())
+		{
+			if(this.hasResident(p.getUniqueId()))
+			{
+				CityPlugin.sendMessage(r.getPlayer().getName()+" joined the city !", TextColors.GREEN, p);
+			}
+			
+		}
+		
 		this.save();
 	}
 
@@ -372,7 +389,7 @@ public class City extends PermissibleZone
 
 	}
 
-	public void tryToClaimHere(Player p)
+	public void tryToClaimHere(Player p,boolean outpost)
 	{
 		Resident r = Resident.fromPlayerId(p.getUniqueId());
 		Chunk target = r.getChunk();
@@ -415,7 +432,7 @@ public class City extends PermissibleZone
 			}
 		}
 
-		if (!pass)
+		if (!pass && !outpost)
 		{
 			CityPlugin.sendMessage("Claims need to be accroch to the city, or create an outpost", TextColors.RED, p);
 			return;
@@ -428,12 +445,12 @@ public class City extends PermissibleZone
 		}
 
 		Account account = CityPlugin.economyService.getOrCreateAccount(this.getNameEconomy()).get();
-		TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), CityPlugin.generalConfig.getChunkClaimCost(), Cause.of(NamedCause.source(p)));
+		TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(),outpost? CityPlugin.generalConfig.getOutpostClaimCost(): CityPlugin.generalConfig.getChunkClaimCost(), Cause.of(NamedCause.source(p)));
 
 		if (transactionResult.getResult() != ResultType.SUCCESS)
 		{
 			CityPlugin.sendMessage("No enought money in the city's bank account.", TextColors.RED, p);
-			CityPlugin.sendMessage("Use /c deposit to add fund. You need " + CityPlugin.generalConfig.getChunkClaimCost() + " $", TextColors.RED, p);
+			CityPlugin.sendMessage("Use /c deposit to add fund. You need " + (outpost ? CityPlugin.generalConfig.getOutpostClaimCost(): CityPlugin.generalConfig.getChunkClaimCost()) + " $", TextColors.RED, p);
 			return;
 		}
 

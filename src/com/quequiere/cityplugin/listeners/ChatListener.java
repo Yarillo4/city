@@ -7,25 +7,22 @@ import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import com.quequiere.cityplugin.CityPlugin;
 import com.quequiere.cityplugin.object.City;
 import com.quequiere.cityplugin.object.Resident;
 
-
 public class ChatListener {
-	
+
 	@Listener
-	public void onMessage(MessageChannelEvent.Chat event, @Root Player player)
-	{
-		Resident r = Resident.fromPlayerId(player.getUniqueId());
-		City c = r.getCity();
-		if(c!=null)
-		{
-			event.setMessage(Text.builder()
-					.append(Text.of(TextColors.DARK_GREEN, "["+c.getCustomName()+"] "))
-					.append(event.getMessage())
-					.build());
+	public void onMessage(MessageChannelEvent.Chat event, @Root Player player) {
+		if (CityPlugin.generalConfig.isCityNameInChat()) {
+			Resident r = Resident.fromPlayerId(player.getUniqueId());
+			City c = r.getCity();
+			if (c != null) {
+				event.setMessage(Text.builder().append(Text.of(TextColors.DARK_GREEN, "[" + c.getCustomName() + "] "))
+						.append(event.getMessage()).build());
+			}
 		}
-		
-	
+
 	}
 }

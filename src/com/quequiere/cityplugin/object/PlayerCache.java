@@ -15,6 +15,8 @@ public class PlayerCache
 	public static ArrayList<PlayerCache> cache = new ArrayList<PlayerCache>();
 	private City city;
 	private UUID id;
+	private ArrayList<City> invitation = new ArrayList<City>();
+	private long lastTpCity = 0;
 
 	private HashMap<Chunk, HashMap<CityPermEnum, Boolean>> cachePerm;
 
@@ -25,6 +27,7 @@ public class PlayerCache
 		cache.add(this);
 	}
 
+	
 	public static PlayerCache generateCache(UUID id)
 	{
 		for (PlayerCache c : cache)
@@ -39,6 +42,17 @@ public class PlayerCache
 		PlayerCache cache = new PlayerCache(id);
 		return cache;
 	}
+
+	
+	public long getLastTpCity() {
+		return lastTpCity;
+	}
+
+
+	public void setLastTpCity(long lastTpCity) {
+		this.lastTpCity = lastTpCity;
+	}
+
 
 	public void initializeCache()
 	{
@@ -188,6 +202,12 @@ public class PlayerCache
 		}
 		this.getCachePerm().put(c, local1);
 
+	}
+	
+	
+
+	public ArrayList<City> getInvitation() {
+		return invitation;
 	}
 
 	public boolean hasPerm(Location<World> loc, CityPermEnum perm)

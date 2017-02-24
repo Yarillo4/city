@@ -5,6 +5,8 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -164,6 +166,12 @@ public class CityCommand implements CommandCallable
 								named.addResident(r);
 								CityPlugin.sendMessage("You joined the city !", TextColors.GREEN, p);
 							}
+							else if(r.getCache().getInvitation().contains(named))
+							{
+								r.getCache().getInvitation().clear();
+								named.addResident(r);
+								CityPlugin.sendMessage("You joined the city with an invitation !", TextColors.GREEN, p);
+							}
 							else
 							{
 								CityPlugin.sendMessage("You need to be invited to join this city !", TextColors.RED, p);
@@ -203,6 +211,53 @@ public class CityCommand implements CommandCallable
 						}
 
 					}
+				}
+			}
+			else if (subc.equals(SubCommand.invite))
+			{
+				String perm = "city.invite";
+				if(!CityPlugin.hasPerm(p, perm))
+				{
+					CityPlugin.sendMessage("You need "+perm+" perm to do that !", TextColors.RED, p);
+					return CommandResult.success();
+				}
+				
+				if (c == null)
+				{
+					CityPlugin.sendMessage("You need to be in a city to do that", TextColors.RED, p);
+				}
+				else
+				{
+					if (c.hasMayorPerm(r))
+					{
+						if (args.length < 2)
+						{
+							CityPlugin.sendMessage("You need to give a short name !", TextColors.RED, p);
+						}
+						else
+						{
+							String name = args[1];
+							Optional<Player> targetp = Sponge.getServer().getPlayer(name);
+							if(targetp.isPresent())
+							{
+								Resident targetr=Resident.fromPlayerId(targetp.get().getUniqueId());
+								targetr.getCache().getInvitation().add(c);
+								CityPlugin.sendMessage("Player invited", TextColors.GREEN, p);
+								CityPlugin.sendMessage("You have beed invited to join "+c.getName(), TextColors.GREEN, targetp.get());
+							}
+							else
+							{
+								CityPlugin.sendMessage("This player is not online !", TextColors.RED, p);
+							}
+							
+
+						}
+					}
+					else
+					{
+						CityPlugin.sendMessage("You need to be mayor to do that !", TextColors.RED, p);
+					}
+
 				}
 			}
 			else if (subc.equals(SubCommand.setcustomname))
@@ -266,7 +321,26 @@ public class CityCommand implements CommandCallable
 					else
 					{
 						CityPlugin.sendMessage("Starting claim process ...", TextColors.GREEN, p);
-						c.tryToClaimHere(p);
+						c.tryToClaimHere(p,false);
+					}
+				}
+			}
+			else if (subc.equals(SubCommand.claimoutpost))
+			{
+				if (c == null)
+				{
+					CityPlugin.sendMessage("You need to be in a city to do that !", TextColors.RED, p);
+				}
+				else
+				{
+					if (!c.hasAssistantPerm(r))
+					{
+						CityPlugin.sendMessage("You need assistant perm to do that !", TextColors.RED, p);
+					}
+					else
+					{
+						CityPlugin.sendMessage("Starting claim outpost process ...", TextColors.GREEN, p);
+						c.tryToClaimHere(p,true);
 					}
 				}
 			}
@@ -286,8 +360,35 @@ public class CityCommand implements CommandCallable
 				}
 				else
 				{
-					p.setLocation(c.getSpawn());
-					CityPlugin.sendMessage("You has been teleported to the city !", TextColors.GREEN, p);
+					int cdConf = CityPlugin.generalConfig.getTeleportCityCooldownInSeconds();
+					boolean passcd = true;
+					if(cdConf>=0)
+					{
+						long last = r.getCache().getLastTpCity();
+						long now = System.currentTimeMillis();
+						long diff = now-last;
+						
+						if(diff>=cdConf)
+						{
+							r.getCache().setLastTpCity(now);
+						}
+						else
+						{
+							diff/=1000.0d;
+							diff = Math.round(diff);
+							passcd=false;
+							CityPlugin.sendMessage("You need to wait "+diff+" seconds to teleport !", TextColors.RED, p);
+						}
+						
+					}
+					
+					if(passcd)
+					{
+						p.setLocation(c.getSpawn());
+						CityPlugin.sendMessage("You has been teleported to the city !", TextColors.GREEN, p);
+					}
+					
+					
 				}
 			}
 			else if (subc.equals(SubCommand.unclaim))
@@ -319,6 +420,14 @@ public class CityCommand implements CommandCallable
 						}
 
 					}
+				}
+			}
+			else if (subc.equals(SubCommand.list))
+			{
+				CityPlugin.sendMessage("City list ["+City.getLoaded().size()+"]:", TextColors.RED, p);
+				for(City tarc: City.getLoaded())
+				{
+					CityPlugin.sendMessageWithoutPrefix("-"+tarc.getName(), tarc.isOpenJoin()?TextColors.GREEN:TextColors.RED, p);
 				}
 			}
 			else if (subc.equals(SubCommand.leave))
@@ -366,7 +475,6 @@ public class CityCommand implements CommandCallable
 			}
 			else if (subc.equals(SubCommand.settax))
 			{
-				
 				
 				String perm = "city.settax";
 				if(!CityPlugin.hasPerm(p, perm))
@@ -559,7 +667,7 @@ public class CityCommand implements CommandCallable
 
 	public enum SubCommand
 	{
-		create, claim, leave, help, join, destroy, unclaim, deposit, info, withdraw, teleport, credit, settax, setteleport, setcustomname
+		create, claim, leave, help, join, destroy, unclaim, deposit, info, withdraw, teleport, credit, settax, setteleport, setcustomname,invite,list,claimoutpost
 	};
 
 	public static void displayCity(Player p, Resident r, City c)
