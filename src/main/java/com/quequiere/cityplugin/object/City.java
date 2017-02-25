@@ -26,6 +26,7 @@ import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.google.common.base.Optional;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.quequiere.cityplugin.CityPlugin;
@@ -357,6 +358,32 @@ public class City extends PermissibleZone {
 
 	}
 	
+	public void setNoMayor()
+	{
+		for(UUID id:this.getResidents())
+		{
+			Resident r = Resident.fromPlayerId(id);
+			if(r.getRank().equals(CityRankEnum.mayor))
+			{
+				r.setRank(CityRankEnum.assistant);
+			}
+		}
+	}
+	
+	public Optional<Resident> getMayor()
+	{
+		for(UUID id:this.getResidents())
+		{
+			Resident r = Resident.fromPlayerId(id);
+			if(r.getRank().equals(CityRankEnum.mayor))
+			{
+				return Optional.of(r);
+			}
+		}
+		
+		return Optional.absent();
+	}
+	
 	public void forceClaimImport(Chunk target) {
 		
 		City c = City.getCityFromChunk(target);
@@ -476,7 +503,13 @@ public class City extends PermissibleZone {
 		this.save();
 	}
 
-	public BigDecimal getDailyCost() {
+	public BigDecimal getTaxDailyCost() {
+		
+		if(!this.getMayor().isPresent())
+		{
+			return new BigDecimal(0); 
+		}
+		
 		return CityPlugin.generalConfig.getChunkDailyCostBase().multiply(new BigDecimal(this.getClaimedChunk().size()));
 	}
 

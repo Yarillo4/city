@@ -50,7 +50,7 @@ public class JoinListener
 			 for(City c:cites)
 			 {
 					Account account = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
-					TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), c.getDailyCost(), Cause.of(NamedCause.source(event)));
+					TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), c.getTaxDailyCost(), Cause.of(NamedCause.source(event)));
 					
 					if (transactionResult.getResult() != ResultType.SUCCESS)
 					{

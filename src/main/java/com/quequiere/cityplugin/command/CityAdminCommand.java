@@ -105,12 +105,21 @@ public class CityAdminCommand implements CommandCallable
 
 				if (args.length < 3)
 				{
-					CityPlugin.sendMessage("You need to give a name to the city and a playername !", TextColors.RED, p);
+					CityPlugin.sendMessage("You need to give a name to the city and a playername or 'none' to set as admin city (don't pay tax)!", TextColors.RED, p);
 				}
 				else
 				{
 					City c = City.getCityByName(args[1]);
 					Optional<UserStorageService> userStorage = Sponge.getServiceManager().provide(UserStorageService.class);
+					
+					
+					if(args[2].equals("none"))
+					{
+						c.setNoMayor();
+						CityPlugin.sendMessage("This is an admin city now.", TextColors.GREEN, p);
+						return CommandResult.success();
+					}
+					
 
 					Optional<User> uo = null;
 					try

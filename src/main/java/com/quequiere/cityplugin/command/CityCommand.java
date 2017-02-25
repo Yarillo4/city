@@ -705,21 +705,29 @@ public class CityCommand implements CommandCallable
 		builder.append(Text.of(TextColors.GREEN, CityPlugin.generalConfig.getChunkDailyCostBase() + " $"));
 
 		builder.append(Text.of(TextColors.DARK_GREEN, " Daily city cost: "));
-		builder.append(Text.of(TextColors.RED, c.getDailyCost() + " $"));
+		builder.append(Text.of(TextColors.RED, c.getTaxDailyCost() + " $"));
 
 		builder.append(Text.of("\n"));
 
 		// --------------------------------------------------------------------------------------------
 
-		builder.append(Text.of(TextColors.DARK_GREEN, "Remaining day before destruction: "));
-		BigDecimal days = balance.divide(c.getDailyCost());
-		days = days.setScale(2, RoundingMode.DOWN);
-		builder.append(Text.of(TextColors.RED, days + " days"));
-
-		if (days.compareTo(new BigDecimal(5)) < 1)
+		if(c.getMayor().isPresent())
 		{
-			builder.append(Text.of(TextColors.RED, "\nEmergency alert, deposit funds with '/c deposit' or city could be destroyed in few days"));
+			builder.append(Text.of(TextColors.DARK_GREEN, "Remaining day before destruction: "));
+			BigDecimal days = balance.divide(c.getTaxDailyCost());
+			days = days.setScale(2, RoundingMode.DOWN);
+			builder.append(Text.of(TextColors.RED, days + " days"));
+
+			if (days.compareTo(new BigDecimal(5)) < 1)
+			{
+				builder.append(Text.of(TextColors.RED, "\nEmergency alert, deposit funds with '/c deposit' or city could be destroyed in few days"));
+			}
 		}
+		else
+		{
+			builder.append(Text.of(TextColors.DARK_GREEN, "Admin cities doesn't pay tax."));
+		}
+		
 
 		builder.append(Text.of("\n"));
 
