@@ -15,6 +15,8 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColor;
 
+import com.google.inject.Inject;
+import com.quequiere.cityplugin.bstats.Metrics;
 import com.quequiere.cityplugin.command.CityAdminCommand;
 import com.quequiere.cityplugin.command.CityChunkCommand;
 import com.quequiere.cityplugin.command.CityCommand;
@@ -34,6 +36,9 @@ public class CityPlugin
 	public static PluginContainer container;
 	public static CityGeneralConfig generalConfig;
 	public static EconomyService economyService;
+	
+	@Inject
+	private Metrics metrics;
 
 	@Listener
 	public void preInit(GamePreInitializationEvent e)
@@ -84,6 +89,7 @@ public class CityPlugin
 		}
 
 		City.reloadAll();
+		
 	}
 
 	public static void sendMessageWithoutPrefix(String message, TextColor color, Player p)
