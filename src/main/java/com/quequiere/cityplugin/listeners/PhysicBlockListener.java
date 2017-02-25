@@ -12,6 +12,7 @@ import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.hanging.Hanging;
 import org.spongepowered.api.entity.living.ArmorStand;
+import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.vehicle.minecart.Minecart;
 import org.spongepowered.api.event.Listener;
@@ -22,6 +23,7 @@ import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import com.quequiere.cityplugin.CityPlugin;
@@ -50,7 +52,7 @@ public class PhysicBlockListener
 
 	@Listener
 	public void on(InteractEntityEvent event, @Root Player p)
-	{
+	{	
 		if (event.getTargetEntity() instanceof Hanging)
 		{
 			Resident r = Resident.fromPlayerId(p.getUniqueId());
@@ -85,13 +87,23 @@ public class PhysicBlockListener
 				return;
 			}
 		}
+		else if (event.getTargetEntity() instanceof Living)
+		{
+			Resident r = Resident.fromPlayerId(p.getUniqueId());
+
+			if (!r.getCache().hasPerm(event.getTargetEntity().getLocation(), CityPermEnum.USEITEM))
+			{
+				event.setCancelled(true);
+				CityPlugin.sendMessage("You can't use item here: interactWithLivingEntity", TextColors.RED, p);
+				return;
+			}
+		}
 
 	}
 
 	@Listener
 	public void interact(final InteractBlockEvent event, @Root Player p)
 	{
-
 		Optional<Location<World>> location = event.getTargetBlock().getLocation();
 
 		if (event.getTargetBlock() == null)
@@ -132,22 +144,35 @@ public class PhysicBlockListener
 		{
 
 			Optional<TileEntity> optiel = location.get().getTileEntity();
-
+			
 			if (optiel.isPresent())
 			{
-
 				TileEntity te = optiel.get();
-				if (te instanceof TileEntityCarrier || te instanceof MobSpawner)
+				if(te instanceof TileEntity)
 				{
-					if (!r.getCache().hasPerm(loc, CityPermEnum.SWITH))
+					if (!r.getCache().hasPerm(loc, CityPermEnum.USEITEM))
 					{
 						event.setCancelled(true);
-						CityPlugin.sendMessage("You can't swith and interact with inventory here !", TextColors.RED, p);
+						CityPlugin.sendMessage("You can't use item here: tileEntity", TextColors.RED, p);
 						return;
 					}
 				}
 
 			}
+			
+			
+			//special fix for apricorntree
+			Optional<TileEntity> downTile = location.get().getRelative(Direction.DOWN).getTileEntity();
+			if(downTile.isPresent() && downTile.get().getClass().getName().contains("TileEntityApricornTree"))
+			{
+				if (!r.getCache().hasPerm(loc, CityPermEnum.USEITEM))
+				{
+					event.setCancelled(true);
+					CityPlugin.sendMessage("You can't use item here: apricornTree", TextColors.RED, p);
+					return;
+				}
+			}
+			
 
 			Optional<ItemStack> i = p.getItemInHand(HandTypes.MAIN_HAND);
 			if (i.isPresent())
