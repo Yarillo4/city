@@ -100,6 +100,38 @@ public class CityAdminCommand implements CommandCallable
 				}
 
 			}
+			else if (subc.equals(SubCommand.setbonusclaim))
+			{
+
+				if (args.length < 3)
+				{
+					CityPlugin.sendMessage("You need to give a name to the city and a claim bonus !", TextColors.RED, p);
+				}
+				else
+				{
+					City c = City.getCityByName(args[1]);
+			
+
+					if (c == null)
+					{
+						CityPlugin.sendMessage("We can't find city:" + args[1], TextColors.RED, p);
+					}
+					else 
+					{
+						try
+						{
+							int nb = Integer.parseInt(args[2]);
+							c.setBonusClaim(nb);
+							CityPlugin.sendMessage("Bonus claim set " + args[1], TextColors.GREEN, p);
+						}
+						catch(NumberFormatException e)
+						{
+							CityPlugin.sendMessage("You need to give an integer: " + args[2], TextColors.RED, p);
+						}
+					}
+				}
+			}
+
 			else if (subc.equals(SubCommand.setmayor))
 			{
 
@@ -196,7 +228,7 @@ public class CityAdminCommand implements CommandCallable
 
 	public enum SubCommand
 	{
-		help, polisimport,setmayor
+		help, polisimport,setmayor,setbonusclaim
 	};
 
 	public static void displayHelp(Player p)

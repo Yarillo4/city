@@ -691,8 +691,12 @@ public class CityCommand implements CommandCallable
 		// --------------------------------------------------------------------------------------------
 
 		builder.append(Text.of(TextColors.DARK_GREEN, "City chunks: "));
-		builder.append(Text.of(TextColors.GREEN, c.getClaimedChunk().size() + " / " + c.getMaxChunk() + "\n"));
+		builder.append(Text.of(TextColors.GREEN, c.getClaimedChunk().size() + " / " + c.getMaxChunk()));
 
+		builder.append(Text.of(TextColors.DARK_GREEN, " Bonus: "));
+		builder.append(Text.of(TextColors.AQUA, "["+c.getBonusClaim()+"]"));
+		
+		builder.append(Text.of("\n"));
 		// --------------------------------------------------------------------------------------------
 
 		Account account = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();

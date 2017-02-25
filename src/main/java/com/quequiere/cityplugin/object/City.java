@@ -55,6 +55,8 @@ public class City extends PermissibleZone {
 	private boolean removePlayerTax = false;
 
 	private String customName = "";
+	
+	private int bonusClaim=0;
 
 	private City(String name, Resident mayor,Chunk c) {
 		this.name = name;
@@ -167,9 +169,22 @@ public class City extends PermissibleZone {
 	}
 
 	public int getMaxChunk() {
-		return CityPlugin.generalConfig.getChunkPerPlayer() * this.getResidents().size();
+		return CityPlugin.generalConfig.getChunkPerPlayer() * this.getResidents().size() + this.getBonusClaim();
+	}
+	
+	
+
+
+	public int getBonusClaim()
+	{
+		return bonusClaim;
 	}
 
+	public void setBonusClaim(int bonusClaim)
+	{
+		this.bonusClaim = bonusClaim;
+		this.save();
+	}
 
 	public void addResident(Resident r) {
 		r.setRank(CityRankEnum.resident);
@@ -441,7 +456,7 @@ public class City extends PermissibleZone {
 			return;
 		}
 
-		if (hasOtherCityInRadius(null, target)) {
+		if (hasOtherCityInRadius(this, target)) {
 			CityPlugin.sendMessage("You cant claim here, need more space between city !", TextColors.RED, p);
 			return;
 		}
