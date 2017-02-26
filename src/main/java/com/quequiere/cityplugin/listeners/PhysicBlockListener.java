@@ -250,7 +250,7 @@ public class PhysicBlockListener
 				{
 					if (loc.getTileEntity().isPresent())
 					{
-						CityPlugin.sendMessage("Special dev fix, report is abnormal", TextColors.GRAY, p);
+						//CityPlugin.sendMessage("Special dev fix, report is abnormal", TextColors.GRAY, p);
 						return;
 					}
 					else
