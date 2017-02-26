@@ -663,7 +663,7 @@ public class CityCommand implements CommandCallable
 				}
 				else
 				{
-					MapCityChunkVisualizer.updatedisplay(p,p.getRotation(),p.getLocation());
+					MapCityChunkVisualizer.updatedisplay(p,p.getRotation().getFloorY()%360,p.getLocation());
 				}
 				
 				

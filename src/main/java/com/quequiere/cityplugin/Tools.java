@@ -22,16 +22,25 @@ public class Tools
 		return chunk;
 	}
 	
-	public static Direction getPlayerDirection(Vector3d vector)
+	public static Direction getPlayerDirection(int degrees)
 	{
-		Direction[] cardinalDirections = { Direction.SOUTH, Direction.EAST, Direction.NORTH, Direction.WEST };
-		int index = (int) ((vector.getY() + 45) / 90);
-
-		int index2 = index % 4;
-
-
-		Direction d = cardinalDirections[index2];
-		return d;
+	
+		degrees = Math.abs(degrees);
+		try
+		{
+			Direction[] cardinalDirections = { Direction.SOUTH, Direction.WEST, Direction.NORTH, Direction.EAST };
+			int index = (int) Math.floor((degrees *4F)/360+0.5D) &3; 
+			
+			Direction d = cardinalDirections[Math.abs(index)];
+			return d;
+		}
+		catch(ArrayIndexOutOfBoundsException e)
+		{
+			System.out.println("City error with degrees: "+degrees);
+			return Direction.NORTH;
+		}
+		
+	
 	}
 	
 	public static Location<Chunk> addDirection(Location<Chunk> c,Direction d,int count)

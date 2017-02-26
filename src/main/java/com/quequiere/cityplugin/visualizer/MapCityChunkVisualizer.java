@@ -28,7 +28,7 @@ import com.quequiere.cityplugin.object.Resident;
 public class MapCityChunkVisualizer
 {
 
-	public static void updatedisplay(Player p,Vector3d dir,Location<World> currentloc)
+	public static void updatedisplay(Player p,int dir,Location<World> currentloc)
 	{
 
 		Scoreboard scoreboard = Scoreboard.builder().build();
