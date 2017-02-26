@@ -29,6 +29,7 @@ import com.quequiere.cityplugin.PluginInfo;
 import com.quequiere.cityplugin.object.City;
 import com.quequiere.cityplugin.object.CityChunk;
 import com.quequiere.cityplugin.object.Resident;
+import com.quequiere.cityplugin.visualizer.MapCityChunkVisualizer;
 
 public class CityCommand implements CommandCallable
 {
@@ -637,7 +638,7 @@ public class CityCommand implements CommandCallable
 							CityPlugin.sendMessage("Transaction failed !", TextColors.RED, p);
 						}
 						else
-						{
+						{ 
 							CityPlugin.sendMessage("Transaction sucess !", TextColors.GREEN, p);
 						}
 
@@ -651,6 +652,21 @@ public class CityCommand implements CommandCallable
 				CityPlugin.sendMessage("Dev by quequiere [FR]", TextColors.GREEN, p);
 				CityPlugin.sendMessage("Skype support: quequierebego", TextColors.GREEN, p);
 				CityPlugin.sendMessage("For pixelsky-mc.com", TextColors.GREEN, p);
+			}
+			else if (subc.equals(SubCommand.citymap))
+			{
+				r.getCache().setDisplayMap(!r.getCache().isDisplayMap());
+				CityPlugin.sendMessage("City map: "+r.getCache().isDisplayMap(), TextColors.GREEN, p);
+				if(!r.getCache().isDisplayMap())
+				{
+					p.setScoreboard(null);
+				}
+				else
+				{
+					MapCityChunkVisualizer.updatedisplay(p,p.getRotation(),p.getLocation());
+				}
+				
+				
 			}
 			else if (subc.equals(SubCommand.help))
 			{
@@ -669,7 +685,7 @@ public class CityCommand implements CommandCallable
 
 	public enum SubCommand
 	{
-		create, claim, leave, help, join, destroy, unclaim, deposit, info, withdraw, teleport, credit, settax, setteleport, setcustomname,invite,list,claimoutpost
+		create, claim, leave, help, join, destroy, unclaim, deposit, info, withdraw, teleport, credit, settax, setteleport, setcustomname,invite,list,claimoutpost,citymap
 	};
 
 	public static void displayCity(Player p, Resident r, City c)

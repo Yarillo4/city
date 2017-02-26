@@ -177,11 +177,11 @@ public class CityChunkCommand implements CommandCallable
 					Account originaccount = null;
 					if (cc.getResident() == null)
 					{
-						CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
+						originaccount=CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
 					}
 					else
 					{
-						CityPlugin.economyService.getOrCreateAccount(cc.getResident()).get();
+						originaccount=CityPlugin.economyService.getOrCreateAccount(cc.getResident()).get();
 					}
 
 					Account newaccount = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();

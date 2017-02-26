@@ -5,7 +5,8 @@ plugins {
     id 'net.ellune.blossom' version '1.0.1'
 }
 
-version = "0.1.22"
+version = "0.1.23"
+compileJava.options.encoding = 'UTF-8'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'

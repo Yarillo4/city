@@ -7,9 +7,12 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.user.UserStorageService;
+import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+
+import com.flowpowered.math.vector.Vector3d;
 
 public class Tools
 {
@@ -19,6 +22,42 @@ public class Tools
 		return chunk;
 	}
 	
+	public static Direction getPlayerDirection(Vector3d vector)
+	{
+		Direction[] cardinalDirections = { Direction.SOUTH, Direction.EAST, Direction.NORTH, Direction.WEST };
+		int index = (int) ((vector.getY() + 45) / 90);
+
+		int index2 = index % 4;
+
+
+		Direction d = cardinalDirections[index2];
+		return d;
+	}
+	
+	public static Location<Chunk> addDirection(Location<Chunk> c,Direction d,int count)
+	{
+		Location<Chunk> toret = c.copy();
+		Direction di = d;
+		
+		if(count<0)
+		{
+			di=d.getOpposite();
+		}
+		
+		
+		for(int x=0;x<Math.abs(count);x++)
+		{
+			toret=toret.getRelative(di);
+		}
+		return toret;
+	}
+
+	public static Location<Chunk> getChunkLocation(Location<World> l)
+	{
+		int chunkX = l.getBlockPosition().getX() >> 4;
+		int chunkZ = l.getBlockPosition().getZ() >> 4;
+		return getChunk(l).getLocation(chunkX, 0, chunkZ);
+	}
 	
 	public static Chunk getChunk(Location<World> l)
 	{

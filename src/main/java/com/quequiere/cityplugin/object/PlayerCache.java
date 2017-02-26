@@ -17,6 +17,7 @@ public class PlayerCache
 	private UUID id;
 	private ArrayList<City> invitation = new ArrayList<City>();
 	private long lastTpCity = 0;
+	private boolean displayMap= false;
 
 	private HashMap<Chunk, HashMap<CityPermEnum, Boolean>> cachePerm;
 
@@ -44,6 +45,18 @@ public class PlayerCache
 	}
 
 	
+	public boolean isDisplayMap()
+	{
+		return displayMap;
+	}
+
+
+	public void setDisplayMap(boolean displayMap)
+	{
+		this.displayMap = displayMap;
+	}
+
+
 	public long getLastTpCity() {
 		return lastTpCity;
 	}
