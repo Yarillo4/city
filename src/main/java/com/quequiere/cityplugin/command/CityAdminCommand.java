@@ -214,6 +214,12 @@ public class CityAdminCommand implements CommandCallable
 					}
 				}
 			}
+			else if (subc.equals(SubCommand.adminbypass))
+			{
+				Resident r = Resident.fromPlayerId(p.getUniqueId());
+				r.getCache().setAdminBypass(!r.getCache().isAdminBypass());
+				CityPlugin.sendMessage("Admin bypass is now set to "+r.getCache().isAdminBypass(), TextColors.GREEN, p);
+			}
 
 			else
 			{
@@ -228,7 +234,7 @@ public class CityAdminCommand implements CommandCallable
 
 	public enum SubCommand
 	{
-		help, polisimport,setmayor,setbonusclaim
+		help, polisimport,setmayor,setbonusclaim,adminbypass
 	};
 
 	public static void displayHelp(Player p)

@@ -20,6 +20,7 @@ public class PlayerCache
 	private long lastTpCity = 0;
 	private boolean displayMap= false;
 	private HashMap<CityPermEnum, Long> advertMessage = new HashMap<CityPermEnum, Long>();
+	private boolean adminBypass=false;
 
 	private HashMap<Chunk, HashMap<CityPermEnum, Boolean>> cachePerm;
 
@@ -31,6 +32,20 @@ public class PlayerCache
 	}
 	
 	
+	
+	public boolean isAdminBypass() {
+		return adminBypass;
+	}
+
+
+
+	public void setAdminBypass(boolean adminBypass) {
+		this.initializeCache();
+		this.adminBypass = adminBypass;
+	}
+
+
+
 	public boolean canDisplayMessage(CityPermEnum perm)
 	{
 		boolean b = false;
@@ -94,6 +109,7 @@ public class PlayerCache
 
 	public void initializeCache()
 	{
+		this.setAdminBypass(false);
 		this.reloadCity();
 		this.reloadPerm();
 	}
@@ -208,6 +224,10 @@ public class PlayerCache
 		for (CityPermEnum perm : CityPermEnum.values())
 		{
 			boolean b = cc.canDoAction(perm, rank); 
+			if(this.isAdminBypass())
+			{
+				b=true;
+			}
 			local1.put(perm, b);
 		}
 		this.getCachePerm().put(c, local1);
@@ -222,6 +242,10 @@ public class PlayerCache
 		for (CityPermEnum perm : CityPermEnum.values())
 		{
 			boolean b = ci.canDoAction(perm, rank);
+			if(this.isAdminBypass())
+			{
+				b=true;
+			}
 			local1.put(perm, b);
 		}
 
@@ -236,6 +260,10 @@ public class PlayerCache
 		for (CityPermEnum perm : CityPermEnum.values())
 		{
 			boolean b = cw.canDoAction(perm, rank);
+			if(this.isAdminBypass())
+			{
+				b=true;
+			}
 			local1.put(perm, b);
 		}
 		this.getCachePerm().put(c, local1);
