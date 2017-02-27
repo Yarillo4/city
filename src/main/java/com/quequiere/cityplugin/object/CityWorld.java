@@ -20,11 +20,11 @@ import com.quequiere.cityplugin.datamanip.LocationSerializer;
 import com.quequiere.cityplugin.object.tool.PermissibleZone;
 
 public class CityWorld  extends PermissibleZone{
-	
+
 	private static ArrayList<CityWorld> loaded = new  ArrayList<CityWorld>();
 	private static File folder = new File("./config/city/cityworlds/");
 	private String name;
-	
+
 	public CityWorld(String name)
 	{
 		this.name=name;
@@ -37,15 +37,15 @@ public class CityWorld  extends PermissibleZone{
 	@Override
 	public void updatePermission() {
 		this.save();
-		
+
 		for (Player p : Sponge.getServer().getOnlinePlayers())
 		{
 			Resident r = Resident.fromPlayerId(p.getUniqueId());
 			r.getCache().reloadPerm();
 		}
-		
+
 	}
-	
+
 	public static CityWorld getByName(String name)
 	{
 		for(CityWorld cw:loaded)
@@ -55,21 +55,21 @@ public class CityWorld  extends PermissibleZone{
 				return cw;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	public static void loadWorld(String name)
 	{
 		if(getByName(name)!=null)
 		{
 			loaded.remove(getByName(name));
 		}
-		System.out.println("[City] New city world loaded !");
+		System.out.println("[City] New CityWorld loaded.");
 		CityWorld cw = loadCityFromFile(name);
 		loaded.add(cw);
 	}
-	
+
 	private static CityWorld loadCityFromFile(String name) {
 		if (!folder.exists()) {
 			folder.mkdirs();
@@ -103,13 +103,13 @@ public class CityWorld  extends PermissibleZone{
 			}
 
 		}
-		
+
 		if(c==null)
 		{
 			c=new CityWorld(name);
 			c.setPermission(CityPermEnum.BUILD, CityPermRankEnum.outsider, true);
 			c.setPermission(CityPermEnum.DESTROY, CityPermRankEnum.outsider, true);
-			c.setPermission(CityPermEnum.SWITH, CityPermRankEnum.outsider, true);
+			c.setPermission(CityPermEnum.SWITCH, CityPermRankEnum.outsider, true);
 			c.setPermission(CityPermEnum.USEITEM, CityPermRankEnum.outsider, true);
 			c.save();
 		}
@@ -143,7 +143,7 @@ public class CityWorld  extends PermissibleZone{
 		}
 
 	}
-	
+
 	public String toJson() {
 		Gson gson = new GsonBuilder().setPrettyPrinting()
 				.create();

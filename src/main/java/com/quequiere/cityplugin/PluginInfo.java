@@ -33,5 +33,5 @@ public class PluginInfo {
     public static final String ID = "city";
     public static final String NAME = "City";
     public static final String VERSION = "@project.version@";
-    public static final String DESCRIPTION = "An claim chunk plugin for sponge";
+    public static final String DESCRIPTION = "A chunk based land protection system that allows for players to set up complex claims and create civilizations.";
 }

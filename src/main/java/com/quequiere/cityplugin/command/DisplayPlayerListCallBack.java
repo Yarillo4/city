@@ -62,22 +62,22 @@ public class DisplayPlayerListCallBack
 
 		if (c.hasMayorPerm(target))
 		{
-			localbuilder.append(Text.of(TextActions.showText(Text.of("This is the mayor of the city")),TextColors.DARK_RED, "[M] "));
+			localbuilder.append(Text.of(TextActions.showText(Text.of("City Mayor")),TextColors.DARK_RED, "[M] "));
 		}
 		else if (c.hasAssistantPerm(target))
 		{
-			localbuilder.append(Text.of(TextActions.showText(Text.of("This is a mayor assistant")),TextColors.RED, "[A] "));
+			localbuilder.append(Text.of(TextActions.showText(Text.of("City Assistant")),TextColors.RED, "[A] "));
 		}
 		else
 		{
-			localbuilder.append(Text.of(TextActions.showText(Text.of("This is a regular resident")),TextColors.AQUA, "[R] "));
+			localbuilder.append(Text.of(TextActions.showText(Text.of("Resident")),TextColors.AQUA, "[R] "));
 		}
 
 		localbuilder.append(Text.of(TextColors.GOLD, u.getName() + " "));
 
 		if (!c.hasResident(target.getId()))
 		{
-			CityPlugin.sendMessage("You can't do that", TextColors.RED, p);
+			CityPlugin.sendMessage("You can't do that!", TextColors.RED, p);
 			return;
 		}
 
@@ -85,10 +85,10 @@ public class DisplayPlayerListCallBack
 		{
 			objects.clear();
 			objects.add(TextActions.executeCallback(source -> {
-				
+
 				if(!c.hasMayorPerm(r))
 					return;
-				
+
 				r.setRank(CityRankEnum.assistant);
 				target.setRank(CityRankEnum.mayor);
 				Builder l = Text.builder("");
@@ -109,17 +109,17 @@ public class DisplayPlayerListCallBack
 			{
 				objects.clear();
 				objects.add(TextActions.executeCallback(source -> {
-					
+
 					if(!c.hasAssistantPerm(r))
 						return;
-					
+
 					target.setRank(CityRankEnum.assistant);
 					Builder l = Text.builder("");
 					diplayPlayerList(localbuilder, p, r, c, l, canModify);
 					p.sendMessage(l.toText());
 				}));
 
-				objects.add(TextActions.showText(Text.of("Give the assistant rank to this player.")));
+				objects.add(TextActions.showText(Text.of("Give assistant status to this player")));
 				objects.add(TextColors.AQUA);
 				objects.add("[A] ");
 
@@ -130,17 +130,17 @@ public class DisplayPlayerListCallBack
 			{
 				objects.clear();
 				objects.add(TextActions.executeCallback(source -> {
-					
+
 					if(!c.hasAssistantPerm(r))
 						return;
-					
+
 					target.setRank(CityRankEnum.resident);
 					Builder l = Text.builder("");
 					diplayPlayerList(localbuilder, p, r, c, l, canModify);
 					p.sendMessage(l.toText());
 				}));
 
-				objects.add(TextActions.showText(Text.of("Remove this player of assistants.")));
+				objects.add(TextActions.showText(Text.of("Remove the assistant status from this player")));
 				objects.add(TextColors.RED);
 				objects.add("[A-] ");
 
@@ -151,17 +151,17 @@ public class DisplayPlayerListCallBack
 			{
 				objects.clear();
 				objects.add(TextActions.executeCallback(source -> {
-					
+
 					if(!c.hasAssistantPerm(r))
 						return;
-					
+
 					c.removeResident(target.getId());
 					Builder l = Text.builder("");
 					diplayPlayerList(localbuilder, p, r, c, l, canModify);
 					p.sendMessage(l.toText());
 				}));
 
-				objects.add(TextActions.showText(Text.of("Remove this player from your city !")));
+				objects.add(TextActions.showText(Text.of("Remove this player from your city")));
 				objects.add(TextColors.RED);
 				objects.add("[-] ");
 

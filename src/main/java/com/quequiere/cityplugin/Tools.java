@@ -24,7 +24,7 @@ public class Tools
 		Chunk chunk = w.getChunk(chunkX, 0, chunkZ).get();
 		return chunk;
 	}
-	
+
 	public static UUID getnerateCustomUUID()
 	{
 		UUID newUID = UUID.randomUUID();
@@ -33,39 +33,39 @@ public class Tools
 		System.out.println("Generated uuid: "+futureGameProfile.isDone());
 		return newUID;
 	}
-	
+
 	public static Direction getPlayerDirection(int degrees)
 	{
-	
+
 		degrees = Math.abs(degrees);
 		try
 		{
 			Direction[] cardinalDirections = { Direction.SOUTH, Direction.WEST, Direction.NORTH, Direction.EAST };
-			int index = (int) Math.floor((degrees *4F)/360+0.5D) &3; 
-			
+			int index = (int) Math.floor((degrees *4F)/360+0.5D) &3;
+
 			Direction d = cardinalDirections[Math.abs(index)];
 			return d;
 		}
 		catch(ArrayIndexOutOfBoundsException e)
 		{
-			System.out.println("City error with degrees: "+degrees);
+			System.out.println("ArrrayIndexOutOfBounds, degree is out of bounds: "+degrees);
 			return Direction.NORTH;
 		}
-		
-	
+
+
 	}
-	
+
 	public static Location<Chunk> addDirection(Location<Chunk> c,Direction d,int count)
 	{
 		Location<Chunk> toret = c.copy();
 		Direction di = d;
-		
+
 		if(count<0)
 		{
 			di=d.getOpposite();
 		}
-		
-		
+
+
 		for(int x=0;x<Math.abs(count);x++)
 		{
 			toret=toret.getRelative(di);
@@ -79,7 +79,7 @@ public class Tools
 		int chunkZ = l.getBlockPosition().getZ() >> 4;
 		return getChunk(l).getLocation(chunkX, 0, chunkZ);
 	}
-	
+
 	public static Chunk getChunk(Location<World> l)
 	{
 		int chunkX = l.getBlockPosition().getX() >> 4;

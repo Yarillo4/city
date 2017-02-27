@@ -51,7 +51,7 @@ public class CityChunkCommand implements CommandCallable
 
 		if (city == null)
 		{
-			CityPlugin.sendMessage("This is wilderness", TextColors.DARK_GREEN, p);
+			CityPlugin.sendMessage("This is Wilderness!", TextColors.DARK_GREEN, p);
 			return CommandResult.success();
 
 		}
@@ -80,7 +80,7 @@ public class CityChunkCommand implements CommandCallable
 			{
 				if (args.length < 2)
 				{
-					CityPlugin.sendMessage("You need to give a price", TextColors.RED, p);
+					CityPlugin.sendMessage("You need to give a price!", TextColors.RED, p);
 				}
 				else
 				{
@@ -91,18 +91,18 @@ public class CityChunkCommand implements CommandCallable
 					}
 					catch (NumberFormatException e)
 					{
-						CityPlugin.sendMessage("Invalid price", TextColors.RED, p);
+						CityPlugin.sendMessage("Invalid price!", TextColors.RED, p);
 						return CommandResult.success();
 					}
 
 					if (city.hasAssistantPerm(r) || cc.isOwner(r.getId()))
 					{
 						cc.setSellPrice(price);
-						CityPlugin.sendMessage("Sell price modified !", TextColors.GREEN, p);
+						CityPlugin.sendMessage("Sell price modified!", TextColors.GREEN, p);
 					}
 					else
 					{
-						CityPlugin.sendMessage("You need to be assistant or owner to do that", TextColors.RED, p);
+						CityPlugin.sendMessage("You need to be assistant or owner to do that!", TextColors.RED, p);
 					}
 
 				}
@@ -113,7 +113,7 @@ public class CityChunkCommand implements CommandCallable
 			}
 			else
 			{
-				CityPlugin.sendMessage("Dev error, you shouldn't be here !", TextColors.RED, p);
+				CityPlugin.sendMessage("Please contact the plugin developer!", TextColors.RED, p);
 			}
 
 		}
@@ -144,7 +144,7 @@ public class CityChunkCommand implements CommandCallable
 		String itemString;
 		ArrayList<Object> objects = new ArrayList<>();
 
-		builder.append(Text.of(TextColors.GOLD, "_____________[ City chunk of " + c.getName() + " " + " ]_____________\n"));
+		builder.append(Text.of(TextColors.GOLD, "Land owned by " + c.getName() + ".\n"));
 
 		if (cc.getResident() != null)
 		{
@@ -157,7 +157,7 @@ public class CityChunkCommand implements CommandCallable
 		}
 		else
 		{
-			builder.append(Text.of(TextColors.DARK_GREEN, "No resident here, city perm applied use /c for more info\n"));
+			builder.append(Text.of(TextColors.DARK_GREEN, "You are not a resident here, use /c for more info.\n"));
 		}
 
 		if (cc.getSellPrice() > 0)
@@ -190,25 +190,25 @@ public class CityChunkCommand implements CommandCallable
 
 					if (transactionResult.getResult() != ResultType.SUCCESS)
 					{
-						CityPlugin.sendMessage("Transaction failed !", TextColors.RED, p);
+						CityPlugin.sendMessage("Transaction failed!", TextColors.RED, p);
 					}
 					else
 					{
-						CityPlugin.sendMessage("Transaction sucess !", TextColors.GREEN, p);
+						CityPlugin.sendMessage("Transaction sucessful!", TextColors.GREEN, p);
 						cc.setSellPrice(-1);
 						cc.setResident(r.getId());
-						CityPlugin.sendMessage("You bought this chunk !", TextColors.GREEN, p);
+						CityPlugin.sendMessage("You bought this land!", TextColors.GREEN, p);
 					}
 
 				}
 				else
 				{
-					CityPlugin.sendMessage("You need to be resident of the city to do that !", TextColors.RED, p);
+					CityPlugin.sendMessage("You need to be resident of the city to do that!", TextColors.RED, p);
 				}
 
 			}));
 
-			objects.add(TextActions.showText(Text.of("Buy the chunk")));
+			objects.add(TextActions.showText(Text.of("Buy this land")));
 			objects.add(TextColors.AQUA);
 			objects.add("Buy");
 
@@ -224,7 +224,7 @@ public class CityChunkCommand implements CommandCallable
 			builder.append(Text.of(TextColors.GREEN, "Not for sale\n"));
 		}
 
-		builder.append(Text.of(TextColors.DARK_GREEN, "Use /cc help for more info "));
+		builder.append(Text.of(TextColors.DARK_GREEN, "Use /cc help for more info."));
 
 		p.sendMessage(builder.toText());
 

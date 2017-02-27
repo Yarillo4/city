@@ -43,7 +43,7 @@ public class CityAdminCommand implements CommandCallable
 		String perm = "city.cityadmin";
 		if (!CityPlugin.hasPerm(p, perm))
 		{
-			CityPlugin.sendMessage("You need " + perm + " perm to do that !", TextColors.RED, p);
+			CityPlugin.sendMessage("You need the " + perm + " node to do that !", TextColors.RED, p);
 			return CommandResult.success();
 		}
 
@@ -51,7 +51,7 @@ public class CityAdminCommand implements CommandCallable
 
 		if (cw == null)
 		{
-			CityPlugin.sendMessage("Can't find this world :o ! This is an error !", TextColors.RED, p);
+			CityPlugin.sendMessage("Cannot find this CityWorld!", TextColors.RED, p);
 			return CommandResult.success();
 
 		}
@@ -86,7 +86,7 @@ public class CityAdminCommand implements CommandCallable
 				}
 				catch (ClassNotFoundException e)
 				{
-					CityPlugin.sendMessage("This command need polis to work !", TextColors.RED, p);
+					CityPlugin.sendMessage("This command needs polis to work!", TextColors.RED, p);
 					return CommandResult.success();
 				}
 
@@ -96,7 +96,7 @@ public class CityAdminCommand implements CommandCallable
 				}
 				else
 				{
-					CityPlugin.sendMessage("Sorry, you only can run this command on a server without City of CityPlugin", TextColors.RED, p);
+					CityPlugin.sendMessage("Sorry, you only can run this command on a server with cities!", TextColors.RED, p);
 				}
 
 			}
@@ -105,18 +105,18 @@ public class CityAdminCommand implements CommandCallable
 
 				if (args.length < 3)
 				{
-					CityPlugin.sendMessage("You need to give a name to the city and a claim bonus !", TextColors.RED, p);
+					CityPlugin.sendMessage("You need to give a name to the city and a claim bonus!", TextColors.RED, p);
 				}
 				else
 				{
 					City c = City.getCityByName(args[1]);
-			
+
 
 					if (c == null)
 					{
 						CityPlugin.sendMessage("We can't find city:" + args[1], TextColors.RED, p);
 					}
-					else 
+					else
 					{
 						try
 						{
@@ -143,15 +143,15 @@ public class CityAdminCommand implements CommandCallable
 				{
 					City c = City.getCityByName(args[1]);
 					Optional<UserStorageService> userStorage = Sponge.getServiceManager().provide(UserStorageService.class);
-					
-					
+
+
 					if(args[2].equals("none"))
 					{
 						c.setNoMayor();
 						CityPlugin.sendMessage("This is an admin city now.", TextColors.GREEN, p);
 						return CommandResult.success();
 					}
-					
+
 
 					Optional<User> uo = null;
 					try
@@ -163,7 +163,7 @@ public class CityAdminCommand implements CommandCallable
 						CityPlugin.sendMessage("Can't find player !", TextColors.RED, p);
 						return CommandResult.success();
 					}
-					
+
 
 					if (c == null)
 					{

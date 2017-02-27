@@ -14,11 +14,11 @@ import com.google.gson.GsonBuilder;
 import com.quequiere.cityplugin.CityPlugin;
 
 public class CityGeneralConfig {
-	
+
 	private static File folder = new File("./config/city/");
-	
+
 	private int lastTaxCheck=0;
-	
+
 	private int chunkPerPlayer = 5;
 	private double chunkDailyCostBase = 20;
 	private double chunkClaimCost = 500;
@@ -33,13 +33,13 @@ public class CityGeneralConfig {
 	private boolean cityNameInChat = true;
 	private long antiSpamAdvertMessageInMs=1000;
 
-	
+
 	public int getChunkPerPlayer() {
 		return chunkPerPlayer;
 	}
-	
-	
-	
+
+
+
 
 	public long getAntiSpamAdvertMessageInMs() {
 		return antiSpamAdvertMessageInMs;
@@ -128,8 +128,8 @@ public class CityGeneralConfig {
 	{
 		CityPlugin.generalConfig=loadConfigFile();
 	}
-	
-	
+
+
 	private static CityGeneralConfig loadConfigFile() {
 		if (!folder.exists()) {
 			folder.mkdirs();
@@ -163,14 +163,14 @@ public class CityGeneralConfig {
 			}
 
 		}
-		
+
 		if(c==null)
 		{
-			System.out.println("[CITY] Generate a new config file !");
+			System.out.println("[CITY] Created a new config!");
 			c = new CityGeneralConfig();
 			c.save();
 		}
-		
+
 		c.save();
 
 		return c;
@@ -202,7 +202,7 @@ public class CityGeneralConfig {
 		}
 
 	}
-	
+
 	public String toJson() {
 		Gson gson = new GsonBuilder().setPrettyPrinting()
 				.create();

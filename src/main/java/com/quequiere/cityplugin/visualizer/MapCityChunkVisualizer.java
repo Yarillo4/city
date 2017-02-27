@@ -70,24 +70,24 @@ public class MapCityChunkVisualizer
 			score--;
 			step++;
 		}
-		
-		c = obj.getOrCreateScore(Text.of(TextColors.AQUA, "█ - To buy"));
+
+		c = obj.getOrCreateScore(Text.of(TextColors.AQUA, "█ - For Sale"));
 		c.setScore(42);
-		c = obj.getOrCreateScore(Text.of(TextColors.GREEN, "█ - Your cc"));
+		c = obj.getOrCreateScore(Text.of(TextColors.GREEN, "█ - Your Land"));
 		c.setScore(41);
-		c = obj.getOrCreateScore(Text.of(TextColors.GOLD, "█ - City cc"));
+		c = obj.getOrCreateScore(Text.of(TextColors.GOLD, "█ - City's Land"));
 		c.setScore(40);
-		c = obj.getOrCreateScore(Text.of(TextColors.YELLOW, "█ - Player cc"));
+		c = obj.getOrCreateScore(Text.of(TextColors.YELLOW, "█ - Other's Land"));
 		c.setScore(39);
-		c = obj.getOrCreateScore(Text.of(TextColors.GRAY, "▒ - Wild"));
+		c = obj.getOrCreateScore(Text.of(TextColors.GRAY, "▒ - Wilderness"));
 		c.setScore(38);
-		c = obj.getOrCreateScore(Text.of(TextColors.RED, "▓ - Other city"));
+		c = obj.getOrCreateScore(Text.of(TextColors.RED, "▓ - Other City"));
 		c.setScore(37);
 
 		scoreboard.addObjective(obj);
 		scoreboard.updateDisplaySlot(obj, DisplaySlots.SIDEBAR);
 
-		p.setScoreboard(scoreboard); 
+		p.setScoreboard(scoreboard);
 
 	}
 	// c = obj.getOrCreateScore(Text.of(color, val," " ,TextColors.RESET,
@@ -105,9 +105,9 @@ public class MapCityChunkVisualizer
 		ArrayList<Text> list = new ArrayList<Text>();
 		Chunk ref = Tools.getChunk(p.getLocation());
 		Location<Chunk> loc = Tools.getChunkLocation(currentloc);
-		
+
 		Direction toapply = null;
-		
+
 		if(playerDirection.equals(Direction.NORTH) || playerDirection.equals(Direction.SOUTH))
 		{
 			toapply=playerDirection.getOpposite();
@@ -125,13 +125,13 @@ public class MapCityChunkVisualizer
 			for (int x = -3; x <= 3; x++)
 			{
 				Location<Chunk> target = Tools.addDirection(localTemp, nextDirection.get(playerDirection), x);
-				
+
 				Chunk targetChunk = Tools.getChunk(target.getBlockX(), target.getBlockZ(), p.getWorld());
 				City c = City.getCityFromChunk(targetChunk);
-				
+
 				String code = null;
 				TextColor color = null;
-				
+
 				if (c == null)
 				{
 					if(target.getExtent().equals(targetChunk))
@@ -156,9 +156,9 @@ public class MapCityChunkVisualizer
 						{
 							code = "█";
 						}
-						
+
 						CityChunk cc = c.getChunck(targetChunk);
-						
+
 						if(cc.getSellPrice()>0)
 						{
 							color=TextColors.AQUA;
@@ -181,7 +181,7 @@ public class MapCityChunkVisualizer
 								}
 							}
 						}
-	
+
 					}
 					else
 					{
@@ -189,11 +189,11 @@ public class MapCityChunkVisualizer
 						color=TextColors.RED;
 					}
 				}
-				
+
 				b.append(Text.of(color, code));
 
 			}
-			
+
 			list.add(b.build());
 
 		}
