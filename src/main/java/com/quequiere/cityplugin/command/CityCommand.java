@@ -734,7 +734,7 @@ public class CityCommand implements CommandCallable
 		if(c.getMayor().isPresent())
 		{
 			builder.append(Text.of(TextColors.DARK_GREEN, "Remaining day before destruction: "));
-			BigDecimal days = balance.divide(c.getTaxDailyCost());
+			BigDecimal days = balance.divide(c.getTaxDailyCost(),RoundingMode.UP);
 			days = days.setScale(2, RoundingMode.DOWN);
 			builder.append(Text.of(TextColors.RED, days + " days"));
 
