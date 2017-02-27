@@ -40,7 +40,7 @@ public class PlayerCache
 
 
 	public void setAdminBypass(boolean adminBypass) {
-		this.initializeCache();
+		this.reloadPerm();
 		this.adminBypass = adminBypass;
 	}
 
@@ -50,22 +50,29 @@ public class PlayerCache
 	{
 		boolean b = false;
 		long now = System.currentTimeMillis();
+	
+	
+		
 		if(advertMessage.containsKey(perm))
 		{
+			
 			long last = advertMessage.get(perm);
-			advertMessage.remove(perm);
-			long diff = last-now;
+			long diff = now-last;
+			
 			if(diff>CityPlugin.generalConfig.getAntiSpamAdvertMessageInMs())
 			{
 				b=true;
+				advertMessage.remove(perm);
+				advertMessage.put(perm, now);
 			}
 		}
 		else
 		{
 			b=true;
+			advertMessage.put(perm, now);
 		}
 		
-		advertMessage.put(perm, now);
+	
 		return b;
 	}
 	
