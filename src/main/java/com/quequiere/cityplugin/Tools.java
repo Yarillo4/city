@@ -30,7 +30,14 @@ public class Tools
 		UUID newUID = UUID.randomUUID();
 		GameProfileManager profileManager = Sponge.getServer().getGameProfileManager();
 		CompletableFuture<GameProfile> futureGameProfile = profileManager.get(newUID);
-		System.out.println("Generated uuid: "+futureGameProfile.isDone());
+		System.out.println("City Generated uuid: "+newUID);
+		
+		if(futureGameProfile.isDone())
+		{
+			System.out.println("City This UUID already exist, try a new one ...");
+			return getnerateCustomUUID();
+		}
+		
 		return newUID;
 	}
 	
@@ -40,7 +47,7 @@ public class Tools
 		degrees = Math.abs(degrees);
 		try
 		{
-			Direction[] cardinalDirections = { Direction.SOUTH, Direction.WEST, Direction.NORTH, Direction.EAST };
+			Direction[] cardinalDirections = { Direction.SOUTH, Direction.EAST, Direction.NORTH, Direction.WEST };
 			int index = (int) Math.floor((degrees *4F)/360+0.5D) &3; 
 			
 			Direction d = cardinalDirections[Math.abs(index)];
