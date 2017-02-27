@@ -47,15 +47,10 @@ public class Tools
 		degrees = Math.abs(degrees);
 		try
 		{
-<<<<<<< HEAD
 			Direction[] cardinalDirections = { Direction.SOUTH, Direction.WEST, Direction.NORTH, Direction.EAST };
 			int index = (int) Math.floor((degrees *4F)/360+0.5D) &3;
-
-=======
 			Direction[] cardinalDirections = { Direction.SOUTH, Direction.EAST, Direction.NORTH, Direction.WEST };
 			int index = (int) Math.floor((degrees *4F)/360+0.5D) &3;
-
->>>>>>> origin/master
 			Direction d = cardinalDirections[Math.abs(index)];
 			return d;
 		}
