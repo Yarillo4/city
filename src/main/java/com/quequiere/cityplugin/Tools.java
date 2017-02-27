@@ -2,10 +2,13 @@ package com.quequiere.cityplugin;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.profile.GameProfile;
+import org.spongepowered.api.profile.GameProfileManager;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Chunk;
@@ -20,6 +23,15 @@ public class Tools
 	{
 		Chunk chunk = w.getChunk(chunkX, 0, chunkZ).get();
 		return chunk;
+	}
+	
+	public static UUID getnerateCustomUUID()
+	{
+		UUID newUID = UUID.randomUUID();
+		GameProfileManager profileManager = Sponge.getServer().getGameProfileManager();
+		CompletableFuture<GameProfile> futureGameProfile = profileManager.get(newUID);
+		System.out.println("Generated uuid: "+futureGameProfile.isDone());
+		return newUID;
 	}
 	
 	public static Direction getPlayerDirection(int degrees)

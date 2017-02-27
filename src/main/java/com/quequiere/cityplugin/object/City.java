@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
@@ -17,6 +18,8 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.profile.GameProfile;
+import org.spongepowered.api.profile.GameProfileManager;
 import org.spongepowered.api.service.economy.account.Account;
 import org.spongepowered.api.service.economy.transaction.ResultType;
 import org.spongepowered.api.service.economy.transaction.TransactionResult;
@@ -57,6 +60,7 @@ public class City extends PermissibleZone {
 	private String customName = "";
 	
 	private int bonusClaim=0;
+	private UUID economyUUID;
 
 	private City(String name, Resident mayor,Chunk c) {
 		this.name = name;
@@ -214,10 +218,32 @@ public class City extends PermissibleZone {
 
 		this.save();
 	}
+	
+	
 
-	public String getNameEconomy() {
-		return "City_" + this.getName();
+	public UUID getEconomyUUID() {
+		return economyUUID;
 	}
+
+	public void setEconomyUUID(UUID economyUUID) {
+		this.economyUUID = economyUUID;
+		this.save();
+	}
+
+	public UUID getNameEconomy() {
+		
+		if(this.getEconomyUUID()==null)
+		{
+			UUID id = Tools.getnerateCustomUUID();
+			System.out.println("City generate a new UUID for city "+this.getName());
+			this.setEconomyUUID(id);
+		}
+		
+		
+		return this.getEconomyUUID();
+	}
+	
+
 
 	public boolean hasResident(UUID id) {
 		for (UUID rid : this.getResidents()) {
