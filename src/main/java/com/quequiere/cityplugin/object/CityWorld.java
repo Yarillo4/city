@@ -107,6 +107,10 @@ public class CityWorld  extends PermissibleZone{
 		if(c==null)
 		{
 			c=new CityWorld(name);
+			c.setPermission(CityPermEnum.BUILD, CityPermRankEnum.outsider, true);
+			c.setPermission(CityPermEnum.DESTROY, CityPermRankEnum.outsider, true);
+			c.setPermission(CityPermEnum.SWITH, CityPermRankEnum.outsider, true);
+			c.setPermission(CityPermEnum.USEITEM, CityPermRankEnum.outsider, true);
 			c.save();
 		}
 
