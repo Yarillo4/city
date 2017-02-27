@@ -32,20 +32,20 @@ public class CityWorldCommand implements CommandCallable
 		String args[] = arg.split(" ");
 
 		Player p = (Player) src;
-		
+
 		String perm = "city.cityworld";
 		if(!CityPlugin.hasPerm(p, perm))
 		{
-			CityPlugin.sendMessage("You need "+perm+" perm to do that !", TextColors.RED, p);
+			CityPlugin.sendMessage("You the "+perm+" node to do that!", TextColors.RED, p);
 			return CommandResult.success();
 		}
-		
+
 
 		CityWorld cw = CityWorld.getByName(p.getWorld().getName());
 
 		if (cw == null)
 		{
-			CityPlugin.sendMessage("Can't find this world :o ! This is an error !", TextColors.RED, p);
+			CityPlugin.sendMessage("Cannot find this world!", TextColors.RED, p);
 			return CommandResult.success();
 
 		}
@@ -74,7 +74,7 @@ public class CityWorldCommand implements CommandCallable
 			}
 			else
 			{
-				CityPlugin.sendMessage("Dev error, you shouldn't be here !", TextColors.RED, p);
+				CityPlugin.sendMessage("Please contact the plugin developer!", TextColors.RED, p);
 			}
 
 		}

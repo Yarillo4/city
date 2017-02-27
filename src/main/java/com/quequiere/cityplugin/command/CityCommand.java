@@ -76,37 +76,37 @@ public class CityCommand implements CommandCallable
 
 			if (subc.equals(SubCommand.create))
 			{
-				
-				
+
+
 				String perm = "city.create";
 				if(!CityPlugin.hasPerm(p, perm))
 				{
-					CityPlugin.sendMessage("You need "+perm+" perm to do that !", TextColors.RED, p);
+					CityPlugin.sendMessage("You the "+perm+" node to do that!", TextColors.RED, p);
 					return CommandResult.success();
 				}
-				
+
 				if (c != null)
 				{
-					CityPlugin.sendMessage("You are in a city, so you can't do that !", TextColors.RED, p);
+					CityPlugin.sendMessage("You are in another city!", TextColors.RED, p);
 				}
 				else
 				{
 
 					if (args.length < 2)
 					{
-						CityPlugin.sendMessage("You need to give a name to the city !", TextColors.RED, p);
+						CityPlugin.sendMessage("You need to give the city a name!", TextColors.RED, p);
 					}
 					else
 					{
-						CityPlugin.sendMessage("Try to create city ...", TextColors.GREEN, p);
+						CityPlugin.sendMessage("Trying to create city...", TextColors.GREEN, p);
 						City newc = City.tryCreateCity(args[1], p);
 						if (newc == null)
 						{
-							CityPlugin.sendMessage("Something goes wrong, city has not been created !", TextColors.RED, p);
+							CityPlugin.sendMessage("Something went wrong! Contact the administrator!", TextColors.RED, p);
 						}
 						else
 						{
-							CityPlugin.sendMessage("City created !", TextColors.GREEN, p);
+							CityPlugin.sendMessage("City created sucessfully!", TextColors.GREEN, p);
 						}
 					}
 				}
@@ -133,15 +133,15 @@ public class CityCommand implements CommandCallable
 			}
 			else if (subc.equals(SubCommand.join))
 			{
-				
-				
+
+
 				String perm = "city.join";
 				if(!CityPlugin.hasPerm(p, perm))
 				{
 					CityPlugin.sendMessage("You need "+perm+" perm to do that !", TextColors.RED, p);
 					return CommandResult.success();
 				}
-				
+
 				if (c != null)
 				{
 					CityPlugin.sendMessage("You are in a city, so you can't do that !", TextColors.RED, p);
@@ -223,7 +223,7 @@ public class CityCommand implements CommandCallable
 					CityPlugin.sendMessage("You need "+perm+" perm to do that !", TextColors.RED, p);
 					return CommandResult.success();
 				}
-				
+
 				if (c == null)
 				{
 					CityPlugin.sendMessage("You need to be in a city to do that", TextColors.RED, p);
@@ -251,7 +251,7 @@ public class CityCommand implements CommandCallable
 							{
 								CityPlugin.sendMessage("This player is not online !", TextColors.RED, p);
 							}
-							
+
 
 						}
 					}
@@ -264,15 +264,15 @@ public class CityCommand implements CommandCallable
 			}
 			else if (subc.equals(SubCommand.setcustomname))
 			{
-				
-				
+
+
 				String perm = "city.setcustomname";
 				if(!CityPlugin.hasPerm(p, perm))
 				{
 					CityPlugin.sendMessage("You need "+perm+" perm to do that !", TextColors.RED, p);
 					return CommandResult.success();
 				}
-				
+
 				if (c == null)
 				{
 					CityPlugin.sendMessage("You need to be in a city to do that", TextColors.RED, p);
@@ -348,14 +348,14 @@ public class CityCommand implements CommandCallable
 			}
 			else if (subc.equals(SubCommand.teleport))
 			{
-				
+
 				String perm = "city.teleport";
 				if(!CityPlugin.hasPerm(p, perm))
 				{
 					CityPlugin.sendMessage("You need "+perm+" perm to do that !", TextColors.RED, p);
 					return CommandResult.success();
 				}
-				
+
 				if (c == null)
 				{
 					CityPlugin.sendMessage("You need to be in a city to do that !", TextColors.RED, p);
@@ -369,7 +369,7 @@ public class CityCommand implements CommandCallable
 						long last = r.getCache().getLastTpCity();
 						long now = System.currentTimeMillis();
 						long diff = now-last;
-						
+
 						if(diff>=cdConf)
 						{
 							r.getCache().setLastTpCity(now);
@@ -381,16 +381,16 @@ public class CityCommand implements CommandCallable
 							passcd=false;
 							CityPlugin.sendMessage("You need to wait "+diff+" seconds to teleport !", TextColors.RED, p);
 						}
-						
+
 					}
-					
+
 					if(passcd)
 					{
 						p.setLocation(c.getSpawn());
 						CityPlugin.sendMessage("You has been teleported to the city !", TextColors.GREEN, p);
 					}
-					
-					
+
+
 				}
 			}
 			else if (subc.equals(SubCommand.unclaim))
@@ -451,15 +451,15 @@ public class CityCommand implements CommandCallable
 			}
 			else if (subc.equals(SubCommand.setteleport))
 			{
-				
-				
+
+
 				String perm = "city.setteleport";
 				if(!CityPlugin.hasPerm(p, perm))
 				{
 					CityPlugin.sendMessage("You need "+perm+" perm to do that !", TextColors.RED, p);
 					return CommandResult.success();
 				}
-				
+
 				if (c == null)
 				{
 					CityPlugin.sendMessage("You need to be in a city to do that !", TextColors.RED, p);
@@ -477,14 +477,14 @@ public class CityCommand implements CommandCallable
 			}
 			else if (subc.equals(SubCommand.settax))
 			{
-				
+
 				String perm = "city.settax";
 				if(!CityPlugin.hasPerm(p, perm))
 				{
 					CityPlugin.sendMessage("You need "+perm+" perm to do that !", TextColors.RED, p);
 					return CommandResult.success();
 				}
-				
+
 				if (c == null)
 				{
 					CityPlugin.sendMessage("You need to be in a city to do that !", TextColors.RED, p);
@@ -528,7 +528,7 @@ public class CityCommand implements CommandCallable
 								c.setPlayerTaxe(amount);
 								CityPlugin.sendMessage("Tax set !", TextColors.GREEN, p);
 							}
-							
+
 						}
 						else
 						{
@@ -638,7 +638,7 @@ public class CityCommand implements CommandCallable
 							CityPlugin.sendMessage("Transaction failed !", TextColors.RED, p);
 						}
 						else
-						{ 
+						{
 							CityPlugin.sendMessage("Transaction sucess !", TextColors.GREEN, p);
 						}
 
@@ -665,8 +665,8 @@ public class CityCommand implements CommandCallable
 				{
 					MapCityChunkVisualizer.updatedisplay(p,p.getRotation().getFloorY()%360,p.getLocation());
 				}
-				
-				
+
+
 			}
 			else if (subc.equals(SubCommand.help))
 			{
@@ -711,7 +711,7 @@ public class CityCommand implements CommandCallable
 
 		builder.append(Text.of(TextColors.DARK_GREEN, " Bonus: "));
 		builder.append(Text.of(TextColors.AQUA, "["+c.getBonusClaim()+"]"));
-		
+
 		builder.append(Text.of("\n"));
 		// --------------------------------------------------------------------------------------------
 
@@ -747,7 +747,7 @@ public class CityCommand implements CommandCallable
 		{
 			builder.append(Text.of(TextColors.DARK_GREEN, "Admin cities doesn't pay tax."));
 		}
-		
+
 
 		builder.append(Text.of("\n"));
 

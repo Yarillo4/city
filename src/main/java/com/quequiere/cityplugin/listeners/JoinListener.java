@@ -30,61 +30,61 @@ public class JoinListener
 	{
 		CityWorld.loadWorld(event.getTargetWorld().getName());
 	}
-	
+
 	@Listener
 	public void onConnectTaxCheck(ClientConnectionEvent.Join event)
 	{
 		int day =CityPlugin.generalConfig.getLastTaxCheck();
 		Calendar cal = Calendar.getInstance();
 		int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
-		
+
 		if(day!=dayOfMonth)
 		{
 			CityPlugin.generalConfig.setLastTaxCheck(dayOfMonth);
-			 System.out.println("[CITY] New day of tax !");
-			 Sponge.getGame().getServer().getBroadcastChannel().send(Text.builder("New day of tax for City !").color(TextColors.GREEN).build());
-			 
+			 System.out.println("[CITY] A new tax day has arrived! All cities have paid taxes!");
+			 Sponge.getGame().getServer().getBroadcastChannel().send(Text.builder("A new tax day has arrived! All cities have paid taxes!").color(TextColors.GREEN).build());
+
 			 @SuppressWarnings("unchecked")
 			ArrayList<City> cites = (ArrayList<City>) City.getLoaded().clone();
-			 
+
 			 for(City c:cites)
 			 {
 					Account account = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
 					TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), c.getTaxDailyCost(), Cause.of(NamedCause.source(event)));
-					
+
 					if (transactionResult.getResult() != ResultType.SUCCESS)
 					{
-						Sponge.getGame().getServer().getBroadcastChannel().send(Text.builder(c.getName()+ " has been destroyed !").color(TextColors.RED).build());
+						Sponge.getGame().getServer().getBroadcastChannel().send(Text.builder(c.getName()+ " could not afford tax today and has fallen!").color(TextColors.RED).build());
 						c.destroy();
 						continue ;
 					}
-					
+
 					ArrayList<UUID> residentToRemove = new ArrayList<>();
-					
+
 					for(UUID id:c.getResidents())
 					{
 						Account raccount = CityPlugin.economyService.getOrCreateAccount(id).get();
 						TransactionResult rtransactionResult = raccount.withdraw(CityPlugin.economyService.getDefaultCurrency(), c.getPlayerTaxe(), Cause.of(NamedCause.source(event)));
-						
+
 						if (rtransactionResult.getResult() != ResultType.SUCCESS && c.isRemovePlayerTax())
 						{
 							if(!c.hasAssistantPerm(Resident.fromPlayerId(id)))
 							{
 								residentToRemove.add(id);
 							}
-							
+
 						}
 					}
-					
+
 					for(UUID id:residentToRemove)
 					{
 						c.removeResident(id);
 					}
-					
+
 			 }
-			
-			
-			 
+
+
+
 		}
 	}
 
@@ -94,7 +94,7 @@ public class JoinListener
 		Player p = event.getTargetEntity();
 		Resident.fromPlayerId(p.getUniqueId()).getCache().initializeCache();
 	}
-	
+
 	@Listener
 	public void spawnInfo(ClientConnectionEvent.Disconnect event)
 	{

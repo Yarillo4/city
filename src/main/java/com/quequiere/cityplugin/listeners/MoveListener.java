@@ -64,11 +64,11 @@ public class MoveListener
 
 		if (previousCity != null && newCity == null)
 		{
-			CityPlugin.sendMessageWithoutPrefix("______________[ WILDERNESS ]______________", TextColors.GOLD, p);
+			CityPlugin.sendMessageWithoutPrefix("Now leaving " + previousCity + "!", TextColors.GOLD, p);
 		}
 		else if (newCity != null && previousCity == null || newCity != null && previousCity != null && !newCity.equals(previousCity))
 		{
-			CityPlugin.sendMessageWithoutPrefix("______________[ Welcome to " + newCity.getName() + " ]______________", TextColors.GOLD, p);
+			CityPlugin.sendMessageWithoutPrefix("Now entering " + newCity.getName() + "!", TextColors.GOLD, p);
 		}
 
 		if (newCity != null)
@@ -79,21 +79,21 @@ public class MoveListener
 			if (newcc != null && newcc.getResident() != null)
 			{
 				User u = Tools.getUser(newcc.getResident());
-				CityPlugin.sendMessageWithoutPrefix("~~~ " + u.getName() + " chunk ~~~", TextColors.DARK_GREEN, p);
+				CityPlugin.sendMessageWithoutPrefix("~~~ " + u.getName() + "'s' Land ~~~", TextColors.DARK_GREEN, p);
 
 				if (newcc.getSellPrice() > 0)
 				{
-					CityPlugin.sendMessage("You can buy this chunk, use /cc for more info.", TextColors.AQUA, p);
+					CityPlugin.sendMessage("This land is for sale, use /cc for more info.", TextColors.AQUA, p);
 				}
 
 			}
 			else if (newcc.getSellPrice() > 0)
 			{
-				CityPlugin.sendMessage("You can buy this chunk, use /cc for more info.", TextColors.AQUA, p);
+				CityPlugin.sendMessage("This land is for sale, use /cc for more info.", TextColors.AQUA, p);
 			}
 			else if (newcc != null && oldcc != null && newcc.getResident() == null && oldcc.getResident() != null)
 			{
-				CityPlugin.sendMessageWithoutPrefix("~~~ City chunk ~~~", TextColors.GREEN, p);
+				CityPlugin.sendMessageWithoutPrefix("~~~ City Land ~~~", TextColors.GREEN, p);
 			}
 		}
 

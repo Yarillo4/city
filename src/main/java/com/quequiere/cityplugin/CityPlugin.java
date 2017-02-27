@@ -28,7 +28,7 @@ import com.quequiere.cityplugin.listeners.MoveListener;
 import com.quequiere.cityplugin.listeners.PhysicBlockListener;
 import com.quequiere.cityplugin.object.City;
 
-@Plugin(id = "city", name = "City", version = PluginInfo.VERSION, description = "Claim chunk plugin", url = "http://pixelsky-mc.com", authors = { "quequiere" })
+@Plugin(id = "city", name = "City", version = PluginInfo.VERSION, description = "A chunk based land protection system that allows for players to set up complex claims and create civilizations.", url = "https://forums.spongepowered.org/t/city-claim/", authors = { "quequiere" })
 public class CityPlugin
 {
 
@@ -36,7 +36,7 @@ public class CityPlugin
 	public static PluginContainer container;
 	public static CityGeneralConfig generalConfig;
 	public static EconomyService economyService;
-	
+
 	@Inject
 	private Metrics metrics;
 
@@ -89,7 +89,7 @@ public class CityPlugin
 		}
 
 		City.reloadAll();
-		
+
 	}
 
 	public static void sendMessageWithoutPrefix(String message, TextColor color, Player p)

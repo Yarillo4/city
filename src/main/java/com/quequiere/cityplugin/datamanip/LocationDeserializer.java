@@ -34,15 +34,15 @@ public class LocationDeserializer implements JsonDeserializer<Location<World>>
 		Integer y = Integer.parseInt(args[1]);
 		Integer z = Integer.parseInt(args[2]);
 		Optional<World> w = Sponge.getGame().getServer().getWorld(args[3]);
-		
+
 		if(!w.isPresent())
 		{
-			System.out.println("cant find world: "+args[3]);
+			System.out.println("Cannot find world \""+args[3]+"!");
 			System.out.println("While loading: "+jsonO.toString());
 		}
-		
+
 		Location<World> l = new Location<World>(w.get(),x,y,z);
-		
+
 		return l;
 	}
 

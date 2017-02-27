@@ -43,47 +43,47 @@ public class PolisAdaptator
 		{
 			Object t = arg0.next();
 			String teamName = String.valueOf(t);
-			
+
 			if(City.getCityByName(teamName)!=null)
 			{
-				CityPlugin.sendMessage("Fail to import "+teamName+" from Polis cause already exist on City !", TextColors.RED, p);
+				CityPlugin.sendMessage("Failed to import "+teamName+" from Polis because the City already exists!", TextColors.RED, p);
 				continue;
 			}
-			
+
 			System.out.println("Try to import config for team: "+teamName);
 
 			String leaderName = ConfigManager.getLeader(teamName);
 			BigDecimal bank = ConfigManager.getBalance(teamName);
 			ArrayList<String> members = ConfigManager.getMembers(teamName);
 			ArrayList<Chunk> clist = importClaimConfigs(teamName);
-			
+
 			if(clist.size()<=0)
 			{
-				CityPlugin.sendMessage("Fail to import "+teamName+" from Polis cause no chunk are claimed by this city.", TextColors.RED, p);
+				CityPlugin.sendMessage("Failed to import "+teamName+" from Polis because no chunks are claimed!", TextColors.RED, p);
 				continue;
 			}
-			 
+
 			Optional<User> mayor=null;
 			try
 			{
 				mayor =  userStorage.get().get(UUID.fromString(leaderName));
-				
+
 			}
 			catch(IllegalArgumentException e)
 			{
 				CityPlugin.sendMessage("Fail to import "+teamName+" from Polis can't resolve player UUID:"+leaderName, TextColors.RED, p);
 				continue;
 			}
-		
-			
+
+
 			if(!mayor.isPresent())
 			{
 				CityPlugin.sendMessage("Fail to import "+teamName+" from Polis cause mayor uuid doesn't exist ...", TextColors.RED, p);
 				continue;
 			}
-			
+
 			City c = City.tryCreateCity(teamName, p, true, mayor.get(), clist.get(0));
-			
+
 			if(c!=null)
 			{
 				CityPlugin.sendMessage("Successfuly import "+teamName+" from Polis.", TextColors.GREEN, p);
@@ -92,7 +92,7 @@ public class PolisAdaptator
 			{
 				CityPlugin.sendMessage("Fail to import "+teamName+" from Polis something goes wrong.", TextColors.RED, p);
 			}
-			
+
 			for(String r:members)
 			{
 				Optional<User> mem=null;
@@ -106,9 +106,9 @@ public class PolisAdaptator
 						{
 							c.addResident(resident);
 						}
-						
+
 					}
-					
+
 				}
 				catch(IllegalArgumentException e)
 				{
@@ -116,25 +116,25 @@ public class PolisAdaptator
 					continue;
 				}
 			}
-			
+
 			Account account = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
 			account.setBalance(CityPlugin.economyService.getDefaultCurrency(), bank, Cause.of(NamedCause.source(p)));
-			
+
 			for(Chunk ch:clist)
 			{
 				c.forceClaimImport(ch);
 			}
-			
+
 
 		}
 	}
 
 	private static ArrayList<Chunk> importClaimConfigs(String teamname)
 	{
-		
+
 		ClaimsConfig claimsConfig = ClaimsConfig.getConfig();
 		ArrayList<Chunk> list = new ArrayList<Chunk>();
-		
+
 
 
 		for (Object worldUUIDObject : Configs.getConfig(claimsConfig).getNode(new Object[] { "claims" ,teamname }).getChildrenMap().keySet())
@@ -144,7 +144,7 @@ public class PolisAdaptator
 			for (Object chunkXObject : Configs.getConfig(claimsConfig).getNode(new Object[] { "claims",teamname ,worldUUIDNname }).getChildrenMap().keySet())
 			{
 				Integer chunkX = Integer.parseInt((String) chunkXObject);
-				
+
 				for (Object chunkZObject : Configs.getConfig(claimsConfig).getNode(new Object[] { "claims",teamname,worldUUIDNname ,String.valueOf(chunkX) }).getChildrenMap().keySet())
 				{
 					Integer chunkZ = Integer.parseInt((String) chunkZObject);
@@ -162,20 +162,20 @@ public class PolisAdaptator
 								Chunk c = Tools.getChunk(chunkX, chunkZ, worldo.get());
 								if(c!=null)
 								{
-									list.add(c);  
+									list.add(c);
 								}
 								else
 								{
 									System.out.println("Error while loading chunk");
 								}
-								
+
 							}
 							catch(NoSuchElementException e)
 							{
 								System.out.println("Error while loading chunk ....");
 							}
-							
-							
+
+
 						}
 						else
 						{
@@ -188,7 +188,7 @@ public class PolisAdaptator
 			}
 
 		}
-		
+
 		return list;
 
 	}
