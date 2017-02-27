@@ -64,11 +64,11 @@ public class MoveListener
 
 		if (previousCity != null && newCity == null)
 		{
-			CityPlugin.sendMessageWithoutPrefix("Now leaving " + previousCity + "!", TextColors.GOLD, p);
+			CityPlugin.sendMessageWithoutPrefix("Now leaving " + previousCity.getName() + "!", TextColors.GOLD, p);
 		}
 		else if (newCity != null && previousCity == null || newCity != null && previousCity != null && !newCity.equals(previousCity))
 		{
-			CityPlugin.sendMessageWithoutPrefix("Now entering " + newCity.getName() + "!", TextColors.GOLD, p);
+			CityPlugin.sendMessageWithoutPrefix("______________[ Welcome to " + newCity.getName() + " ]______________", TextColors.GOLD, p);
 		}
 
 		if (newCity != null)

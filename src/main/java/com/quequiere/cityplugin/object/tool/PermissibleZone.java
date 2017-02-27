@@ -63,6 +63,14 @@ public abstract class PermissibleZone
 		}
 
 		HashMap<CityPermRankEnum, Boolean> map = this.getCityPerm().get(perm);
+		
+		if(map==null ||  map.get(rank) == null)
+		{
+			this.initCityPerm();
+			this.updatePermission();
+			map = this.getCityPerm().get(perm);
+		}
+		
 		return map.get(rank);
 	}
 
