@@ -31,6 +31,7 @@ public class CityGeneralConfig {
 	private int defaultPlayerTaxOnCity =0;
 	private int teleportCityCooldownInSeconds=60;
 	private boolean cityNameInChat = true;
+	private long antiSpamAdvertMessageInMs=1000;
 
 	
 	public int getChunkPerPlayer() {
@@ -39,6 +40,13 @@ public class CityGeneralConfig {
 	
 	
 	
+
+	public long getAntiSpamAdvertMessageInMs() {
+		return antiSpamAdvertMessageInMs;
+	}
+
+
+
 
 	public BigDecimal getOutpostClaimCost() {
 		return new BigDecimal(this.outpostClaimCost);

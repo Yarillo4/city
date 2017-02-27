@@ -43,6 +43,7 @@ public class PhysicBlockListener
 			if (!r.getCache().hasPerm(e.getLocation(), CityPermEnum.SWITH))
 			{
 				event.setCancelled(true);
+				if(r.getCache().canDisplayMessage(CityPermEnum.SWITH))
 				CityPlugin.sendMessage("You can't swith with here: collide entity.", TextColors.RED, p);
 				return;
 			}
@@ -60,6 +61,7 @@ public class PhysicBlockListener
 			if (!r.getCache().hasPerm(event.getTargetEntity().getLocation(), CityPermEnum.SWITH))
 			{
 				event.setCancelled(true);
+				if(r.getCache().canDisplayMessage(CityPermEnum.SWITH))
 				CityPlugin.sendMessage("You can't swith with frame here !", TextColors.RED, p);
 				return;
 			}
@@ -72,6 +74,7 @@ public class PhysicBlockListener
 			if (!r.getCache().hasPerm(event.getTargetEntity().getLocation(), CityPermEnum.SWITH))
 			{
 				event.setCancelled(true);
+				if(r.getCache().canDisplayMessage(CityPermEnum.SWITH))
 				CityPlugin.sendMessage("You can't swith with minecart here !", TextColors.RED, p);
 				return;
 			}
@@ -83,6 +86,7 @@ public class PhysicBlockListener
 			if (!r.getCache().hasPerm(event.getTargetEntity().getLocation(), CityPermEnum.SWITH))
 			{
 				event.setCancelled(true);
+				if(r.getCache().canDisplayMessage(CityPermEnum.SWITH))
 				CityPlugin.sendMessage("You can't swith with armorstand here !", TextColors.RED, p);
 				return;
 			}
@@ -94,6 +98,7 @@ public class PhysicBlockListener
 			if (!r.getCache().hasPerm(event.getTargetEntity().getLocation(), CityPermEnum.USEITEM))
 			{
 				event.setCancelled(true);
+				if(r.getCache().canDisplayMessage(CityPermEnum.USEITEM))
 				CityPlugin.sendMessage("You can't use item here: interactWithLivingEntity", TextColors.RED, p);
 				return;
 			}
@@ -128,6 +133,7 @@ public class PhysicBlockListener
 				if (!r.getCache().hasPerm(loc, CityPermEnum.DESTROY))
 				{
 					event.setCancelled(true);
+					if(r.getCache().canDisplayMessage(CityPermEnum.DESTROY))
 					CityPlugin.sendMessage("You can't destroy tile entity here !", TextColors.RED, p);
 					return;
 				}
@@ -153,6 +159,7 @@ public class PhysicBlockListener
 					if (!r.getCache().hasPerm(loc, CityPermEnum.USEITEM))
 					{
 						event.setCancelled(true);
+						if(r.getCache().canDisplayMessage(CityPermEnum.USEITEM))
 						CityPlugin.sendMessage("You can't use item here: tileEntity", TextColors.RED, p);
 						return;
 					}
@@ -168,6 +175,7 @@ public class PhysicBlockListener
 				if (!r.getCache().hasPerm(loc, CityPermEnum.USEITEM))
 				{
 					event.setCancelled(true);
+					if(r.getCache().canDisplayMessage(CityPermEnum.USEITEM))
 					CityPlugin.sendMessage("You can't use item here: apricornTree", TextColors.RED, p);
 					return;
 				}
@@ -184,6 +192,7 @@ public class PhysicBlockListener
 					if (!r.getCache().hasPerm(loc, CityPermEnum.BUILD))
 					{
 						event.setCancelled(true);
+						if(r.getCache().canDisplayMessage(CityPermEnum.BUILD))
 						CityPlugin.sendMessage("You can't build with hanging entity here !", TextColors.RED, p);
 						return;
 					}
@@ -201,6 +210,7 @@ public class PhysicBlockListener
 		if (!r.getCache().hasPerm(loc, CityPermEnum.SWITH))
 		{
 			event.setCancelled(true);
+			if(r.getCache().canDisplayMessage(CityPermEnum.SWITH))
 			CityPlugin.sendMessage("You can't switch here !", TextColors.RED, p);
 			return;
 		}
@@ -230,6 +240,7 @@ public class PhysicBlockListener
 					event.setCancelled(true);
 					if (!transaction.getOriginal().getState().getType().equals(BlockTypes.GRASS))
 					{
+						if(r.getCache().canDisplayMessage(CityPermEnum.BUILD))
 						CityPlugin.sendMessage("You can't build here !", TextColors.RED,event.toString(), p);
 					}
 					return;
@@ -240,6 +251,7 @@ public class PhysicBlockListener
 				if (!r.getCache().hasPerm(loc, CityPermEnum.DESTROY))
 				{
 					event.setCancelled(true);
+					if(r.getCache().canDisplayMessage(CityPermEnum.DESTROY))
 					CityPlugin.sendMessage("You can't destroy here !", TextColors.RED, p);
 					return;
 				}
@@ -256,6 +268,7 @@ public class PhysicBlockListener
 					else
 					{
 						event.setCancelled(true);
+						if(r.getCache().canDisplayMessage(CityPermEnum.SWITH))
 						CityPlugin.sendMessage("You can't switch here: modify !", TextColors.RED, p);
 						return;
 					}

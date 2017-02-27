@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+import com.quequiere.cityplugin.CityPlugin;
 
 import com.quequiere.cityplugin.Tools;
 
@@ -18,6 +19,7 @@ public class PlayerCache
 	private ArrayList<City> invitation = new ArrayList<City>();
 	private long lastTpCity = 0;
 	private boolean displayMap= false;
+	private HashMap<CityPermEnum, Long> advertMessage = new HashMap<CityPermEnum, Long>();
 
 	private HashMap<Chunk, HashMap<CityPermEnum, Boolean>> cachePerm;
 
@@ -27,7 +29,30 @@ public class PlayerCache
 		this.initializeCache();
 		cache.add(this);
 	}
-
+	
+	
+	public boolean canDisplayMessage(CityPermEnum perm)
+	{
+		boolean b = false;
+		long now = System.currentTimeMillis();
+		if(advertMessage.containsKey(perm))
+		{
+			long last = advertMessage.get(perm);
+			advertMessage.remove(perm);
+			long diff = last-now;
+			if(diff>CityPlugin.generalConfig.getAntiSpamAdvertMessageInMs())
+			{
+				b=true;
+			}
+		}
+		else
+		{
+			b=true;
+		}
+		
+		advertMessage.put(perm, now);
+		return b;
+	}
 	
 	public static PlayerCache generateCache(UUID id)
 	{
