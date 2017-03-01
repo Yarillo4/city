@@ -59,14 +59,13 @@ public class City extends PermissibleZone {
 
 	private String customName = "";
 
-	private int bonusClaim=0;
+	private int bonusClaim = 0;
 	private UUID economyUUID;
 
-	private City(String name, Resident mayor,Chunk c) {
+	private City(String name, Resident mayor, Chunk c) {
 		this.name = name;
 
-		if( Sponge.getServer().getPlayer(mayor.getId()).isPresent())
-		{
+		if (Sponge.getServer().getPlayer(mayor.getId()).isPresent()) {
 			this.spawn = mayor.getPlayer().getLocation();
 		}
 
@@ -79,40 +78,41 @@ public class City extends PermissibleZone {
 
 	}
 
-	public static City tryCreateCity(String name, Player p,boolean importFileBypass,User mayor,Optional<Chunk> locationo) {
+	public static City tryCreateCity(String name, Player p, boolean importFileBypass, User mayor,
+			Optional<Chunk> locationo) {
 
-		if(!importFileBypass)
-		{
+		if (!importFileBypass) {
 			Account account = CityPlugin.economyService.getOrCreateAccount(p.getUniqueId()).get();
 			TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(),
 					CityPlugin.generalConfig.getCityCreateCost(), Cause.of(NamedCause.source(p)));
 
 			if (name.length() > CityPlugin.generalConfig.getCityNameLenght()) {
-				CityPlugin.sendMessage("The maximum length of a custom city name is " + CityPlugin.generalConfig.getCityNameLenght(),
+				CityPlugin.sendMessage(
+						"The maximum length of a custom city name is " + CityPlugin.generalConfig.getCityNameLenght(),
 						TextColors.RED, p);
 				return null;
 			}
 
 			if (transactionResult.getResult() != ResultType.SUCCESS) {
-				CityPlugin.sendMessage("You can't afford that! You need: "
-						+ "$" + CityPlugin.generalConfig.getCityCreateCost(), TextColors.RED, p);
+				CityPlugin.sendMessage(
+						"You can't afford that! You need: " + "$" + CityPlugin.generalConfig.getCityCreateCost(),
+						TextColors.RED, p);
 				return null;
 			}
 
 		}
-		
-		if(!locationo.isPresent())
-		{
-			CityPlugin.sendMessage("We can't find the chunk chere you are standing up",TextColors.RED, p);
+
+		if (!locationo.isPresent()) {
+			CityPlugin.sendMessage("We can't find the chunk chere you are standing up", TextColors.RED, p);
 			return null;
 		}
-		
-		Chunk location = locationo.get();
 
+		Chunk location = locationo.get();
 
 		City named = getCityByName(name);
 		if (named != null) {
-			CityPlugin.sendMessage(named.getName() + " already exists! Please choose a different name!", TextColors.RED, p);
+			CityPlugin.sendMessage(named.getName() + " already exists! Please choose a different name!", TextColors.RED,
+					p);
 			return null;
 		}
 
@@ -121,28 +121,27 @@ public class City extends PermissibleZone {
 			return null;
 		}
 
-
 		if (!importFileBypass && hasOtherCityInRadius(null, location)) {
 			CityPlugin.sendMessage("You cannot claim this close to another city.", TextColors.RED, p);
 			return null;
 		}
 
 		Resident r = Resident.fromPlayerId(mayor.getUniqueId());
-		City c = new City(name, r,location);
+		City c = new City(name, r, location);
 		loaded.add(c);
 		c.save();
 		r.getCache().initializeCache();
 		c.updatePermission();
 
-		Sponge.getGame().getServer().getBroadcastChannel().send(Text.builder("The city "+name+" has been created!").color(TextColors.GREEN).build());
+		Sponge.getGame().getServer().getBroadcastChannel()
+				.send(Text.builder("The city " + name + " has been created!").color(TextColors.GREEN).build());
 
 		return c;
-
 
 	}
 
 	public static City tryCreateCity(String name, Player p) {
-		return tryCreateCity(name, p,false,p,Tools.getChunk(p.getLocation()));
+		return tryCreateCity(name, p, false, p, Tools.getChunk(p.getLocation()));
 	}
 
 	public static boolean hasOtherCityInRadius(City reference, Chunk c) {
@@ -156,24 +155,24 @@ public class City extends PermissibleZone {
 
 				Optional<Chunk> toseeo = Tools.getChunk(xc, zc, c.getWorld());
 
-				if(!toseeo.isPresent())
-				{
-					System.out.println("City can't find a chunk for method 1 radius: "+xc +" / "+ zc + " / "+ c.getWorld());
+				if (!toseeo.isPresent()) {
+					System.out.println(
+							"City can't find a chunk for method 1 radius: " + xc + " / " + zc + " / " + c.getWorld());
 					return true;
 				}
-				
+
 				Chunk tosee = toseeo.get();
-				
+
 				if (!tosee.equals(c)) {
-					
+
 					Optional<Chunk> currentCo = Tools.getChunk(xc, zc, c.getWorld());
-					
-					if(!currentCo.isPresent())
-					{
-						System.out.println("City can't find a chunk for method 2 radius: "+xc +" / "+ zc + " / "+ c.getWorld());
+
+					if (!currentCo.isPresent()) {
+						System.out.println("City can't find a chunk for method 2 radius: " + xc + " / " + zc + " / "
+								+ c.getWorld());
 						return true;
 					}
-					
+
 					City ctarget = City.getCityFromChunk(currentCo.get());
 
 					if (ctarget != null && !ctarget.equals(reference)) {
@@ -201,24 +200,18 @@ public class City extends PermissibleZone {
 		return CityPlugin.generalConfig.getChunkPerPlayer() * this.getResidents().size() + this.getBonusClaim();
 	}
 
-
-
-
-	public int getBonusClaim()
-	{
+	public int getBonusClaim() {
 		return bonusClaim;
 	}
 
-	public void setBonusClaim(int bonusClaim)
-	{
+	public void setBonusClaim(int bonusClaim) {
 		this.bonusClaim = bonusClaim;
 		this.save();
 	}
 
 	public void addResident(Resident r) {
 		r.setRank(CityRankEnum.resident);
-		if(r.getId()==null)
-		{
+		if (r.getId() == null) {
 			System.out.println("fatal error");
 			return;
 		}
@@ -228,12 +221,9 @@ public class City extends PermissibleZone {
 		for (Player p : Sponge.getServer().getOnlinePlayers()) {
 			if (this.hasResident(p.getUniqueId())) {
 
-				if(r.getPlayer()!=null)
-				{
+				if (r.getPlayer() != null) {
 					CityPlugin.sendMessage(r.getPlayer().getName() + " joined the city !", TextColors.GREEN, p);
-				}
-				else
-				{
+				} else {
 					CityPlugin.sendMessage(r.getId() + " joined the city !", TextColors.GREEN, p);
 				}
 
@@ -243,8 +233,6 @@ public class City extends PermissibleZone {
 
 		this.save();
 	}
-
-
 
 	public UUID getEconomyUUID() {
 		return economyUUID;
@@ -257,18 +245,14 @@ public class City extends PermissibleZone {
 
 	public UUID getNameEconomy() {
 
-		if(this.getEconomyUUID()==null)
-		{
+		if (this.getEconomyUUID() == null) {
 			UUID id = Tools.getnerateCustomUUID();
-			System.out.println("City generate a new UUID for city "+this.getName());
+			System.out.println("City generate a new UUID for city " + this.getName());
 			this.setEconomyUUID(id);
 		}
 
-
 		return this.getEconomyUUID();
 	}
-
-
 
 	public boolean hasResident(UUID id) {
 		for (UUID rid : this.getResidents()) {
@@ -311,16 +295,22 @@ public class City extends PermissibleZone {
 	}
 
 	public boolean hasAssistantPerm(Resident r) {
-		if (r.getRank().equals(CityRankEnum.mayor) || r.getRank().equals(CityRankEnum.assistant)) {
-			return true;
+
+		if (this.hasResident(r.getId())) {
+			if (r.getRank().equals(CityRankEnum.mayor) || r.getRank().equals(CityRankEnum.assistant)) {
+				return true;
+			}
 		}
 
 		return false;
 	}
 
 	public boolean hasMayorPerm(Resident r) {
-		if (r.getRank().equals(CityRankEnum.mayor)) {
-			return true;
+		if (this.hasResident(r.getId())) {
+			if (r.getRank().equals(CityRankEnum.mayor)) {
+				return true;
+			}
+
 		}
 
 		return false;
@@ -424,25 +414,19 @@ public class City extends PermissibleZone {
 
 	}
 
-	public void setNoMayor()
-	{
-		for(UUID id:this.getResidents())
-		{
+	public void setNoMayor() {
+		for (UUID id : this.getResidents()) {
 			Resident r = Resident.fromPlayerId(id);
-			if(r.getRank().equals(CityRankEnum.mayor))
-			{
+			if (r.getRank().equals(CityRankEnum.mayor)) {
 				r.setRank(CityRankEnum.assistant);
 			}
 		}
 	}
 
-	public Optional<Resident> getMayor()
-	{
-		for(UUID id:this.getResidents())
-		{
+	public Optional<Resident> getMayor() {
+		for (UUID id : this.getResidents()) {
 			Resident r = Resident.fromPlayerId(id);
-			if(r.getRank().equals(CityRankEnum.mayor))
-			{
+			if (r.getRank().equals(CityRankEnum.mayor)) {
 				return Optional.of(r);
 			}
 		}
@@ -469,13 +453,12 @@ public class City extends PermissibleZone {
 	public void tryToClaimHere(Player p, boolean outpost) {
 		Resident r = Resident.fromPlayerId(p.getUniqueId());
 		Optional<Chunk> targeto = r.getChunk();
-		
-		if(!targeto.isPresent())
-		{
+
+		if (!targeto.isPresent()) {
 			CityPlugin.sendMessage("Can't find the chunk where you are standing up 2", TextColors.RED, p);
 			return;
 		}
-		
+
 		Chunk target = targeto.get();
 		City c = City.getCityFromChunk(target);
 
@@ -498,16 +481,16 @@ public class City extends PermissibleZone {
 				int zc = target.getPosition().getZ() + z;
 
 				Optional<Chunk> toseeo = Tools.getChunk(xc, zc, target.getWorld());
-				
-				if(!toseeo.isPresent())
-				{
-					System.out.println("Can't find chunk on "+xc+" / "+zc);
+
+				if (!toseeo.isPresent()) {
+					System.out.println("Can't find chunk on " + xc + " / " + zc);
 					continue;
 				}
-				
-				Chunk tosee =toseeo.get();
-				
+
+				Chunk tosee = toseeo.get();
+
 				if (!tosee.equals(target)) {
+
 					City ctarget = City.getCityFromChunk(tosee);
 
 					if (ctarget != null && ctarget.equals(r.getCity())) {
@@ -581,26 +564,21 @@ public class City extends PermissibleZone {
 
 		for (Player p : Sponge.getServer().getOnlinePlayers()) {
 			Resident r = Resident.fromPlayerId(p.getUniqueId());
-			
+
 			Optional<Chunk> cco = cc.getChunk();
-			if(cco.isPresent())
-			{
+			if (cco.isPresent()) {
 				r.getCache().clearChunkPerm(cco.get());
-			}
-			else
-			{
+			} else {
 				System.out.println("City can't find chunk while unclaiming and update perm");
 			}
-			
-			
+
 		}
 		this.save();
 	}
 
 	public BigDecimal getTaxDailyCost() {
 
-		if(!this.getMayor().isPresent())
-		{
+		if (!this.getMayor().isPresent()) {
 			return new BigDecimal(0);
 		}
 
@@ -673,19 +651,15 @@ public class City extends PermissibleZone {
 			Resident r = Resident.fromPlayerId(p.getUniqueId());
 
 			for (CityChunk cc : this.getClaimedChunk()) {
-				
+
 				Optional<Chunk> cco = cc.getChunk();
-				
-				if(cco.isPresent())
-				{
+
+				if (cco.isPresent()) {
 					r.getCache().clearChunkPerm(cco.get());
-				}
-				else
-				{
+				} else {
 					System.out.println("City can't find chunk while update perm of city");
 				}
-				
-				
+
 			}
 
 		}
