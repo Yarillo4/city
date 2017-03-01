@@ -3,6 +3,7 @@ package com.quequiere.cityplugin.visualizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scoreboard.Score;
@@ -103,8 +104,17 @@ public class MapCityChunkVisualizer
 		nextDirection.put(Direction.EAST, Direction.NORTH);
 
 		ArrayList<Text> list = new ArrayList<Text>();
-		Chunk ref = Tools.getChunk(p.getLocation());
-		Location<Chunk> loc = Tools.getChunkLocation(currentloc);
+		Optional<Chunk> refo = Tools.getChunk(p.getLocation());
+		Optional<Location<Chunk>> loco = Tools.getChunkLocation(currentloc);
+		
+		if(!refo.isPresent()||!loco.isPresent())
+		{
+			System.out.println("City: Error while loading map 1");
+			return list;
+		}
+		
+		Chunk ref = refo.get();
+		Location<Chunk> loc = loco.get();
 
 		Direction toapply = null;
 
@@ -126,7 +136,16 @@ public class MapCityChunkVisualizer
 			{
 				Location<Chunk> target = Tools.addDirection(localTemp, nextDirection.get(playerDirection), x);
 
-				Chunk targetChunk = Tools.getChunk(target.getBlockX(), target.getBlockZ(), p.getWorld());
+				Optional<Chunk> targetChunko = Tools.getChunk(target.getBlockX(), target.getBlockZ(), p.getWorld());
+				
+				if(!targetChunko.isPresent())
+				{
+					System.out.println("City: Error while loading map 2");
+					continue;
+				}
+				
+				Chunk targetChunk = targetChunko.get();
+				
 				City c = City.getCityFromChunk(targetChunk);
 
 				String code = null;

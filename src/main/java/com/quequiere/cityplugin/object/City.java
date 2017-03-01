@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -29,7 +30,6 @@ import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.google.common.base.Optional;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.quequiere.cityplugin.CityPlugin;
@@ -79,7 +79,7 @@ public class City extends PermissibleZone {
 
 	}
 
-	public static City tryCreateCity(String name, Player p,boolean importFileBypass,User mayor,Chunk location) {
+	public static City tryCreateCity(String name, Player p,boolean importFileBypass,User mayor,Optional<Chunk> locationo) {
 
 		if(!importFileBypass)
 		{
@@ -100,6 +100,14 @@ public class City extends PermissibleZone {
 			}
 
 		}
+		
+		if(!locationo.isPresent())
+		{
+			CityPlugin.sendMessage("We can't find the chunk chere you are standing up",TextColors.RED, p);
+			return null;
+		}
+		
+		Chunk location = locationo.get();
 
 
 		City named = getCityByName(name);
@@ -146,10 +154,27 @@ public class City extends PermissibleZone {
 				int xc = c.getPosition().getX() + x;
 				int zc = c.getPosition().getZ() + z;
 
-				Chunk tosee = Tools.getChunk(xc, zc, c.getWorld());
+				Optional<Chunk> toseeo = Tools.getChunk(xc, zc, c.getWorld());
 
+				if(!toseeo.isPresent())
+				{
+					System.out.println("City can't find a chunk for method 1 radius: "+xc +" / "+ zc + " / "+ c.getWorld());
+					return true;
+				}
+				
+				Chunk tosee = toseeo.get();
+				
 				if (!tosee.equals(c)) {
-					City ctarget = City.getCityFromChunk(Tools.getChunk(xc, zc, c.getWorld()));
+					
+					Optional<Chunk> currentCo = Tools.getChunk(xc, zc, c.getWorld());
+					
+					if(!currentCo.isPresent())
+					{
+						System.out.println("City can't find a chunk for method 2 radius: "+xc +" / "+ zc + " / "+ c.getWorld());
+						return true;
+					}
+					
+					City ctarget = City.getCityFromChunk(currentCo.get());
 
 					if (ctarget != null && !ctarget.equals(reference)) {
 						return true;
@@ -422,7 +447,7 @@ public class City extends PermissibleZone {
 			}
 		}
 
-		return Optional.absent();
+		return Optional.empty();
 	}
 
 	public void forceClaimImport(Chunk target) {
@@ -443,7 +468,15 @@ public class City extends PermissibleZone {
 
 	public void tryToClaimHere(Player p, boolean outpost) {
 		Resident r = Resident.fromPlayerId(p.getUniqueId());
-		Chunk target = r.getChunk();
+		Optional<Chunk> targeto = r.getChunk();
+		
+		if(!targeto.isPresent())
+		{
+			CityPlugin.sendMessage("Can't find the chunk where you are standing up 2", TextColors.RED, p);
+			return;
+		}
+		
+		Chunk target = targeto.get();
 		City c = City.getCityFromChunk(target);
 
 		if (c != null) {
@@ -464,7 +497,16 @@ public class City extends PermissibleZone {
 				int xc = target.getPosition().getX() + x;
 				int zc = target.getPosition().getZ() + z;
 
-				Chunk tosee = Tools.getChunk(xc, zc, target.getWorld());
+				Optional<Chunk> toseeo = Tools.getChunk(xc, zc, target.getWorld());
+				
+				if(!toseeo.isPresent())
+				{
+					System.out.println("Can't find chunk on "+xc+" / "+zc);
+					continue;
+				}
+				
+				Chunk tosee =toseeo.get();
+				
 				if (!tosee.equals(target)) {
 					City ctarget = City.getCityFromChunk(tosee);
 
@@ -539,7 +581,18 @@ public class City extends PermissibleZone {
 
 		for (Player p : Sponge.getServer().getOnlinePlayers()) {
 			Resident r = Resident.fromPlayerId(p.getUniqueId());
-			r.getCache().clearChunkPerm(cc.getChunk());
+			
+			Optional<Chunk> cco = cc.getChunk();
+			if(cco.isPresent())
+			{
+				r.getCache().clearChunkPerm(cco.get());
+			}
+			else
+			{
+				System.out.println("City can't find chunk while unclaiming and update perm");
+			}
+			
+			
 		}
 		this.save();
 	}
@@ -620,7 +673,19 @@ public class City extends PermissibleZone {
 			Resident r = Resident.fromPlayerId(p.getUniqueId());
 
 			for (CityChunk cc : this.getClaimedChunk()) {
-				r.getCache().clearChunkPerm(cc.getChunk());
+				
+				Optional<Chunk> cco = cc.getChunk();
+				
+				if(cco.isPresent())
+				{
+					r.getCache().clearChunkPerm(cco.get());
+				}
+				else
+				{
+					System.out.println("City can't find chunk while update perm of city");
+				}
+				
+				
 			}
 
 		}

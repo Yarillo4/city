@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.spongepowered.api.Sponge;
@@ -47,9 +48,9 @@ public class Resident
 		return Sponge.getServer().getPlayer(this.getId()).get();
 	}
 
-	public Chunk getChunk()
+	public Optional<Chunk> getChunk()
 	{
-		Chunk chunk = Tools.getChunk(this.getPlayer().getLocation());
+		Optional<Chunk> chunk = Tools.getChunk(this.getPlayer().getLocation());
 		return chunk;
 	}
 

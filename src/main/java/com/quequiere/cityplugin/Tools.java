@@ -15,13 +15,18 @@ import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.flowpowered.math.vector.Vector3d;
-
 public class Tools
 {
-	public static Chunk getChunk(int chunkX,int chunkZ,World w)
+	public static Optional<Chunk> getChunk(int chunkX,int chunkZ,World w)
 	{
-		Chunk chunk = w.getChunk(chunkX, 0, chunkZ).get();
+		Optional<Chunk> chunk = w.getChunk(chunkX, 0, chunkZ);
+		
+		if(!chunk.isPresent())
+		{
+			chunk=w.loadChunk(chunkX, 0, chunkZ, false);
+			System.out.println("City loaded a new chunk for world "+chunkX+" / "+chunkZ+" to avoid empty chunk !");
+		}
+		
 		return chunk;
 	}
 
@@ -79,14 +84,23 @@ public class Tools
 		return toret;
 	}
 
-	public static Location<Chunk> getChunkLocation(Location<World> l)
+	public static Optional<Location<Chunk>> getChunkLocation(Location<World> l)
 	{
 		int chunkX = l.getBlockPosition().getX() >> 4;
 		int chunkZ = l.getBlockPosition().getZ() >> 4;
-		return getChunk(l).getLocation(chunkX, 0, chunkZ);
+		
+		Optional<Chunk> c = getChunk(l);
+		if(c.isPresent())
+		{
+			return Optional.of(c.get().getLocation(chunkX, 0, chunkZ));
+		}
+		
+		System.out.println("City can't find chunk for location "+l);
+		
+		return Optional.empty();
 	}
 
-	public static Chunk getChunk(Location<World> l)
+	public static Optional<Chunk> getChunk(Location<World> l)
 	{
 		int chunkX = l.getBlockPosition().getX() >> 4;
 		int chunkZ = l.getBlockPosition().getZ() >> 4;

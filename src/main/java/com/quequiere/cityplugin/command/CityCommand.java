@@ -329,6 +329,15 @@ public class CityCommand implements CommandCallable
 			}
 			else if (subc.equals(SubCommand.claimoutpost))
 			{
+				
+				String perm = "city.claimoutpost";
+				if(!CityPlugin.hasPerm(p, perm))
+				{
+					CityPlugin.sendMessage("You need "+perm+" perm to do that !", TextColors.RED, p);
+					return CommandResult.success();
+				}
+				
+				
 				if (c == null)
 				{
 					CityPlugin.sendMessage("You need to be in a city to do that !", TextColors.RED, p);
@@ -409,7 +418,12 @@ public class CityCommand implements CommandCallable
 					{
 						CityPlugin.sendMessage("Starting unclaim process ...", TextColors.GREEN, p);
 
-						CityChunk cc = c.getChunck(r.getChunk());
+						if(!r.getChunk().isPresent())
+						{
+							CityPlugin.sendMessage("Error while try to unclaim chunk, not loaded in world ?", TextColors.RED, p);
+						}
+						
+						CityChunk cc = c.getChunck(r.getChunk().get());
 
 						if (cc != null)
 						{

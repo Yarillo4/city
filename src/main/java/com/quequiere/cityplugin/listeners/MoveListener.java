@@ -1,5 +1,7 @@
 package com.quequiere.cityplugin.listeners;
 
+import java.util.Optional;
+
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Listener;
@@ -56,9 +58,17 @@ public class MoveListener
 			MapCityChunkVisualizer.updatedisplay(p, toY, newLocation);
 		}
 
-		Chunk previousChunk = Tools.getChunk(previousLocation.getChunkPosition().getX(), previousLocation.getChunkPosition().getZ(), previousLocation.getExtent());
-		Chunk newChunk = Tools.getChunk(newLocation.getChunkPosition().getX(), newLocation.getChunkPosition().getZ(), newLocation.getExtent());
+		Optional<Chunk> previousChunko = Tools.getChunk(previousLocation.getChunkPosition().getX(), previousLocation.getChunkPosition().getZ(), previousLocation.getExtent());
+		Optional<Chunk> newChunko = Tools.getChunk(newLocation.getChunkPosition().getX(), newLocation.getChunkPosition().getZ(), newLocation.getExtent());
 
+		if(!previousChunko.isPresent() ||!newChunko.isPresent() )
+		{	
+			return;
+		}
+		
+		Chunk previousChunk = previousChunko.get();
+		Chunk newChunk =newChunko.get();
+		
 		City previousCity = City.getCityFromChunk(previousChunk);
 		City newCity = City.getCityFromChunk(newChunk);
 

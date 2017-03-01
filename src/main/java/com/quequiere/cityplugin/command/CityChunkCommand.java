@@ -45,7 +45,17 @@ public class CityChunkCommand implements CommandCallable
 
 		Player p = (Player) src;
 		Resident r = Resident.fromPlayerId(p.getUniqueId());
-		Chunk ch = Tools.getChunk(p.getLocation());
+		Optional<Chunk> cho = Tools.getChunk(p.getLocation());
+		
+		if(!cho.isPresent())
+		{
+			CityPlugin.sendMessage("We can't find the chunk where you are!", TextColors.RED, p);
+			return CommandResult.success();
+		}
+		
+		Chunk ch = cho.get();
+		
+		
 
 		City city = City.getCityFromChunk(ch);
 

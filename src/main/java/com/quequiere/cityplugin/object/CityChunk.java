@@ -1,5 +1,6 @@
 package com.quequiere.cityplugin.object;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.spongepowered.api.Sponge;
@@ -59,7 +60,7 @@ public class CityChunk extends PermissibleZone
 		this.updatePermission();
 	}
 
-	public Chunk getChunk()
+	public Optional<Chunk> getChunk()
 	{
 		return Tools.getChunk(this.x, this.z, Tools.getWorldByName(this.world));
 	}
@@ -74,7 +75,15 @@ public class CityChunk extends PermissibleZone
 	{
 		if (this.city == null)
 		{
-			this.city = City.getCityFromChunk(this.getChunk());
+			if(this.getChunk().isPresent())
+			{
+				this.city = City.getCityFromChunk(this.getChunk().get());
+			}
+			else
+			{
+				System.out.println("Can't find chunk for a city chunk ");
+			}
+			
 		}
 
 		return this.city;
@@ -89,7 +98,15 @@ public class CityChunk extends PermissibleZone
 		{
 			Resident r = Resident.fromPlayerId(p.getUniqueId());
 
-			r.getCache().clearChunkPerm(this.getChunk());
+			if(this.getChunk().isPresent())
+			{
+				r.getCache().clearChunkPerm(this.getChunk().get());
+			}
+			else
+			{
+				System.out.println("Can't clear cache cause chunk can't be finded !");
+			}
+			
 
 		}
 

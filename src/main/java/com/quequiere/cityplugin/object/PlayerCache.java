@@ -2,6 +2,7 @@ package com.quequiere.cityplugin.object;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.spongepowered.api.world.Chunk;
@@ -285,7 +286,15 @@ public class PlayerCache
 
 	public boolean hasPerm(Location<World> loc, CityPermEnum perm)
 	{
-		Chunk c = Tools.getChunk(loc);
+		Optional<Chunk> co = Tools.getChunk(loc);
+		
+		if(!co.isPresent())
+		{
+			System.out.println("Can't find chunk while loading player cache");
+			return false;
+		}
+		
+		Chunk c =co.get();
 
 		if (!cachePerm.containsKey(c))
 		{

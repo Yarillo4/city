@@ -82,7 +82,7 @@ public class PolisAdaptator
 				continue;
 			}
 
-			City c = City.tryCreateCity(teamName, p, true, mayor.get(), clist.get(0));
+			City c = City.tryCreateCity(teamName, p, true, mayor.get(), Optional.of(clist.get(0)));
 
 			if(c!=null)
 			{
@@ -159,10 +159,10 @@ public class PolisAdaptator
 							System.out.println("Find a new claimed chunk for team: " + teamname + " on world " + worldo.get().getName() + " pos: " + chunkX + "/" + chunkZ);
 							try
 							{
-								Chunk c = Tools.getChunk(chunkX, chunkZ, worldo.get());
-								if(c!=null)
+								Optional<Chunk> c = Tools.getChunk(chunkX, chunkZ, worldo.get());
+								if(c.isPresent())
 								{
-									list.add(c);
+									list.add(c.get());
 								}
 								else
 								{
