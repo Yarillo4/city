@@ -2,8 +2,8 @@
 A chunk based land protection system that allows for players to set up complex claims and create civilizations.
 
 ###Downloads
+- City 0.1.30 ALPHA - [Download](http://play.pixelsky-mc.com/downloads/city/City-0.1.30.jar)
 - City 0.1.29 ALPHA - [Download](http://play.pixelsky-mc.com/downloads/city/City-0.1.29.jar)
-- City 0.1.28 ALPHA - [Download](http://play.pixelsky-mc.com/downloads/city/City-0.1.28.jar)
 
 
 ###Features
