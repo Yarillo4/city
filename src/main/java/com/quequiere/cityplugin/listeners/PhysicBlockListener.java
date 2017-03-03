@@ -10,6 +10,8 @@ import org.spongepowered.api.block.tileentity.carrier.TileEntityCarrier;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityTypes;
+import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.hanging.Hanging;
 import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.Living;
@@ -40,13 +42,31 @@ public class PhysicBlockListener
 		Resident r = Resident.fromPlayerId(p.getUniqueId());
 		for(Entity e:event.getEntities())
 		{
-			if (!r.getCache().hasPerm(e.getLocation(), CityPermEnum.SWITCH))
+			if(e instanceof Item)
 			{
-				event.setCancelled(true);
-				if(r.getCache().canDisplayMessage(CityPermEnum.SWITCH))
-				CityPlugin.sendMessage("You cannot collide with entities here!", TextColors.RED, p);
-				return;
+				if (!r.getCache().hasPerm(e.getLocation(), CityPermEnum.USEITEM))
+				{
+					event.setCancelled(true);
+					if(r.getCache().canDisplayMessage(CityPermEnum.USEITEM))
+					CityPlugin.sendMessage("You cannot use item here: get ItemStack", TextColors.RED, p);
+					return;
+				}
 			}
+			else
+			{
+				if (!r.getCache().hasPerm(e.getLocation(), CityPermEnum.SWITCH))
+				{
+					event.setCancelled(true);
+					if(!CityPlugin.generalConfig.isDisableCollideMessage())
+					{
+						if(r.getCache().canDisplayMessage(CityPermEnum.SWITCH))
+							CityPlugin.sendMessage("You cannot collide with entities here!", TextColors.RED, p);
+					}
+				
+					return;
+				}
+			}
+			
 		}
 
 	}

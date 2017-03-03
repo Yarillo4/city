@@ -32,11 +32,21 @@ public class CityGeneralConfig {
 	private int teleportCityCooldownInSeconds=60;
 	private boolean cityNameInChat = true;
 	private long antiSpamAdvertMessageInMs=1000;
+	private boolean disableCollideMessage = false;
 
 
 	public int getChunkPerPlayer() {
 		return chunkPerPlayer;
 	}
+
+
+	
+
+
+	public boolean isDisableCollideMessage() {
+		return disableCollideMessage;
+	}
+
 
 
 
