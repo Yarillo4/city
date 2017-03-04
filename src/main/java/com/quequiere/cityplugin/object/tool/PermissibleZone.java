@@ -24,6 +24,7 @@ public abstract class PermissibleZone
 {
 
 	private HashMap<CityPermEnum, HashMap<CityPermRankEnum, Boolean>> cityPerm;
+	private boolean interactWithLivingEntity=false;
 
 	protected void initCityPerm()
 	{
@@ -74,6 +75,18 @@ public abstract class PermissibleZone
 		return map.get(rank);
 	}
 
+	
+	public boolean isInteractWithLivingEntity()
+	{
+		return interactWithLivingEntity;
+	}
+
+	public void setInteractWithLivingEntity(boolean interactWithLivingEntity)
+	{
+		this.interactWithLivingEntity = interactWithLivingEntity;
+		this.updatePermission();
+	}
+
 	public void setPermission(CityPermEnum perm, CityPermRankEnum rank, boolean value)
 	{
 		HashMap<CityPermRankEnum, Boolean> map = this.getCityPerm().get(perm);
@@ -87,7 +100,49 @@ public abstract class PermissibleZone
 	public void displayPerm(Player p, Resident r, Builder builder, boolean canModify)
 	{
 		ArrayList<Object> objects = new ArrayList<>();
+		
+		
+		boolean can = this.isInteractWithLivingEntity();
+		
+		if (canModify)
+			objects.add(TextActions.executeCallback(source -> {
+				boolean old = this.isInteractWithLivingEntity();
+				
+				if (this instanceof City)
+				{
+					City c = (City) this;
+					if(c.hasAssistantPerm(r))
+					{
+						this.setInteractWithLivingEntity(!old);
+						CityCommand.displayCity(p, r, (City) this);
+					}
+				}
+				else if (this instanceof CityChunk)
+				{
+					this.setInteractWithLivingEntity(!old);
+					CityChunkCommand.displayChunk(p, r, (CityChunk) this); 
+				}
+				else if (this instanceof CityWorld)
+				{
+					this.setInteractWithLivingEntity(!old);
+					CityWorldCommand.displayWorld(p, CityWorld.getByName(p.getWorld().getName()));
+				}
+				else
+				{
+					CityPlugin.sendMessage("Error, not dev part 245", TextColors.RED, p);
+				}
 
+			}));
+		objects.add(TextActions.showText(Text.of("Toggle if player can interact with living entities")));
+		objects.add(can ? TextColors.GREEN : TextColors.RED);
+		objects.add(can ? "EntityInteract: ON" : "EntityInteract: OFF");
+		objects.add("\n");
+		builder.append(Text.of(objects.toArray()));
+		
+
+		
+		
+		 
 		builder.append(Text.of(TextColors.DARK_GREEN, "Permission: "));
 
 		for (CityPermEnum perm : CityPermEnum.values())
@@ -99,7 +154,7 @@ public abstract class PermissibleZone
 				if (rank.equals(CityPermRankEnum.admin))
 					continue;
 
-				boolean can = this.canDoAction(perm, rank);
+				can = this.canDoAction(perm, rank);
 
 				objects.clear();
 				if (canModify)

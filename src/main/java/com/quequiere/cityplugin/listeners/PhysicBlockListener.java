@@ -115,11 +115,10 @@ public class PhysicBlockListener
 		{
 			Resident r = Resident.fromPlayerId(p.getUniqueId());
 
-			if (!r.getCache().hasPerm(event.getTargetEntity().getLocation(), CityPermEnum.USEITEM))
+			if (!r.getCache().canInteractEntity((event.getTargetEntity().getLocation())))
 			{
 				event.setCancelled(true);
-				if(r.getCache().canDisplayMessage(CityPermEnum.USEITEM))
-				CityPlugin.sendMessage("You cannot interact with animals here!", TextColors.RED, p);
+				CityPlugin.sendMessage("You cannot interact with living entity here!", TextColors.RED, p);
 				return;
 			}
 		}
