@@ -82,16 +82,20 @@ public class City extends PermissibleZone {
 			Optional<Chunk> locationo) {
 
 		if (!importFileBypass) {
-			Account account = CityPlugin.economyService.getOrCreateAccount(p.getUniqueId()).get();
-			TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(),
-					CityPlugin.generalConfig.getCityCreateCost(), Cause.of(NamedCause.source(p)));
-
+			
 			if (name.length() > CityPlugin.generalConfig.getCityNameLenght()) {
 				CityPlugin.sendMessage(
 						"The maximum length of a custom city name is " + CityPlugin.generalConfig.getCityNameLenght(),
 						TextColors.RED, p);
 				return null;
 			}
+
+			
+			
+			Account account = CityPlugin.economyService.getOrCreateAccount(p.getUniqueId()).get();
+			TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(),
+					CityPlugin.generalConfig.getCityCreateCost(), Cause.of(NamedCause.source(p)));
+
 
 			if (transactionResult.getResult() != ResultType.SUCCESS) {
 				CityPlugin.sendMessage(
