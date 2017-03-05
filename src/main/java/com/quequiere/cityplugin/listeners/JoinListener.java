@@ -45,7 +45,7 @@ public class JoinListener
 		for (Entity e : event.getEntities())
 		{
 			
-			if(e.getClass().toString().contains("entities.pixelmon.EntityPixelmon"))
+			if(e.getClass().toString().contains("com.pixelmonmod.pixelmon"))
 			{
 				// !!!! For pixelmon need to cancel event, because cause lags if is checked
 				if(CityPlugin.generalConfig.isdissociatePixelmonEntityFromCreatureSpawn()||true)
@@ -53,6 +53,8 @@ public class JoinListener
 					return;
 				}
 			}
+			
+		
 			
 			Optional<Chunk> co = Tools.getChunk(e.getLocation());
 			if (co.isPresent())
@@ -69,6 +71,7 @@ public class JoinListener
 					if(!chunkPerms.get(c).get(CityPermBooleanEnum.spawnMob))
 					{
 						event.setCancelled(true);
+						return;
 					}
 				}
 				else if(e instanceof Animal || e instanceof Ambient)
@@ -76,12 +79,15 @@ public class JoinListener
 					if(!chunkPerms.get(c).get(CityPermBooleanEnum.spawnCreature))
 					{
 						event.setCancelled(true);
+						return;
 					}
 				}
 				
 			}
 
+			
 		}
+		
 	}
 	
 	public static void loadBooleanPermForChunk(Chunk c)
