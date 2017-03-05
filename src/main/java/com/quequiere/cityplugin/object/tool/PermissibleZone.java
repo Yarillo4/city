@@ -15,6 +15,7 @@ import com.quequiere.cityplugin.command.CityCommand;
 import com.quequiere.cityplugin.command.CityWorldCommand;
 import com.quequiere.cityplugin.object.City;
 import com.quequiere.cityplugin.object.CityChunk;
+import com.quequiere.cityplugin.object.CityPermBooleanEnum;
 import com.quequiere.cityplugin.object.CityPermEnum;
 import com.quequiere.cityplugin.object.CityPermRankEnum;
 import com.quequiere.cityplugin.object.CityWorld;
@@ -24,9 +25,42 @@ public abstract class PermissibleZone
 {
 
 	private HashMap<CityPermEnum, HashMap<CityPermRankEnum, Boolean>> cityPerm;
-	private boolean interactWithLivingEntity=false;
+	private HashMap<CityPermBooleanEnum, Boolean> cityBooleanPerm;
 
-	protected void initCityPerm()
+	public void initCityBooleanPerm()
+	{
+		cityBooleanPerm = new HashMap<CityPermBooleanEnum, Boolean>();
+		 for(CityPermBooleanEnum perm:CityPermBooleanEnum.values())
+		 {
+			 if(perm.equals(CityPermBooleanEnum.pvp))
+			 {
+				 cityBooleanPerm.put(perm, false);
+			 }
+			 else
+			 {
+				 cityBooleanPerm.put(perm, true);
+			 }
+			 
+		 }	
+		 
+		 this.updatePermission();
+	}
+	
+	
+
+	public HashMap<CityPermBooleanEnum, Boolean> getCityBooleanPerm()
+	{
+		if(cityBooleanPerm==null)
+		{
+			this.initCityBooleanPerm();
+			this.updatePermission();
+		}
+		return cityBooleanPerm;
+	}
+
+
+
+	public void initCityPerm()
 	{
 		this.cityPerm = new HashMap<CityPermEnum, HashMap<CityPermRankEnum, Boolean>>();
 		for (CityPermEnum perm : CityPermEnum.values())
@@ -42,8 +76,12 @@ public abstract class PermissibleZone
 
 			this.cityPerm.put(perm, permtypes);
 		}
+		
+		
 		this.updatePermission();
 	}
+	
+	
 
 	public HashMap<CityPermEnum, HashMap<CityPermRankEnum, Boolean>> getCityPerm()
 	{
@@ -75,17 +113,18 @@ public abstract class PermissibleZone
 		return map.get(rank);
 	}
 
-	
-	public boolean isInteractWithLivingEntity()
+	public boolean isActive(CityPermBooleanEnum citypermboolean)
 	{
-		return interactWithLivingEntity;
+		return this.getCityBooleanPerm().get(citypermboolean);
 	}
-
-	public void setInteractWithLivingEntity(boolean interactWithLivingEntity)
+	
+	public void setBooleanPerm(CityPermBooleanEnum citypermboolean, boolean value)
 	{
-		this.interactWithLivingEntity = interactWithLivingEntity;
+		this.getCityBooleanPerm().remove(citypermboolean);
+		this.getCityBooleanPerm().put(citypermboolean, value);
 		this.updatePermission();
 	}
+	
 
 	public void setPermission(CityPermEnum perm, CityPermRankEnum rank, boolean value)
 	{
@@ -101,49 +140,55 @@ public abstract class PermissibleZone
 	{
 		ArrayList<Object> objects = new ArrayList<>();
 		
-		
-		boolean can = this.isInteractWithLivingEntity();
-		
-		if (canModify)
-			objects.add(TextActions.executeCallback(source -> {
-				boolean old = this.isInteractWithLivingEntity();
-				
-				if (this instanceof City)
-				{
-					City c = (City) this;
-					if(c.hasAssistantPerm(r))
+		for (CityPermBooleanEnum boolPerm : CityPermBooleanEnum.values())
+		{
+			boolean can = this.isActive(boolPerm);
+			objects.clear();
+			if (canModify)
+				objects.add(TextActions.executeCallback(source -> {
+					boolean old = this.isActive(boolPerm);
+					
+					if (this instanceof City)
 					{
-						this.setInteractWithLivingEntity(!old);
-						CityCommand.displayCity(p, r, (City) this);
+						City c = (City) this;
+						if(c.hasAssistantPerm(r))
+						{
+							this.setBooleanPerm(boolPerm, !old);
+							CityCommand.displayCity(p, r, (City) this);
+						}
 					}
-				}
-				else if (this instanceof CityChunk)
-				{
-					this.setInteractWithLivingEntity(!old);
-					CityChunkCommand.displayChunk(p, r, (CityChunk) this); 
-				}
-				else if (this instanceof CityWorld)
-				{
-					this.setInteractWithLivingEntity(!old);
-					CityWorldCommand.displayWorld(p, CityWorld.getByName(p.getWorld().getName()));
-				}
-				else
-				{
-					CityPlugin.sendMessage("Error, not dev part 245", TextColors.RED, p);
-				}
+					else if (this instanceof CityChunk)
+					{
+						this.setBooleanPerm(boolPerm, !old);
+						CityChunkCommand.displayChunk(p, r, (CityChunk) this); 
+					}
+					else if (this instanceof CityWorld)
+					{
+						this.setBooleanPerm(boolPerm, !old);
+						CityWorldCommand.displayWorld(p, CityWorld.getByName(p.getWorld().getName()));
+					}
+					else
+					{
+						CityPlugin.sendMessage("Error, not dev part 245", TextColors.RED, p);
+					}
 
-			}));
-		objects.add(TextActions.showText(Text.of("Toggle if player can interact with living entities")));
-		objects.add(can ? TextColors.GREEN : TextColors.RED);
-		objects.add(can ? "EntityInteract: ON" : "EntityInteract: OFF");
-		objects.add("\n");
-		builder.append(Text.of(objects.toArray()));
+				}));
+			
+			
+			objects.add(TextActions.showText(Text.of(boolPerm.overText)));
+			objects.add(Text.of(TextColors.DARK_GREEN,boolPerm.displayName,": ",TextColors.GRAY,"["));
+			objects.add(can ? TextColors.GREEN : TextColors.RED);
+			objects.add(can ? "ON" : "OFF");
+			objects.add(Text.of(TextColors.GRAY,"] "));
 		
+			builder.append(Text.of(objects.toArray()));
+			
+		}
+		
+		objects.clear();
 
-		
-		
 		 
-		builder.append(Text.of(TextColors.DARK_GREEN, "Permission: "));
+		builder.append(Text.of(TextColors.DARK_GREEN, "\nPermission: "));
 
 		for (CityPermEnum perm : CityPermEnum.values())
 		{
@@ -154,7 +199,7 @@ public abstract class PermissibleZone
 				if (rank.equals(CityPermRankEnum.admin))
 					continue;
 
-				can = this.canDoAction(perm, rank);
+				boolean can = this.canDoAction(perm, rank);
 
 				objects.clear();
 				if (canModify)
@@ -199,5 +244,6 @@ public abstract class PermissibleZone
 
 		builder.append(Text.of("\n"));
 	}
+	
 
 }

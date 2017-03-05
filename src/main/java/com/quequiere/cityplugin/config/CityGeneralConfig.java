@@ -8,10 +8,20 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 
+import org.spongepowered.api.world.Chunk;
+
+import com.google.common.base.Optional;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.quequiere.cityplugin.CityPlugin;
+import com.quequiere.cityplugin.listeners.JoinListener;
+import com.quequiere.cityplugin.object.City;
+import com.quequiere.cityplugin.object.CityPermBooleanEnum;
+import com.quequiere.cityplugin.object.CityWorld;
+import com.quequiere.cityplugin.object.PlayerCache;
 
 public class CityGeneralConfig {
 
@@ -33,15 +43,64 @@ public class CityGeneralConfig {
 	private boolean cityNameInChat = true;
 	private long antiSpamAdvertMessageInMs=1000;
 	private boolean disableCollideMessage = false;
+	private boolean dissociatePixelmonEntityFromCreatureSpawn = true;
 
+	private HashMap<CityPermBooleanEnum, ForcableConfig> serverOverridePerm;
+	
+
+	private void initOverrideBooleanPerms()
+	{
+		serverOverridePerm = new HashMap<CityPermBooleanEnum, ForcableConfig>();
+		for(CityPermBooleanEnum per:CityPermBooleanEnum.values())
+		{
+			if(per.equals(CityPermBooleanEnum.pvp))
+			{
+				serverOverridePerm.put(per, new ForcableConfig(false,false));
+			}
+			else
+			{
+				serverOverridePerm.put(per, new ForcableConfig(false,true));
+			}
+			
+		}
+		
+		this.save();
+	}
+
+	private HashMap<CityPermBooleanEnum, ForcableConfig> getServerOverridePerm()
+	{
+		if(serverOverridePerm==null)
+		{
+			this.initOverrideBooleanPerms();
+		}
+		return serverOverridePerm;
+	}
+	
+
+	
+	public Optional<Boolean> isActivePerm(CityPermBooleanEnum cityPermBoolean)
+	{
+		if(!this.getServerOverridePerm().get(cityPermBoolean).forceThisPermOnServer)
+		{
+			return Optional.absent();
+		}
+		else
+		{
+			return Optional.of(this.getServerOverridePerm().get(cityPermBoolean).valueOfPerm);
+		}
+		
+	}
+	
+	
+
+	public boolean isdissociatePixelmonEntityFromCreatureSpawn()
+	{
+		return dissociatePixelmonEntityFromCreatureSpawn;
+	}
 
 	public int getChunkPerPlayer() {
 		return chunkPerPlayer;
 	}
-
-
-	
-
 
 	public boolean isDisableCollideMessage() {
 		return disableCollideMessage;
@@ -137,6 +196,16 @@ public class CityGeneralConfig {
 	public static void loadConfig()
 	{
 		CityPlugin.generalConfig=loadConfigFile();
+		JoinListener.chunkPerms= new HashMap<Chunk, HashMap<CityPermBooleanEnum,Boolean>>();
+		
+		for(PlayerCache pc:PlayerCache.cache)
+		{
+			pc.initializeCache();
+		}
+		
+		
+		CityWorld.reloadAllPerm();
+		City.reloadAllPerm();
 	}
 
 
@@ -181,6 +250,9 @@ public class CityGeneralConfig {
 			c.save();
 		}
 
+		//initialize si nexiste pas
+		c.getServerOverridePerm();
+		
 		c.save();
 
 		return c;

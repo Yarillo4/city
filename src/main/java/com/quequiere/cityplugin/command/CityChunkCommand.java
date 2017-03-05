@@ -46,16 +46,14 @@ public class CityChunkCommand implements CommandCallable
 		Player p = (Player) src;
 		Resident r = Resident.fromPlayerId(p.getUniqueId());
 		Optional<Chunk> cho = Tools.getChunk(p.getLocation());
-		
-		if(!cho.isPresent())
+
+		if (!cho.isPresent())
 		{
 			CityPlugin.sendMessage("We can't find the chunk where you are!", TextColors.RED, p);
 			return CommandResult.success();
 		}
-		
+
 		Chunk ch = cho.get();
-		
-		
 
 		City city = City.getCityFromChunk(ch);
 
@@ -117,6 +115,27 @@ public class CityChunkCommand implements CommandCallable
 
 				}
 			}
+			else if (subc.equals(SubCommand.delete))
+			{
+				if (city.hasAssistantPerm(r) || cc.isOwner(r.getId()))
+				{
+					if (cc.getResident() == null)
+					{
+						CityPlugin.sendMessage("No resident here, you can't delete it !", TextColors.RED, p);
+						return CommandResult.success();
+					}
+					else
+					{
+						cc.setResident(null);
+						CityPlugin.sendMessage("This city now belong to the city", TextColors.GREEN, p);
+					}
+				}
+				else
+				{
+					CityPlugin.sendMessage("You need to be assistant or owner to do that!", TextColors.RED, p);
+				}
+
+			}
 			else if (subc.equals(SubCommand.help))
 			{
 				displayHelp(p);
@@ -134,7 +153,7 @@ public class CityChunkCommand implements CommandCallable
 
 	public enum SubCommand
 	{
-		help, sell
+		help, sell, delete
 	};
 
 	public static void displayChunk(Player p, Resident r, CityChunk cc)
@@ -187,11 +206,11 @@ public class CityChunkCommand implements CommandCallable
 					Account originaccount = null;
 					if (cc.getResident() == null)
 					{
-						originaccount=CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
+						originaccount = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
 					}
 					else
 					{
-						originaccount=CityPlugin.economyService.getOrCreateAccount(cc.getResident()).get();
+						originaccount = CityPlugin.economyService.getOrCreateAccount(cc.getResident()).get();
 					}
 
 					Account newaccount = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();

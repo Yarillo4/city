@@ -20,7 +20,9 @@ import org.spongepowered.api.entity.vehicle.minecart.Minecart;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.block.InteractBlockEvent;
+import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.entity.CollideEntityEvent;
+import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -29,11 +31,44 @@ import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import com.quequiere.cityplugin.CityPlugin;
+import com.quequiere.cityplugin.object.CityPermBooleanEnum;
 import com.quequiere.cityplugin.object.CityPermEnum;
 import com.quequiere.cityplugin.object.Resident;
 
 public class PhysicBlockListener
 {
+
+	@Listener
+	public void on(DamageEntityEvent event)
+	{
+
+		if(!event.getCause().first(EntityDamageSource.class).isPresent())
+		{
+			return;
+		}
+		
+		EntityDamageSource damagesrc = event.getCause().first(EntityDamageSource.class).get();
+		
+		if(!(damagesrc.getSource() instanceof Player))
+		{
+			return;
+		}
+		
+		Player source = (Player) damagesrc.getSource();
+		
+		
+		if(event.getTargetEntity() instanceof Player)
+		{
+			Resident r = Resident.fromPlayerId(event.getTargetEntity().getUniqueId());
+			if(!r.getCache().hasBooleanPerm(event.getTargetEntity().getLocation(), CityPermBooleanEnum.pvp))
+			{
+				event.setCancelled(true);
+				CityPlugin.sendMessage("You cannot pvp here with players !", TextColors.RED, source);
+				return;
+			}
+		}
+	
+	}
 
 	@Listener
 	public void on(CollideEntityEvent event, @Root Player p)
@@ -114,13 +149,22 @@ public class PhysicBlockListener
 		else if (event.getTargetEntity() instanceof Living)
 		{
 			Resident r = Resident.fromPlayerId(p.getUniqueId());
-
-			if (!r.getCache().canInteractEntity((event.getTargetEntity().getLocation())))
+			
+			if(event.getTargetEntity() instanceof Player)
 			{
-				event.setCancelled(true);
-				CityPlugin.sendMessage("You cannot interact with living entity here!", TextColors.RED, p);
-				return;
+				//Nothing happen
 			}
+			else
+			{
+				if (!r.getCache().hasBooleanPerm(event.getTargetEntity().getLocation(), CityPermBooleanEnum.interactEntityLiving))
+				{
+					event.setCancelled(true);
+					CityPlugin.sendMessage("You cannot interact with living entity here!", TextColors.RED, p);
+					return;
+				}
+			}
+
+			
 		}
 
 	}

@@ -8,15 +8,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.Location;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.quequiere.cityplugin.datamanip.LocationDeserializer;
 import com.quequiere.cityplugin.datamanip.LocationSerializer;
+import com.quequiere.cityplugin.listeners.JoinListener;
 import com.quequiere.cityplugin.object.tool.PermissibleZone;
 
 public class CityWorld  extends PermissibleZone{
@@ -43,6 +46,8 @@ public class CityWorld  extends PermissibleZone{
 			Resident r = Resident.fromPlayerId(p.getUniqueId());
 			r.getCache().reloadPerm();
 		}
+		
+		JoinListener.chunkPerms =  new HashMap<Chunk, HashMap<CityPermBooleanEnum,Boolean>>();
 
 	}
 
@@ -155,5 +160,12 @@ public class CityWorld  extends PermissibleZone{
 		return gson.fromJson(s, CityWorld.class);
 	}
 
-
+	public static void reloadAllPerm()
+	{
+		for(CityWorld c:loaded)
+		{
+			c.initCityBooleanPerm();
+			c.initCityPerm();
+		}
+	}
 }

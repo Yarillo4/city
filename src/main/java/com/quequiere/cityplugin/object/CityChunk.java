@@ -8,6 +8,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Chunk;
 
 import com.quequiere.cityplugin.Tools;
+import com.quequiere.cityplugin.listeners.JoinListener;
 import com.quequiere.cityplugin.object.tool.PermissibleZone;
 
 public class CityChunk extends PermissibleZone
@@ -109,6 +110,19 @@ public class CityChunk extends PermissibleZone
 			
 
 		}
+		
+		if(this.getChunk().isPresent())
+		{
+			if(JoinListener.chunkPerms.containsKey(this.getChunk().get()))
+			{
+				JoinListener.chunkPerms.remove(this.getChunk().get());
+			}
+		}
+		else
+		{
+			System.out.println("can't clear general cache chunk on cc.");
+		}
+		
 
 	}
 
@@ -128,6 +142,7 @@ public class CityChunk extends PermissibleZone
 		this.save();
 	}
 	
+
 	
 
 }

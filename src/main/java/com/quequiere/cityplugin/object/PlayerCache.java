@@ -24,8 +24,7 @@ public class PlayerCache
 	private boolean adminBypass = false;
 
 	private HashMap<Chunk, HashMap<CityPermEnum, Boolean>> cachePerm;
-
-	private HashMap<Chunk, Boolean> interactWithEntity;
+	private HashMap<Chunk,  HashMap<CityPermBooleanEnum, Boolean>> cacheBooleanPerm;
 
 	private PlayerCache(UUID id)
 	{
@@ -117,7 +116,7 @@ public class PlayerCache
 	public void reloadPerm()
 	{
 		cachePerm = new HashMap<Chunk, HashMap<CityPermEnum, Boolean>>();
-		interactWithEntity = new HashMap<Chunk, Boolean>();
+		cacheBooleanPerm = new HashMap<Chunk,  HashMap<CityPermBooleanEnum, Boolean>>();
 	}
 
 	public HashMap<Chunk, HashMap<CityPermEnum, Boolean>> getCachePerm()
@@ -128,15 +127,18 @@ public class PlayerCache
 		}
 		return cachePerm;
 	}
+	
+	
 
-	public HashMap<Chunk, Boolean> getInteractEntityPerm()
+	public HashMap<Chunk, HashMap<CityPermBooleanEnum, Boolean>> getCacheBooleanPerm()
 	{
-		if (this.interactWithEntity == null)
+		if(cacheBooleanPerm==null)
 		{
 			this.reloadPerm();
 		}
-		return interactWithEntity;
+		return cacheBooleanPerm;
 	}
+
 
 	private void reloadCity()
 	{
@@ -198,7 +200,6 @@ public class PlayerCache
 				if (cc.getResident().equals(this.id))
 				{
 					loadPermChunkCity(c, cc, CityPermRankEnum.admin);
-					// A CHANGER EN TANT QUE ADMIN
 				}
 				else
 				{
@@ -242,8 +243,20 @@ public class PlayerCache
 
 		}
 		this.getCachePerm().put(c, local1);
+		
 
-		this.getInteractEntityPerm().put(c, cc.isInteractWithLivingEntity());
+		HashMap<CityPermBooleanEnum, Boolean> bperm1 = new HashMap<CityPermBooleanEnum, Boolean>();
+		for (CityPermBooleanEnum perm : CityPermBooleanEnum.values())
+		{
+			boolean b = cc.isActive(perm);
+			if(CityPlugin.generalConfig.isActivePerm(perm).isPresent())
+			{
+				b=CityPlugin.generalConfig.isActivePerm(perm).get();
+			}
+			bperm1.put(perm, b);
+		}
+		this.getCacheBooleanPerm().put(c, bperm1);
+		
 
 	}
 
@@ -263,7 +276,20 @@ public class PlayerCache
 		}
 
 		this.getCachePerm().put(c, local1);
-		this.getInteractEntityPerm().put(c, ci.isInteractWithLivingEntity());
+		
+		
+		
+		HashMap<CityPermBooleanEnum, Boolean> bperm1 = new HashMap<CityPermBooleanEnum, Boolean>();
+		for (CityPermBooleanEnum perm : CityPermBooleanEnum.values())
+		{
+			boolean b = ci.isActive(perm);
+			if(CityPlugin.generalConfig.isActivePerm(perm).isPresent())
+			{
+				b=CityPlugin.generalConfig.isActivePerm(perm).get();
+			}
+			bperm1.put(perm, b);
+		}
+		this.getCacheBooleanPerm().put(c, bperm1);
 
 	}
 
@@ -281,7 +307,19 @@ public class PlayerCache
 			local1.put(perm, b);
 		}
 		this.getCachePerm().put(c, local1);
-		this.getInteractEntityPerm().put(c, cw.isInteractWithLivingEntity());
+		
+		
+		HashMap<CityPermBooleanEnum, Boolean> bperm1 = new HashMap<CityPermBooleanEnum, Boolean>();
+		for (CityPermBooleanEnum perm : CityPermBooleanEnum.values())
+		{
+			boolean b = cw.isActive(perm);
+			if(CityPlugin.generalConfig.isActivePerm(perm).isPresent())
+			{
+				b=CityPlugin.generalConfig.isActivePerm(perm).get();
+			}
+			bperm1.put(perm, b);
+		}
+		this.getCacheBooleanPerm().put(c, bperm1);
 
 	}
 
@@ -309,8 +347,8 @@ public class PlayerCache
 
 		return cachePerm.get(c).get(perm);
 	}
-
-	public boolean canInteractEntity(Location<World> loc)
+	
+	public boolean hasBooleanPerm(Location<World> loc,CityPermBooleanEnum citypermBoolean)
 	{
 		Optional<Chunk> co = Tools.getChunk(loc);
 
@@ -319,16 +357,17 @@ public class PlayerCache
 			System.out.println("Can't find chunk while loading player cache");
 			return false;
 		}
-
+		
 		Chunk c = co.get();
-
-		if (!getInteractEntityPerm().containsKey(c))
+		if(!this.getCacheBooleanPerm().containsKey(c))
 		{
 			this.loadPermForChunk(c);
 		}
-
-		return getInteractEntityPerm().get(c);
+		
+		return this.getCacheBooleanPerm().get(c).get(citypermBoolean);
+		
 	}
+
 
 	public void clearChunkPerm(Chunk c)
 	{

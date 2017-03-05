@@ -18,6 +18,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import com.quequiere.cityplugin.CityPlugin;
 import com.quequiere.cityplugin.PluginInfo;
+import com.quequiere.cityplugin.config.CityGeneralConfig;
 import com.quequiere.cityplugin.config.polis.PolisAdaptator;
 import com.quequiere.cityplugin.object.City;
 import com.quequiere.cityplugin.object.CityRankEnum;
@@ -252,6 +253,11 @@ public class CityAdminCommand implements CommandCallable
 				r.getCache().setAdminBypass(!r.getCache().isAdminBypass());
 				CityPlugin.sendMessage("Admin bypass is now set to "+r.getCache().isAdminBypass(), TextColors.GREEN, p);
 			}
+			else if (subc.equals(SubCommand.reloadConf))
+			{
+				CityGeneralConfig.loadConfig();
+				CityPlugin.sendMessage("Configuration reloaded !", TextColors.GREEN, p);
+			}
 
 			else
 			{
@@ -266,7 +272,7 @@ public class CityAdminCommand implements CommandCallable
 
 	public enum SubCommand
 	{
-		help, polisimport,setmayor,setbonusclaim,adminbypass,addbonusclaim
+		help, polisimport,setmayor,setbonusclaim,adminbypass,addbonusclaim,reloadConf
 	};
 
 	public static void displayHelp(Player p)
