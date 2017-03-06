@@ -88,6 +88,10 @@ public class MoveListener
 
 			if (newcc != null && newcc.getResident() != null)
 			{
+				if(oldcc!=null && oldcc.isOwner(newcc.getResident()))
+				{
+					return;
+				}
 				User u = Tools.getUser(newcc.getResident());
 				CityPlugin.sendMessageWithoutPrefix("~~~ " + u.getName() + "'s' Land ~~~", TextColors.DARK_GREEN, p);
 
