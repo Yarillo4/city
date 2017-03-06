@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.Ambient;
 import org.spongepowered.api.entity.living.animal.Animal;
 import org.spongepowered.api.entity.living.monster.Monster;
@@ -15,6 +16,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.event.cause.entity.spawn.EntitySpawnCause;
 import org.spongepowered.api.event.cause.entity.spawn.SpawnCause;
 import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
@@ -39,107 +41,124 @@ import com.quequiere.cityplugin.object.tool.PermissibleZone;
 public class JoinListener
 {
 
-	public static HashMap<Chunk, HashMap<CityPermBooleanEnum,Boolean>> chunkPerms = new HashMap<Chunk, HashMap<CityPermBooleanEnum,Boolean>>();
-	
+	public static HashMap<Chunk, HashMap<CityPermBooleanEnum, Boolean>> chunkPerms = new HashMap<Chunk, HashMap<CityPermBooleanEnum, Boolean>>();
+
 	@Listener
 	public void worldLoad(SpawnEntityEvent event)
 	{
 		for (Entity e : event.getEntities())
 		{
-			
-			if(e.getClass().toString().contains("com.pixelmonmod.pixelmon"))
+
+			if (e.getClass().toString().contains("com.pixelmonmod.pixelmon"))
 			{
-				// !!!! For pixelmon need to cancel event, because cause lags if is checked
-				if(CityPlugin.generalConfig.isdissociatePixelmonEntityFromCreatureSpawn()||true)
+				// !!!! For pixelmon need to cancel event, because cause lags if
+				// is checked
+				if (CityPlugin.generalConfig.isdissociatePixelmonEntityFromCreatureSpawn() || true)
 				{
 					return;
 				}
 			}
-			
-		
-			
+
 			Optional<Chunk> co = Tools.getChunk(e.getLocation());
 			if (co.isPresent())
 			{
 				Chunk c = co.get();
 
-				if(!chunkPerms.containsKey(c))
+				if (!chunkPerms.containsKey(c))
 				{
 					loadBooleanPermForChunk(c);
 				}
-				
-				if(event.getCause().first(SpawnCause.class).isPresent())
+
+				if (event.getCause().first(SpawnCause.class).isPresent())
 				{
 					SpawnCause cause = event.getCause().first(SpawnCause.class).get();
-					if(cause.getType().equals(SpawnTypes.WORLD_SPAWNER))
+
+					if (cause.getType().equals(SpawnTypes.WORLD_SPAWNER))
 					{
-						if(!chunkPerms.get(c).get(CityPermBooleanEnum.naturalSpawn))
+						if (!chunkPerms.get(c).get(CityPermBooleanEnum.naturalSpawn))
 						{
 							event.setCancelled(true);
 							return;
 						}
 					}
-					else if(cause.getType().equals(SpawnTypes.BREEDING) ||cause.getType().equals(SpawnTypes.PROJECTILE) )
+					else if (cause.getType().equals(SpawnTypes.BREEDING))
 					{
-						if(!CityPlugin.generalConfig.isAllowBreeding())
+						if (!CityPlugin.generalConfig.isAllowBreeding())
 						{
 							event.setCancelled(true);
 							return;
 						}
-						
+
 					}
+					else if (cause.getType().equals(SpawnTypes.PASSIVE))
+					{
+						if (cause instanceof EntitySpawnCause)
+						{
+							EntitySpawnCause ess = (EntitySpawnCause) cause;
+							if (ess.getEntity().getType().equals(EntityTypes.EGG))
+							{
+								if (!CityPlugin.generalConfig.isAllowBreeding())
+								{
+									event.setCancelled(true);
+									return;
+								}
+							}
+
+						}
+
+					}
+
 				}
-					
-				if(e instanceof Monster)
+
+				if (e instanceof Monster)
 				{
-					if(!chunkPerms.get(c).get(CityPermBooleanEnum.spawnMob))
+					if (!chunkPerms.get(c).get(CityPermBooleanEnum.spawnMob))
 					{
 						event.setCancelled(true);
 						return;
 					}
 				}
-				else if(e instanceof Animal || e instanceof Ambient)
+				else if (e instanceof Animal || e instanceof Ambient)
 				{
-					if(!chunkPerms.get(c).get(CityPermBooleanEnum.spawnCreature))
+					if (!chunkPerms.get(c).get(CityPermBooleanEnum.spawnCreature))
 					{
 						event.setCancelled(true);
 						return;
 					}
 				}
-				
+
 			}
 
-			
 		}
-		
+
 	}
-	
+
 	public static void loadBooleanPermForChunk(Chunk c)
 	{
 		PermissibleZone pz = null;
 		City targetCity = City.getCityFromChunk(c);
-		if(targetCity==null)
+		if (targetCity == null)
 		{
 			pz = CityWorld.getByName(c.getWorld().getName());
 		}
 		else
 		{
 			CityChunk cc = targetCity.getChunck(c);
-			
+
 			if (cc.getResident() == null)
 			{
-				pz=targetCity;
+				pz = targetCity;
 			}
 			else
 			{
-				pz=cc;
+				pz = cc;
 			}
 		}
-		
-		HashMap<CityPermBooleanEnum,Boolean> map = new HashMap<CityPermBooleanEnum,Boolean>();
-		for(CityPermBooleanEnum perms:CityPermBooleanEnum.values())
+
+		HashMap<CityPermBooleanEnum, Boolean> map = new HashMap<CityPermBooleanEnum, Boolean>();
+		for (CityPermBooleanEnum perms : CityPermBooleanEnum.values())
 		{
-			if(CityPlugin.generalConfig.isActivePerm(perms).isPresent())
+			if (CityPlugin.generalConfig.isActivePerm(perms).isPresent())
 			{
 				map.put(perms, CityPlugin.generalConfig.isActivePerm(perms).get());
 			}
@@ -147,12 +166,10 @@ public class JoinListener
 			{
 				map.put(perms, pz.isActive(perms));
 			}
-			
-			
+
 		}
 		chunkPerms.put(c, map);
 	}
-	
 
 	@Listener
 	public void worldLoad(LoadWorldEvent event)
