@@ -115,6 +115,11 @@ public abstract class PermissibleZone
 
 	public boolean isActive(CityPermBooleanEnum citypermboolean)
 	{
+		if(!this.getCityBooleanPerm().containsKey(citypermboolean))
+		{
+			this.getCityBooleanPerm().put(citypermboolean, true);
+			this.updatePermission();
+		}
 		return this.getCityBooleanPerm().get(citypermboolean);
 	}
 	

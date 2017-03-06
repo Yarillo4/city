@@ -74,6 +74,7 @@ public class City extends PermissibleZone
 		}
 
 		this.initCityPerm();
+		this.initCityBooleanPerm();
 		this.citychunk.add(new CityChunk(c));
 
 		this.addResident(mayor);
@@ -831,21 +832,5 @@ public class City extends PermissibleZone
 		this.save();
 	}
 
-	public static void reloadAllPerm()
-	{
-		for(City c:loaded)
-		{
-			c.initCityBooleanPerm();
-			c.initCityPerm();
-			
-			for(CityChunk cc:c.getClaimedChunk())
-			{
-				cc.initCityBooleanPerm();
-				cc.initCityPerm();
-			}
-			
-		}
-		
-		
-	}
+
 }

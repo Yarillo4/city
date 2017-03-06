@@ -160,12 +160,5 @@ public class CityWorld  extends PermissibleZone{
 		return gson.fromJson(s, CityWorld.class);
 	}
 
-	public static void reloadAllPerm()
-	{
-		for(CityWorld c:loaded)
-		{
-			c.initCityBooleanPerm();
-			c.initCityPerm();
-		}
-	}
+	
 }

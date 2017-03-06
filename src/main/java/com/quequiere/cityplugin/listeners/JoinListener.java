@@ -15,6 +15,8 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.event.cause.entity.spawn.SpawnCause;
+import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.world.LoadWorldEvent;
@@ -64,6 +66,28 @@ public class JoinListener
 				if(!chunkPerms.containsKey(c))
 				{
 					loadBooleanPermForChunk(c);
+				}
+				
+				if(event.getCause().first(SpawnCause.class).isPresent())
+				{
+					SpawnCause cause = event.getCause().first(SpawnCause.class).get();
+					if(cause.getType().equals(SpawnTypes.WORLD_SPAWNER))
+					{
+						if(!chunkPerms.get(c).get(CityPermBooleanEnum.naturalSpawn))
+						{
+							event.setCancelled(true);
+							return;
+						}
+					}
+					else if(cause.getType().equals(SpawnTypes.BREEDING) ||cause.getType().equals(SpawnTypes.PROJECTILE) )
+					{
+						if(!CityPlugin.generalConfig.isAllowBreeding())
+						{
+							event.setCancelled(true);
+							return;
+						}
+						
+					}
 				}
 					
 				if(e instanceof Monster)

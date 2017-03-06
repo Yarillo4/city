@@ -44,6 +44,7 @@ public class CityGeneralConfig {
 	private long antiSpamAdvertMessageInMs=1000;
 	private boolean disableCollideMessage = false;
 	private boolean dissociatePixelmonEntityFromCreatureSpawn = true;
+	private boolean allowBreeding = true;
 
 	private HashMap<CityPermBooleanEnum, ForcableConfig> serverOverridePerm;
 	
@@ -73,6 +74,17 @@ public class CityGeneralConfig {
 		{
 			this.initOverrideBooleanPerms();
 		}
+		else
+		{
+			//si ajout d'une perm dans les configs via dev et que non initialisee en jeu
+			for(CityPermBooleanEnum perms:CityPermBooleanEnum.values())
+			{
+				if(!serverOverridePerm.containsKey(perms))
+				{
+					serverOverridePerm.put(perms, new ForcableConfig(false,true));
+				}
+			}
+		}
 		return serverOverridePerm;
 	}
 	
@@ -92,6 +104,11 @@ public class CityGeneralConfig {
 	}
 	
 	
+	
+
+	public boolean isAllowBreeding() {
+		return allowBreeding;
+	}
 
 	public boolean isdissociatePixelmonEntityFromCreatureSpawn()
 	{
@@ -203,9 +220,6 @@ public class CityGeneralConfig {
 			pc.initializeCache();
 		}
 		
-		
-		CityWorld.reloadAllPerm();
-		City.reloadAllPerm();
 	}
 
 
