@@ -162,7 +162,7 @@ public class CityChunkCommand implements CommandCallable
 		Builder builder = Text.builder("");
 		boolean canModify = false;
 
-		if (c.hasAssistantPerm(r))
+		if (c.hasAssistantPerm(r)||cc.isOwner(r.getId()))
 		{
 			canModify = true;
 		}

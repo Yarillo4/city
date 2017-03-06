@@ -164,8 +164,15 @@ public abstract class PermissibleZone
 					}
 					else if (this instanceof CityChunk)
 					{
-						this.setBooleanPerm(boolPerm, !old);
-						CityChunkCommand.displayChunk(p, r, (CityChunk) this); 
+						CityChunk cc = (CityChunk) this;
+						
+						if(cc.isOwner(r.getId())||cc.getCity().hasAssistantPerm(r))
+						{
+							this.setBooleanPerm(boolPerm, !old);
+							CityChunkCommand.displayChunk(p, r, (CityChunk) this); 
+						}
+						
+					
 					}
 					else if (this instanceof CityWorld)
 					{
