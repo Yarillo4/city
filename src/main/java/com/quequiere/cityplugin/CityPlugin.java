@@ -20,6 +20,7 @@ import com.quequiere.cityplugin.bstats.Metrics;
 import com.quequiere.cityplugin.command.CityAdminCommand;
 import com.quequiere.cityplugin.command.CityChunkCommand;
 import com.quequiere.cityplugin.command.CityCommand;
+import com.quequiere.cityplugin.command.CityDynmapCommand;
 import com.quequiere.cityplugin.command.CityWorldCommand;
 import com.quequiere.cityplugin.config.CityGeneralConfig;
 import com.quequiere.cityplugin.listeners.ChatListener;
@@ -72,6 +73,7 @@ public class CityPlugin
 		cmdService.register(plugin, new CityChunkCommand(), "citychunk", "cc");
 		cmdService.register(plugin, new CityWorldCommand(), "cityworld", "cw");
 		cmdService.register(plugin, new CityAdminCommand(), "cityadmin", "ca");
+		cmdService.register(plugin, new CityDynmapCommand(), "citydynmap", "cd");
 	}
 
 	@Listener
