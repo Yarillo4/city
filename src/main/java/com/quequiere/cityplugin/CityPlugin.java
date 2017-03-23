@@ -23,6 +23,7 @@ import com.quequiere.cityplugin.command.CityCommand;
 import com.quequiere.cityplugin.command.CityDynmapCommand;
 import com.quequiere.cityplugin.command.CityWorldCommand;
 import com.quequiere.cityplugin.config.CityGeneralConfig;
+import com.quequiere.cityplugin.dynmap.CityDynmapAdaptator;
 import com.quequiere.cityplugin.listeners.ChatListener;
 import com.quequiere.cityplugin.listeners.JoinListener;
 import com.quequiere.cityplugin.listeners.MoveListener;
@@ -91,6 +92,19 @@ public class CityPlugin
 		}
 
 		City.reloadAll();
+		
+		new java.util.Timer().schedule( 
+		        new java.util.TimerTask() {
+		            @Override
+		            public void run() {
+		            	System.out.println("Initialize dynmaplink !");
+		            	CityDynmapAdaptator.init(null);
+		            }
+		        }, 
+		        15000 
+		);
+		
+		
 
 	}
 

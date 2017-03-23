@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Chunk;
+import org.spongepowered.api.world.World;
 
 import com.quequiere.cityplugin.Tools;
 import com.quequiere.cityplugin.listeners.JoinListener;
@@ -54,6 +55,23 @@ public class CityChunk extends PermissibleZone
 	}
 	
 	
+	
+
+	
+	public World getWorld()
+	{
+		return Tools.getWorldByName(this.world);
+	}
+
+	public int getX()
+	{
+		return x;
+	}
+
+	public int getZ()
+	{
+		return z;
+	}
 
 	public void setResident(UUID resident)
 	{

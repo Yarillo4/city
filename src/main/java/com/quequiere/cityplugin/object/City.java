@@ -36,6 +36,7 @@ import com.quequiere.cityplugin.CityPlugin;
 import com.quequiere.cityplugin.Tools;
 import com.quequiere.cityplugin.datamanip.LocationDeserializer;
 import com.quequiere.cityplugin.datamanip.LocationSerializer;
+import com.quequiere.cityplugin.dynmap.CityDynmapAdaptator;
 import com.quequiere.cityplugin.listeners.JoinListener;
 import com.quequiere.cityplugin.object.tool.PermissibleZone;
 
@@ -80,6 +81,20 @@ public class City extends PermissibleZone
 		this.addResident(mayor);
 		mayor.setRank(CityRankEnum.mayor);
 		this.setPlayerTaxe(CityPlugin.generalConfig.getDefaultPlayerTaxOnCity());
+		
+		
+		new java.util.Timer().schedule( 
+		        new java.util.TimerTask() {
+		            @Override
+		            public void run() {
+		            	System.out.println("Initialize dynmaplink !");
+		            	CityDynmapAdaptator.init(null);
+		            }
+		        }, 
+		        10000 
+		);
+		
+		
 
 	}
 
@@ -625,7 +640,7 @@ public class City extends PermissibleZone
 		this.save();
 		cc.updatePermission();
 		CityPlugin.sendMessage("New chunk claimed !", TextColors.GREEN, p);
-
+		CityDynmapAdaptator.init(this.getName());
 	}
 
 	public void destroy()
@@ -651,6 +666,25 @@ public class City extends PermissibleZone
 		f.delete();
 
 		Sponge.getGame().getServer().getBroadcastChannel().send(Text.builder(this.getName() + " has been successfuly destroyed").color(TextColors.GRAY).build());
+		
+		
+		CityDynmapAdaptator.clear();
+		
+		new java.util.Timer().schedule( 
+		        new java.util.TimerTask() {
+		            @Override
+		            public void run() {
+		            	System.out.println("Initialize dynmaplink !");
+		            	CityDynmapAdaptator.init(null);
+		            }
+		        }, 
+		        30000 
+		);
+		
+		
+		
+		
+		
 	}
 
 	public void unclaimChunk(CityChunk cc)
@@ -675,6 +709,7 @@ public class City extends PermissibleZone
 
 		}
 		this.save();
+		CityDynmapAdaptator.init(this.getName());
 	}
 
 	public BigDecimal getTaxDailyCost()

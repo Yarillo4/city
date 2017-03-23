@@ -32,7 +32,7 @@ public class CityDynmapCommand implements CommandCallable
 	@Override
 	public CommandResult process(CommandSource src, String arg) throws CommandException
 	{
-		CityDynmapAdaptator.init();
+		CityDynmapAdaptator.init(null);
 		return CommandResult.success();
 	}
 
