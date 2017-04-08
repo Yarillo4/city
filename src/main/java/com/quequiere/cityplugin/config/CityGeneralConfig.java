@@ -45,6 +45,7 @@ public class CityGeneralConfig {
 	private boolean disableCollideMessage = false;
 	private boolean dissociatePixelmonEntityFromCreatureSpawn = true;
 	private boolean allowBreeding = true;
+	private double privatecityprice = 5000;
 
 	private HashMap<CityPermBooleanEnum, ForcableConfig> serverOverridePerm;
 	
@@ -104,7 +105,11 @@ public class CityGeneralConfig {
 	}
 	
 	
-	
+	public BigDecimal getPrivatecityprice() {
+		return new BigDecimal(privatecityprice);
+	}
+
+
 
 	public boolean isAllowBreeding() {
 		return allowBreeding;

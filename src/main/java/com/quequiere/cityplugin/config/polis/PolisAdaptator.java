@@ -82,7 +82,7 @@ public class PolisAdaptator
 				continue;
 			}
 
-			City c = City.tryCreateCity(teamName, p, true, mayor.get(), Optional.of(clist.get(0)));
+			City c = City.tryCreateCity(teamName, p, true, mayor.get(), Optional.of(clist.get(0)),false);
 
 			if(c!=null)
 			{

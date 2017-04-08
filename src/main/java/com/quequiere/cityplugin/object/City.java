@@ -64,6 +64,8 @@ public class City extends PermissibleZone
 
 	private int bonusClaim = 0;
 	private UUID economyUUID;
+	
+	private boolean privateCity = false;
 
 	private City(String name, Resident mayor, Chunk c)
 	{
@@ -98,7 +100,7 @@ public class City extends PermissibleZone
 
 	}
 
-	public static City tryCreateCity(String name, Player p, boolean importFileBypass, User mayor, Optional<Chunk> locationo)
+	public static City tryCreateCity(String name, Player p, boolean importFileBypass, User mayor, Optional<Chunk> locationo,boolean privateCity)
 	{
 
 		if (!importFileBypass)
@@ -109,13 +111,23 @@ public class City extends PermissibleZone
 				CityPlugin.sendMessage("The maximum length of a custom city name is " + CityPlugin.generalConfig.getCityNameLenght(), TextColors.RED, p);
 				return null;
 			}
+			
+			BigDecimal price = null;
+			if(privateCity)
+			{
+				price =  CityPlugin.generalConfig.getPrivatecityprice();
+			}
+			else
+			{
+				price =  CityPlugin.generalConfig.getCityCreateCost();
+			}
 
 			Account account = CityPlugin.economyService.getOrCreateAccount(p.getUniqueId()).get();
-			TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), CityPlugin.generalConfig.getCityCreateCost(), Cause.of(NamedCause.source(p)));
+			TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), price, Cause.of(NamedCause.source(p)));
 
 			if (transactionResult.getResult() != ResultType.SUCCESS)
 			{
-				CityPlugin.sendMessage("You can't afford that! You need: " + "$" + CityPlugin.generalConfig.getCityCreateCost(), TextColors.RED, p);
+				CityPlugin.sendMessage("You can't afford that! You need: " + "$" + price, TextColors.RED, p);
 				return null;
 			}
 
@@ -150,20 +162,46 @@ public class City extends PermissibleZone
 
 		Resident r = Resident.fromPlayerId(mayor.getUniqueId());
 		City c = new City(name, r, location);
+		
+		if(privateCity)
+		{
+			c.setPrivateCity(true);
+		}
+			
 		loaded.add(c);
 		c.save();
 		r.getCache().initializeCache();
 		c.updatePermission();
 
-		Sponge.getGame().getServer().getBroadcastChannel().send(Text.builder("The city " + name + " has been created!").color(TextColors.GREEN).build());
+		if(privateCity)
+		{
+			Sponge.getGame().getServer().getBroadcastChannel().send(Text.builder("The private city " + name + " has been created!").color(TextColors.GREEN).build());
+		}
+		else
+		{
+			Sponge.getGame().getServer().getBroadcastChannel().send(Text.builder("The city " + name + " has been created!").color(TextColors.GREEN).build());
+		}
+		
 
 		return c;
 
 	}
+	
+	
 
-	public static City tryCreateCity(String name, Player p)
+	public boolean isPrivateCity()
 	{
-		return tryCreateCity(name, p, false, p, Tools.getChunk(p.getLocation()));
+		return privateCity;
+	}
+
+	public void setPrivateCity(boolean privateCity)
+	{
+		this.privateCity = privateCity;
+	}
+
+	public static City tryCreateCity(String name, Player p,boolean privateCity)
+	{
+		return tryCreateCity(name, p, false, p, Tools.getChunk(p.getLocation()),privateCity);
 	}
 
 	public static boolean hasOtherCityInRadius(City reference, Chunk c)
