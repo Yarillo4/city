@@ -317,8 +317,17 @@ public class PhysicBlockListener
 			Player p = event.getCause().first(Player.class).get();
 			Resident r = Resident.fromPlayerId(p.getUniqueId());
 			
+			
 			if (!r.getCache().hasPerm(event.getImpactPoint(), CityPermEnum.DESTROY))
 			{
+				if(event.getEntities().size()>0)
+				{
+					if(event.getEntities().get(0).getClass().getCanonicalName().contains("pixelmon"))
+					{
+						return;
+					}
+				}
+				
 				event.setCancelled(true);
 				if(r.getCache().canDisplayMessage(CityPermEnum.DESTROY))
 				CityPlugin.sendMessage("You cannot destroy that here!", TextColors.RED, p);
