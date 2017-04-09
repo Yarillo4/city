@@ -4,13 +4,10 @@ import java.util.Optional;
 
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.block.tileentity.MobSpawner;
 import org.spongepowered.api.block.tileentity.TileEntity;
-import org.spongepowered.api.block.tileentity.carrier.TileEntityCarrier;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.hanging.Hanging;
 import org.spongepowered.api.entity.living.ArmorStand;
@@ -20,7 +17,9 @@ import org.spongepowered.api.entity.vehicle.minecart.Minecart;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.block.InteractBlockEvent;
+import org.spongepowered.api.event.cause.entity.damage.source.DamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
+import org.spongepowered.api.event.cause.entity.damage.source.IndirectEntityDamageSource;
 import org.spongepowered.api.event.entity.CollideEntityEvent;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
@@ -41,7 +40,8 @@ public class PhysicBlockListener
 	@Listener
 	public void on(DamageEntityEvent event)
 	{
-
+		Player source = null;
+		
 		if(!event.getCause().first(EntityDamageSource.class).isPresent())
 		{
 			return;
@@ -49,12 +49,39 @@ public class PhysicBlockListener
 		
 		EntityDamageSource damagesrc = event.getCause().first(EntityDamageSource.class).get();
 		
+		
+
 		if(!(damagesrc.getSource() instanceof Player))
 		{
-			return;
+			if(event.getCause().first(IndirectEntityDamageSource.class).isPresent())
+			{
+				IndirectEntityDamageSource indi = event.getCause().first(IndirectEntityDamageSource.class).get();
+				
+				if(indi.getIndirectSource() instanceof Player)
+				{
+					source = (Player) indi.getIndirectSource();
+				}
+				else
+				{
+					return;
+				}
+				
+			}
+			else
+			{
+				return;
+			}
+			
+			
+		}
+		else
+		{
+			source = (Player) damagesrc.getSource();
 		}
 		
-		Player source = (Player) damagesrc.getSource();
+		
+		
+		
 		
 		
 		if(event.getTargetEntity() instanceof Player)
@@ -70,10 +97,10 @@ public class PhysicBlockListener
 	
 	}
 
+
 	@Listener
 	public void on(CollideEntityEvent event, @Root Player p)
 	{
-
 		Resident r = Resident.fromPlayerId(p.getUniqueId());
 		for(Entity e:event.getEntities())
 		{
@@ -109,6 +136,7 @@ public class PhysicBlockListener
 	@Listener
 	public void on(InteractEntityEvent event, @Root Player p)
 	{
+		
 		if (event.getTargetEntity() instanceof Hanging)
 		{
 			Resident r = Resident.fromPlayerId(p.getUniqueId());
@@ -280,6 +308,28 @@ public class PhysicBlockListener
 
 	}
 
+	@Listener
+	public void on(CollideEntityEvent.Impact event)
+	{
+		
+		if(event.getCause().first(Player.class).isPresent())
+		{
+			Player p = event.getCause().first(Player.class).get();
+			Resident r = Resident.fromPlayerId(p.getUniqueId());
+			
+			if (!r.getCache().hasPerm(event.getImpactPoint(), CityPermEnum.DESTROY))
+			{
+				event.setCancelled(true);
+				if(r.getCache().canDisplayMessage(CityPermEnum.DESTROY))
+				CityPlugin.sendMessage("You cannot destroy that here!", TextColors.RED, p);
+				return;
+			}
+			
+		}
+	
+	}
+	
+	
 	@Listener
 	public void onChangeBlock(final ChangeBlockEvent event)
 	{

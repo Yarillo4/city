@@ -19,7 +19,7 @@ public class ChatListener {
 			Resident r = Resident.fromPlayerId(player.getUniqueId());
 			City c = r.getCity();
 			if (c != null) {
-				event.setMessage(Text.builder().append(Text.of(TextColors.DARK_GREEN, "[" + c.getCustomName() + "] "))
+				event.setMessage(Text.builder().append(Text.of(c.isPrivateCity()?TextColors.GRAY:TextColors.DARK_GREEN, "[" + c.getCustomName() + "] "))
 						.append(event.getMessage()).build());
 			}
 		}

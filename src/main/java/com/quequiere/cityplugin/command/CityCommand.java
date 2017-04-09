@@ -486,7 +486,15 @@ public class CityCommand implements CommandCallable
 				CityPlugin.sendMessage("City list [" + City.getLoaded().size() + "]:", TextColors.RED, p);
 				for (City tarc : City.getLoaded())
 				{
-					CityPlugin.sendMessageWithoutPrefix("-" + tarc.getName(), tarc.isOpenJoin() ? TextColors.GREEN : TextColors.RED, p);
+					if(tarc.isPrivateCity())
+					{
+						CityPlugin.sendMessageWithoutPrefix("-" + tarc.getName(), TextColors.GRAY, p);
+					}
+					else
+					{
+						CityPlugin.sendMessageWithoutPrefix("-" + tarc.getName(), tarc.isOpenJoin() ? TextColors.GREEN : TextColors.RED, p);
+					}
+					
 				}
 			}
 			else if (subc.equals(SubCommand.leave))

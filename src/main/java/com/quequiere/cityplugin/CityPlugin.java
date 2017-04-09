@@ -93,16 +93,29 @@ public class CityPlugin
 
 		City.reloadAll();
 		
-		new java.util.Timer().schedule( 
-		        new java.util.TimerTask() {
-		            @Override
-		            public void run() {
-		            	System.out.println("Initialize dynmaplink !");
-		            	CityDynmapAdaptator.init(null);
-		            }
-		        }, 
-		        15000 
-		);
+		boolean dynmapFind = true;
+		try {
+		    Class.forName("org.dynmap.DynmapCore");
+		    System.out.println("Dynmap system finded !");
+		} catch(Exception e) {
+			System.out.println("Dynmap system not finded.");
+			dynmapFind= false;
+		}
+		
+		if(dynmapFind)
+		{
+			new java.util.Timer().schedule( 
+			        new java.util.TimerTask() {
+			            @Override
+			            public void run() {
+			            	System.out.println("Initialize dynmaplink !");
+			            	CityDynmapAdaptator.init(null);
+			            }
+			        }, 
+			        15000 
+			);
+		}
+
 		
 		
 
