@@ -30,6 +30,7 @@ import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import com.quequiere.cityplugin.CityPlugin;
+import com.quequiere.cityplugin.command.CityAdminCommand;
 import com.quequiere.cityplugin.object.CityPermBooleanEnum;
 import com.quequiere.cityplugin.object.CityPermEnum;
 import com.quequiere.cityplugin.object.Resident;
@@ -215,6 +216,18 @@ public class PhysicBlockListener
 		Resident r = Resident.fromPlayerId(p.getUniqueId());
 
 		Location<World> loc = event.getTargetBlock().getLocation().get();
+		
+		
+		if(CityAdminCommand.bindedWhitelistDestroy.contains(p))
+		{
+			CityAdminCommand.bindedWhitelistDestroy.remove(p);
+			String name = event.getTargetBlock().getState().getType().getName();
+			
+			CityPlugin.generalConfig.getWhitelistDestroy().add(name);
+			CityPlugin.generalConfig.save();
+			CityPlugin.sendMessage("Added a block to destroy whitelist: "+name, TextColors.GREEN, p);
+		}
+		
 
 		// special fix for pixelmonmod fossil cleaner
 		if (event instanceof InteractBlockEvent.Primary )

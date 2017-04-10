@@ -49,6 +49,21 @@ public class CityGeneralConfig {
 
 	private HashMap<CityPermBooleanEnum, ForcableConfig> serverOverridePerm;
 	
+	private ArrayList<String> whitelistDestroy;
+	
+
+	
+	
+	public ArrayList<String> getWhitelistDestroy() {
+		
+		if(whitelistDestroy==null)
+		{
+			whitelistDestroy=new ArrayList<String>();
+			this.save();
+		}
+		
+		return whitelistDestroy;
+	}
 
 	private void initOverrideBooleanPerms()
 	{

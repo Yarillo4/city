@@ -330,6 +330,20 @@ public class PlayerCache
 
 	public boolean hasPerm(Location<World> loc, CityPermEnum perm)
 	{
+		
+		if(CityPermEnum.DESTROY.equals(perm))
+		{
+			String name = loc.getBlock().getType().getName();
+			for(String targ:CityPlugin.generalConfig.getWhitelistDestroy())
+			{
+				if(name.equals(targ))
+				{
+					return true;
+				}
+			}
+		}
+		
+		
 		Optional<Chunk> co = Tools.getChunk(loc);
 
 		if (!co.isPresent())

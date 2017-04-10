@@ -1,5 +1,6 @@
 package com.quequiere.cityplugin.command;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,6 +28,8 @@ import com.quequiere.cityplugin.object.Resident;
 
 public class CityAdminCommand implements CommandCallable
 {
+	
+	public static ArrayList<Player> bindedWhitelistDestroy = new ArrayList<Player>();
 
 	@Override
 	public CommandResult process(CommandSource src, String arg) throws CommandException
@@ -253,6 +256,19 @@ public class CityAdminCommand implements CommandCallable
 				r.getCache().setAdminBypass(!r.getCache().isAdminBypass());
 				CityPlugin.sendMessage("Admin bypass is now set to "+r.getCache().isAdminBypass(), TextColors.GREEN, p);
 			}
+			else if (subc.equals(SubCommand.whitelistdestroy))
+			{
+				if(bindedWhitelistDestroy.contains(p))
+				{
+					bindedWhitelistDestroy.remove(p);
+					CityPlugin.sendMessage("Bind removed !", TextColors.GREEN, p);
+				}
+				else
+				{
+					bindedWhitelistDestroy.add(p);
+					CityPlugin.sendMessage("Now click on the block to add it on the whitelist destroy", TextColors.GREEN, p);
+				}
+			}
 			else if (subc.equals(SubCommand.reloadConf))
 			{
 				CityGeneralConfig.loadConfig();
@@ -272,7 +288,7 @@ public class CityAdminCommand implements CommandCallable
 
 	public enum SubCommand
 	{
-		help, polisimport,setmayor,setbonusclaim,adminbypass,addbonusclaim,reloadConf
+		help, polisimport,setmayor,setbonusclaim,adminbypass,addbonusclaim,reloadConf,whitelistdestroy
 	};
 
 	public static void displayHelp(Player p)
