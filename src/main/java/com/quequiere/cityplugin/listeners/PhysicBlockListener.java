@@ -201,6 +201,8 @@ public class PhysicBlockListener
 	@Listener
 	public void interact(final InteractBlockEvent event, @Root Player p)
 	{
+		//System.out.println(event.getLocation().getBlockType());
+		
 		Optional<Location<World>> location = event.getTargetBlock().getLocation();
 
 		if (event.getTargetBlock() == null)
@@ -383,7 +385,7 @@ public class PhysicBlockListener
 			}
 			else if (event instanceof ChangeBlockEvent.Break)
 			{
-				if (!r.getCache().hasPerm(loc, CityPermEnum.DESTROY))
+				if (!r.getCache().hasPermWithExpection(loc, CityPermEnum.DESTROY,transaction.getOriginal().getState()))
 				{
 					event.setCancelled(true);
 					if(r.getCache().canDisplayMessage(CityPermEnum.DESTROY))

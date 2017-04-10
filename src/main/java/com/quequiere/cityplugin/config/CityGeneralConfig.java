@@ -59,6 +59,7 @@ public class CityGeneralConfig {
 		if(whitelistDestroy==null)
 		{
 			whitelistDestroy=new ArrayList<String>();
+			whitelistDestroy.add("pixelmon:poke_chest");
 			this.save();
 		}
 		

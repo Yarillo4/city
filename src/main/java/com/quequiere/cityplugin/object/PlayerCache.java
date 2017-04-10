@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -328,22 +329,32 @@ public class PlayerCache
 		return invitation;
 	}
 
-	public boolean hasPerm(Location<World> loc, CityPermEnum perm)
+	
+	public boolean hasPermWithExpection(Location<World> loc, CityPermEnum perm,BlockState state)
 	{
 		
 		if(CityPermEnum.DESTROY.equals(perm))
 		{
-			String name = loc.getBlock().getType().getName();
+			
+			String name = state.getType().getName();
+			
 			for(String targ:CityPlugin.generalConfig.getWhitelistDestroy())
 			{
 				if(name.equals(targ))
-				{
+				{	
 					return true;
 				}
 			}
 		}
 		
 		
+		return hasPerm(loc, perm);
+	}
+	
+	public boolean hasPerm(Location<World> loc, CityPermEnum perm)
+	{
+		
+
 		Optional<Chunk> co = Tools.getChunk(loc);
 
 		if (!co.isPresent())
