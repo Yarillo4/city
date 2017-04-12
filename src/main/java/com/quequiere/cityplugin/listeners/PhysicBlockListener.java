@@ -13,16 +13,19 @@ import org.spongepowered.api.entity.hanging.Hanging;
 import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.vehicle.minecart.Minecart;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.block.InteractBlockEvent;
+import org.spongepowered.api.event.block.tileentity.ChangeSignEvent;
 import org.spongepowered.api.event.cause.entity.damage.source.DamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.cause.entity.damage.source.IndirectEntityDamageSource;
 import org.spongepowered.api.event.entity.CollideEntityEvent;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
+import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.format.TextColors;
@@ -37,6 +40,26 @@ import com.quequiere.cityplugin.object.Resident;
 
 public class PhysicBlockListener
 {
+	
+	@Listener
+	public void signeEvent(ChangeSignEvent event,@First User p)
+	{
+		if(p.getPlayer().isPresent())
+		{
+			Resident r = Resident.fromPlayerId(p.getUniqueId());
+			
+			
+			if (!r.getCache().hasPerm(event.getTargetTile().getLocation(), CityPermEnum.BUILD))
+			{
+				event.setCancelled(true);
+				if(r.getCache().canDisplayMessage(CityPermEnum.BUILD))
+				CityPlugin.sendMessage("You cannot edit(build) signs here!", TextColors.RED, p.getPlayer().get());
+				return;
+			}
+		}
+		
+	
+	}
 
 	@Listener
 	public void on(DamageEntityEvent event)
