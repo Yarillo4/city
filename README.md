@@ -1,9 +1,9 @@
-![City](https://dl.dropboxusercontent.com/u/74904588/cityphostoshop.png)
+![City](https://www.dropbox.com/s/u0t4pzd8qxs46wv/cityphostoshop.png?dl=0)
 A chunk based land protection system that allows for players to set up complex claims and create civilizations.
 
 ###Downloads
-- City 0.1.39 ALPHA - [Download](http://play.pixelsky-mc.com/downloads/city/City-0.1.39.jar)
-- City 0.1.36 ALPHA - [Download](http://play.pixelsky-mc.com/downloads/city/City-0.1.36.jar)
+- City 0.1.39 ALPHA - [Download](https://www.dropbox.com/s/7c1damw9salb825/City-0.1.39.jar?dl=0)
+- City 0.1.38 ALPHA - [Download](https://www.dropbox.com/s/tpzcenhg1ae5n7a/City-0.1.38.jar?dl=0)
 
 
 ###Features
