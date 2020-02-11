@@ -1,13 +1,7 @@
 package com.quequiere.cityplugin.dynmap;
 
-import java.lang.reflect.Field;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+import com.quequiere.cityplugin.object.City;
+import com.quequiere.cityplugin.object.CityChunk;
 import org.dynmap.DynmapCore;
 import org.dynmap.forge.DynmapMod;
 import org.dynmap.forge.DynmapPlugin;
@@ -19,8 +13,8 @@ import org.dynmap.utils.TileFlags;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.quequiere.cityplugin.object.City;
-import com.quequiere.cityplugin.object.CityChunk;
+import java.lang.reflect.Field;
+import java.util.*;
 
 public class CityDynmapAdaptator
 {
@@ -41,7 +35,7 @@ public class CityDynmapAdaptator
 
 		DynmapPlugin pl = DynmapMod.plugin;
 		Field f = pl.getClass().getDeclaredFields()[0];
-		f.setAccessible(true);
+		f.setAccessible(false);
 
 		try
 		{

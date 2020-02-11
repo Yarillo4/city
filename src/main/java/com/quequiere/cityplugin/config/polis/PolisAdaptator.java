@@ -1,34 +1,25 @@
 package com.quequiere.cityplugin.config.polis;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
-
+import com.quequiere.cityplugin.CityPlugin;
+import com.quequiere.cityplugin.Tools;
+import com.quequiere.cityplugin.object.City;
+import com.quequiere.cityplugin.object.Resident;
+import io.github.hsyyid.polis.Polis;
+import io.github.hsyyid.polis.config.ClaimsConfig;
+import io.github.hsyyid.polis.config.Configs;
+import io.github.hsyyid.polis.utils.ConfigManager;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.service.economy.account.Account;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.World;
 
-import com.flowpowered.math.vector.Vector3i;
-import com.quequiere.cityplugin.CityPlugin;
-import com.quequiere.cityplugin.Tools;
-import com.quequiere.cityplugin.object.City;
-import com.quequiere.cityplugin.object.Resident;
-
-import io.github.hsyyid.polis.Polis;
-import io.github.hsyyid.polis.config.ClaimsConfig;
-import io.github.hsyyid.polis.config.Configs;
-import io.github.hsyyid.polis.utils.ConfigManager;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import java.math.BigDecimal;
+import java.util.*;
 
 public class PolisAdaptator
 {
@@ -118,7 +109,7 @@ public class PolisAdaptator
 			}
 
 			Account account = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
-			account.setBalance(CityPlugin.economyService.getDefaultCurrency(), bank, Cause.of(NamedCause.source(p)));
+			account.setBalance(CityPlugin.economyService.getDefaultCurrency(), bank, Sponge.getCauseStackManager().getCurrentCause());
 
 			for(Chunk ch:clist)
 			{

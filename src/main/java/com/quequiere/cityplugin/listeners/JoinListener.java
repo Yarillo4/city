@@ -1,24 +1,16 @@
 package com.quequiere.cityplugin.listeners;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
-
+import com.quequiere.cityplugin.CityPlugin;
+import com.quequiere.cityplugin.Tools;
+import com.quequiere.cityplugin.object.*;
+import com.quequiere.cityplugin.object.tool.PermissibleZone;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.Ambient;
 import org.spongepowered.api.entity.living.animal.Animal;
 import org.spongepowered.api.entity.living.monster.Monster;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.event.cause.entity.spawn.EntitySpawnCause;
-import org.spongepowered.api.event.cause.entity.spawn.SpawnCause;
-import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.world.LoadWorldEvent;
@@ -29,14 +21,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Chunk;
 
-import com.quequiere.cityplugin.CityPlugin;
-import com.quequiere.cityplugin.Tools;
-import com.quequiere.cityplugin.object.City;
-import com.quequiere.cityplugin.object.CityChunk;
-import com.quequiere.cityplugin.object.CityPermBooleanEnum;
-import com.quequiere.cityplugin.object.CityWorld;
-import com.quequiere.cityplugin.object.Resident;
-import com.quequiere.cityplugin.object.tool.PermissibleZone;
+import java.util.*;
 
 public class JoinListener
 {
@@ -68,6 +53,9 @@ public class JoinListener
 				{
 					loadBooleanPermForChunk(c);
 				}
+
+				/*
+				TODO: Port this to Sponge 7.1
 
 				if (event.getCause().first(SpawnCause.class).isPresent())
 				{
@@ -107,8 +95,10 @@ public class JoinListener
 						}
 
 					}
-
 				}
+
+				*/
+
 
 				if (e instanceof Monster)
 				{
@@ -196,7 +186,7 @@ public class JoinListener
 			for (City c : cites)
 			{
 				Account account = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
-				TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), c.getTaxDailyCost(), Cause.of(NamedCause.source(event)));
+				TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), c.getTaxDailyCost(), Sponge.getCauseStackManager().getCurrentCause());
 
 				if (transactionResult.getResult() != ResultType.SUCCESS)
 				{
@@ -210,7 +200,7 @@ public class JoinListener
 				for (UUID id : c.getResidents())
 				{
 					Account raccount = CityPlugin.economyService.getOrCreateAccount(id).get();
-					TransactionResult rtransactionResult = raccount.withdraw(CityPlugin.economyService.getDefaultCurrency(), c.getPlayerTaxe(), Cause.of(NamedCause.source(event)));
+					TransactionResult rtransactionResult = raccount.withdraw(CityPlugin.economyService.getDefaultCurrency(), c.getPlayerTaxe(), Sponge.getCauseStackManager().getCurrentCause());
 
 					if (rtransactionResult.getResult() != ResultType.SUCCESS && c.isRemovePlayerTax())
 					{

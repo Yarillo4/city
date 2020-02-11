@@ -1,17 +1,17 @@
 package com.quequiere.cityplugin.command;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import com.quequiere.cityplugin.CityPlugin;
+import com.quequiere.cityplugin.Tools;
+import com.quequiere.cityplugin.object.City;
+import com.quequiere.cityplugin.object.CityChunk;
+import com.quequiere.cityplugin.object.Resident;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.service.economy.account.Account;
 import org.spongepowered.api.service.economy.transaction.ResultType;
 import org.spongepowered.api.service.economy.transaction.TransactionResult;
@@ -23,11 +23,11 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-import com.quequiere.cityplugin.CityPlugin;
-import com.quequiere.cityplugin.Tools;
-import com.quequiere.cityplugin.object.City;
-import com.quequiere.cityplugin.object.CityChunk;
-import com.quequiere.cityplugin.object.Resident;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class CityChunkCommand implements CommandCallable
 {
@@ -215,7 +215,7 @@ public class CityChunkCommand implements CommandCallable
 
 					Account newaccount = CityPlugin.economyService.getOrCreateAccount(c.getNameEconomy()).get();
 
-					TransactionResult transactionResult = originaccount.transfer(newaccount, CityPlugin.economyService.getDefaultCurrency(), new BigDecimal(cc.getSellPrice()), Cause.of(NamedCause.source(p)));
+					TransactionResult transactionResult = originaccount.transfer(newaccount, CityPlugin.economyService.getDefaultCurrency(), new BigDecimal(cc.getSellPrice()), Sponge.getCauseStackManager().getCurrentCause());
 
 					if (transactionResult.getResult() != ResultType.SUCCESS)
 					{

@@ -26,7 +26,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.spongepowered:spongeapi:5.0.0-SNAPSHOT'
+    compile 'org.spongepowered:spongeapi:7.1.0'
 	compile files('libs/Polis-1.10.2-2.7.0.jar')
 	compile files('libs/Dynmap-2.4-forge-1.10.2.jar')
 }

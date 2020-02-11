@@ -1,35 +1,5 @@
 package com.quequiere.cityplugin.object;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.entity.living.player.User;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.plugin.Plugin;
-import org.spongepowered.api.profile.GameProfile;
-import org.spongepowered.api.profile.GameProfileManager;
-import org.spongepowered.api.service.economy.account.Account;
-import org.spongepowered.api.service.economy.transaction.ResultType;
-import org.spongepowered.api.service.economy.transaction.TransactionResult;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.world.Chunk;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.quequiere.cityplugin.CityPlugin;
@@ -39,6 +9,23 @@ import com.quequiere.cityplugin.datamanip.LocationSerializer;
 import com.quequiere.cityplugin.dynmap.CityDynmapAdaptator;
 import com.quequiere.cityplugin.listeners.JoinListener;
 import com.quequiere.cityplugin.object.tool.PermissibleZone;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.service.economy.account.Account;
+import org.spongepowered.api.service.economy.transaction.ResultType;
+import org.spongepowered.api.service.economy.transaction.TransactionResult;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.Chunk;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
+
+import java.io.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.UUID;
 
 public class City extends PermissibleZone
 {
@@ -123,7 +110,7 @@ public class City extends PermissibleZone
 			}
 
 			Account account = CityPlugin.economyService.getOrCreateAccount(p.getUniqueId()).get();
-			TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), price, Cause.of(NamedCause.source(p)));
+			TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), price, Sponge.getCauseStackManager().getCurrentCause());
 
 			if (transactionResult.getResult() != ResultType.SUCCESS)
 			{
@@ -664,7 +651,7 @@ public class City extends PermissibleZone
 		}
 
 		Account account = CityPlugin.economyService.getOrCreateAccount(this.getNameEconomy()).get();
-		TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), outpost ? CityPlugin.generalConfig.getOutpostClaimCost() : CityPlugin.generalConfig.getChunkClaimCost(), Cause.of(NamedCause.source(p)));
+		TransactionResult transactionResult = account.withdraw(CityPlugin.economyService.getDefaultCurrency(), outpost ? CityPlugin.generalConfig.getOutpostClaimCost() : CityPlugin.generalConfig.getChunkClaimCost(), Sponge.getCauseStackManager().getCurrentCause());
 
 		if (transactionResult.getResult() != ResultType.SUCCESS)
 		{

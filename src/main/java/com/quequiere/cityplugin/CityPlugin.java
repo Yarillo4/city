@@ -1,7 +1,15 @@
 package com.quequiere.cityplugin;
 
-import java.util.Optional;
-
+import com.google.inject.Inject;
+import com.quequiere.cityplugin.bstats.Metrics;
+import com.quequiere.cityplugin.command.*;
+import com.quequiere.cityplugin.config.CityGeneralConfig;
+import com.quequiere.cityplugin.dynmap.CityDynmapAdaptator;
+import com.quequiere.cityplugin.listeners.ChatListener;
+import com.quequiere.cityplugin.listeners.JoinListener;
+import com.quequiere.cityplugin.listeners.MoveListener;
+import com.quequiere.cityplugin.listeners.PhysicBlockListener;
+import com.quequiere.cityplugin.object.City;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandManager;
 import org.spongepowered.api.entity.living.player.Player;
@@ -15,20 +23,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColor;
 
-import com.google.inject.Inject;
-import com.quequiere.cityplugin.bstats.Metrics;
-import com.quequiere.cityplugin.command.CityAdminCommand;
-import com.quequiere.cityplugin.command.CityChunkCommand;
-import com.quequiere.cityplugin.command.CityCommand;
-import com.quequiere.cityplugin.command.CityDynmapCommand;
-import com.quequiere.cityplugin.command.CityWorldCommand;
-import com.quequiere.cityplugin.config.CityGeneralConfig;
-import com.quequiere.cityplugin.dynmap.CityDynmapAdaptator;
-import com.quequiere.cityplugin.listeners.ChatListener;
-import com.quequiere.cityplugin.listeners.JoinListener;
-import com.quequiere.cityplugin.listeners.MoveListener;
-import com.quequiere.cityplugin.listeners.PhysicBlockListener;
-import com.quequiere.cityplugin.object.City;
+import java.util.Optional;
 
 @Plugin(id = "city", name = "City", version = PluginInfo.VERSION, description = "A chunk based land protection system that allows for players to set up complex claims and create civilizations.", url = "https://forums.spongepowered.org/t/city-claim/", authors = { "quequiere" })
 public class CityPlugin
